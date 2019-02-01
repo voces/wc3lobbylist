@@ -1,6 +1,8 @@
 
 import Joi from "joi";
 
+import { assert, children } from "./util/joi.mjs";
+
 const realmSchema = Joi.string().valid( "asia", "eu", "kr", "use", "usw" );
 const nameSchema = Joi.string().min( 1 ).max( 31 );
 const slotsSchema = Joi.object().keys( {
@@ -39,7 +41,7 @@ export default class Lobby {
 
 	static find( rawLobby ) {
 
-		Joi.assert( rawLobby, rawLobbySchema.required() );
+		rawLobby = assert( rawLobby, rawLobbySchema.required() );
 
 		return lobbies.filter( lobby =>
 			lobby.name.toLowerCase() === rawLobby.name.toLowerCase() &&
@@ -49,7 +51,7 @@ export default class Lobby {
 
 	static fineOne( rawLobby ) {
 
-		Joi.assert( rawLobby, rawLobbySchema.required() );
+		rawLobby = assert( rawLobby, rawLobbySchema.required() );
 
 		return this.find( rawLobby )[ 0 ];
 
@@ -57,12 +59,9 @@ export default class Lobby {
 
 	constructor( rawLobby ) {
 
-		Joi.assert( rawLobby, rawLobbySchema.required() );
+		rawLobby = assert( rawLobby, rawLobbySchema.required() );
 
-		// Object.defineProperties( this, {
-		// 	_realm: { writable: true },
-		// 	realm: { get: () => this._realm, set: realm => ( Joi.assert( realm, realmSchema.required() ), this._realm = realm ) }
-		// } );
+		children( rawLobbySchema ).forEach( ( { key, schema } ) => defineJoiProperty( this, key, schema ) );
 
 		this.realm = rawLobby.realm;
 		this.name = rawLobby.name;
@@ -81,3 +80,14 @@ export default class Lobby {
 	}
 
 }
+
+const lobby = new Lobby( {
+	realm: "usw",
+	name: "Testy test",
+	slots: {
+		occupied: 7,
+		max: 12
+	}
+} );
+
+console.log( JSON.stringify( lobby ) );
