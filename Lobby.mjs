@@ -1,93 +1,129 @@
 
-import Joi from "joi";
+import Discord from "discord.js";
 
-import { assert, children } from "./util/joi.mjs";
-
-const realmSchema = Joi.string().valid( "asia", "eu", "kr", "use", "usw" );
-const nameSchema = Joi.string().min( 1 ).max( 31 );
-const slotsSchema = Joi.object().keys( {
-	occupied: Joi.number().min( 1 ).max( 24 ).integer().required(),
-	max: Joi.number().min( Joi.ref( "occupied" ) ).max( 24 ).integer().required()
-} );
-const mapSchema = Joi.object().keys( {
-	name: Joi.string().min( 1 ),
-	path: Joi.string().min( 1 ).regex( /(.w3x|.w3m)$/ )
-} ).or( "name", "path" );
-
-const rawLobbySchema = Joi.object().keys( {
-	realm: realmSchema.required(),
-	name: nameSchema.required(),
-	slots: slotsSchema.required(),
-	map: mapSchema
-} );
-
-function defineJoiProperty( obj, property, schema ) {
-
-	const dataProperty = "_" + property;
-	Object.defineProperties( obj, {
-		[ dataProperty ]: { writable: true },
-		[ property ]: {
-			enumerable: true,
-			get: () => obj[ dataProperty ],
-			set: value => ( Joi.assert( value, schema ), obj[ dataProperty ] = value )
-		}
-	} );
-
-}
+import { mergeDeep } from "./util/merge.mjs";
 
 const lobbies = [];
 
+const invokeOnUpdate = ( obj, prop, callback ) => {
+
+	const valueProp = `_${prop}`;
+
+	Object.defineProperties( obj, {
+		[ valueProp ]: { writable: true },
+		[ prop ]: {
+			enumerable: true,
+			get: () => obj[ valueProp ],
+			set: value => {
+
+				// Don't do anything if unchanged
+				if ( value === obj[ valueProp ] ) return value;
+
+				const oldValue = obj[ valueProp ];
+				obj[ valueProp ] = value;
+				callback( value, prop, oldValue, obj );
+
+				return value;
+
+			}
+		}
+	} );
+
+};
 export default class Lobby {
 
 	static find( rawLobby ) {
 
-		rawLobby = assert( rawLobby, rawLobbySchema.required() );
-
 		return lobbies.filter( lobby =>
 			lobby.name.toLowerCase() === rawLobby.name.toLowerCase() &&
-            lobby.realm.toLowerCase() === rawLobby.realm.toLowerCase() );
+			lobby.realm.toLowerCase() === rawLobby.realm.toLowerCase() );
 
 	}
 
 	static fineOne( rawLobby ) {
 
-		rawLobby = assert( rawLobby, rawLobbySchema.required() );
-
 		return this.find( rawLobby )[ 0 ];
 
 	}
 
-	constructor( rawLobby ) {
+	constructor( props ) {
 
-		rawLobby = assert( rawLobby, rawLobbySchema.required() );
+		this.debounceUpdate();
 
-		children( rawLobbySchema ).forEach( ( { key, schema } ) => defineJoiProperty( this, key, schema ) );
+		[ "realm", "name", "slots", "map", "available" ].forEach( prop =>
+			invokeOnUpdate( this, prop, () => this.onUpdate() ) );
 
-		this.realm = rawLobby.realm;
-		this.name = rawLobby.name;
-		this.slots = rawLobby.slots;
-		if ( rawLobby.map ) this.map = rawLobby.map;
+		this.realm = props.realm;
+		this.name = props.name;
+		this.slots = props.slots;
+		this.available = true;
+
+		[ "occupied", "max" ].forEach( prop =>
+			invokeOnUpdate( this.slots, prop, () => this.onUpdate() ) );
+
+		this.map = props.map || {};
+		[ "file", "author", "name", "preview" ].forEach( prop =>
+			invokeOnUpdate( this.map, prop, () => this.onUpdate() ) );
+
+		this.messages = [];
+
+		this.releaseUpdate();
 
 		lobbies.push( this );
-		Object.seal( this );
 
 	}
 
-	get realm() {
+	update( ...patches ) {
 
-		return this._data.realm;
+		this.debounceUpdate();
+		mergeDeep( this, ...patches );
+		this.releaseUpdate();
+
+	}
+
+	debounceUpdate() {
+
+		this._debouncingUpdate = true;
+
+	}
+
+	releaseUpdate() {
+
+		this._debouncingUpdate = false;
+		if ( this._debouncedUpdate ) this.onUpdate();
+		this._debouncedUpdate = false;
+
+	}
+
+	onUpdate() {
+
+		this.lastTouch = Date.now();
+		if ( this.timeout ) clearTimeout( this.timeout );
+		this.timeout = setTimeout( () => this.available = false, 1000 * 60 );
+
+		if ( this._debouncingUpdate ) {
+
+			this._debouncedUpdate = true;
+			return;
+
+		}
+
+		const embed = this.toEmbed();
+
+		for ( let i = 0; i < this.messages.length; i ++ )
+			this.messages[ i ].edit( embed );
+
+	}
+
+	toEmbed() {
+
+		return new Discord.RichEmbed( {
+			title: `[${this.realm.toUpperCase()}] ${this.name} (${this.slots.occupied}/${this.slots.max})`,
+			description: this.map.file,
+			thumbnail: { url: this.map.preview }
+		} );
 
 	}
 
 }
 
-const lobby = new Lobby( {
-	realm: "usw",
-	name: "Testy test",
-	slots: {
-		occupied: 7,
-		max: 12
-	}
-} );
-
-console.log( JSON.stringify( lobby ) );
