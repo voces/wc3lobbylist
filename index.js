@@ -5,7 +5,9 @@ import fetchLobbies from "./fetchLobbies.js";
 let oldLobbies = {};
 
 const isSheepTag = lobby =>
-	lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst|\bbd\b).*$/i );
+	process.env.NODE_ENV === "production" ?
+		lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst|\bbd\b).*$/i ) :
+		true;
 
 const format = lobby =>
 	`[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})`;

@@ -1,8 +1,12 @@
 
 import Discord from "discord.js";
 
-if ( ! process.env.DISCORD_TOKEN )
+if ( ! process.env.DISCORD_TOKEN ) {
+
 	console.error( new Error( "Environmental variable DISCORD_TOKEN not set" ) );
+	process.exit( 1 );
+
+}
 
 const client = new Discord.Client();
 client.login( process.env.DISCORD_TOKEN );
