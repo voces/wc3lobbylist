@@ -6,7 +6,7 @@ import { escapeMarkdown, promiseTimeout } from "./util.js";
 let oldLobbies = {};
 let lastWork = 0;
 
-const isSheepTag = lobby =>
+const isRelevantLobby = lobby =>
 	process.env.NODE_ENV === "production" ?
 		lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst|\bbd\b).*$/i ) :
 		true;
@@ -16,7 +16,7 @@ const format = lobby =>
 
 const onNewLobby = async lobby => {
 
-	if ( ! isSheepTag( lobby ) ) return;
+	if ( ! isRelevantLobby( lobby ) ) return;
 
 	try {
 
@@ -34,7 +34,7 @@ const onNewLobby = async lobby => {
 
 const onUpdateLobby = async lobby => {
 
-	if ( ! isSheepTag( lobby ) ) return;
+	if ( ! isRelevantLobby( lobby ) ) return;
 
 	lastWork = Date.now();
 
@@ -54,7 +54,7 @@ const onUpdateLobby = async lobby => {
 
 const onDeleteLobby = async lobby => {
 
-	if ( ! isSheepTag( lobby ) ) return;
+	if ( ! isRelevantLobby( lobby ) ) return;
 
 	lastWork = Date.now();
 
@@ -77,6 +77,14 @@ const update = async () => {
 	const start = Date.now();
 	lastWork = Date.now();
 	let newLobbies;
+
+	if ( discord.update )
+		try {
+
+			discord.update();
+
+		} catch ( err ) { /* do nothing */ }
+
 	try {
 
 		newLobbies = await promiseTimeout( fetchLobbies() );
