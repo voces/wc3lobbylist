@@ -78,13 +78,6 @@ const update = async () => {
 	lastWork = Date.now();
 	let newLobbies;
 
-	if ( discord.update )
-		try {
-
-			discord.update();
-
-		} catch ( err ) { /* do nothing */ }
-
 	try {
 
 		newLobbies = await promiseTimeout( fetchLobbies() );
@@ -123,6 +116,13 @@ const update = async () => {
 			await onDeleteLobby( oldLobbies[ prop ] );
 
 	oldLobbies = lobbyMap;
+
+	if ( discord.update )
+		try {
+
+			discord.update( start );
+
+		} catch ( err ) { /* do nothing */ }
 
 	setTimeout( update, start + 5000 - Date.now() );
 
