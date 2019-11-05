@@ -1,8 +1,10 @@
 
 import discord from "./discord.js";
 import fetchLobbies from "./fetchLobbies.js";
+import { escapeMarkdown, promiseTimeout } from "./util.js";
 
 let oldLobbies = {};
+let lastWork = 0;
 
 const isSheepTag = lobby =>
 	process.env.NODE_ENV === "production" ?
@@ -10,7 +12,7 @@ const isSheepTag = lobby =>
 		true;
 
 const format = lobby =>
-	`[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})`;
+	escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
 
 const onNewLobby = async lobby => {
 
@@ -18,7 +20,8 @@ const onNewLobby = async lobby => {
 
 	try {
 
-		lobby.message = await discord.send( `**${format( lobby )}**` );
+		lastWork = Date.now();
+		lobby.message = await promiseTimeout( discord.send( `**${format( lobby )}**` ) );
 		console.log( new Date(), "n", format( lobby ), !! lobby.message );
 
 	} catch ( err ) {
@@ -33,8 +36,19 @@ const onUpdateLobby = async lobby => {
 
 	if ( ! isSheepTag( lobby ) ) return;
 
-	if ( lobby.message ) await lobby.message.edit( `**${format( lobby )}**` );
-	console.log( new Date(), "u", format( lobby ), !! lobby.message );
+	lastWork = Date.now();
+
+	try {
+
+		if ( lobby.message )
+			await promiseTimeout( lobby.message.edit( `**${format( lobby )}**` ) );
+		console.log( new Date(), "u", format( lobby ), !! lobby.message );
+
+	} catch ( err ) {
+
+		console.error( err );
+
+	}
 
 };
 
@@ -42,15 +56,38 @@ const onDeleteLobby = async lobby => {
 
 	if ( ! isSheepTag( lobby ) ) return;
 
-	if ( lobby.message ) await lobby.message.edit( `~~${format( lobby )}~~` );
-	console.log( new Date(), "d", format( lobby ), !! lobby.message );
+	lastWork = Date.now();
+
+	try {
+
+		if ( lobby.message )
+			await promiseTimeout( lobby.message.edit( `~~${format( lobby )}~~` ) );
+		console.log( new Date(), "d", format( lobby ), !! lobby.message );
+
+	} catch ( err ) {
+
+		console.error( err );
+
+	}
 
 };
 
 const update = async () => {
 
 	const start = Date.now();
-	const newLobbies = await fetchLobbies();
+	lastWork = Date.now();
+	let newLobbies;
+	try {
+
+		newLobbies = await promiseTimeout( fetchLobbies() );
+
+	} catch ( err ) {
+
+		console.error( err );
+		setTimeout( update, 5000 );
+
+	}
+
 	console.log( new Date(), "l", newLobbies.length );
 	const keys = newLobbies.map( l =>
 		`${l.server}-${l.name.toLowerCase()}-${l.slots.max}-${l.map}` );
@@ -85,4 +122,13 @@ const update = async () => {
 
 update();
 
-console.log( "ready!" );
+setInterval( () => {
+
+	if ( Date.now() - lastWork < 60_000 ) return;
+
+	console.log( Date.now(), "looks dead, killing..." );
+	process.exit( 1 );
+
+}, 30_000 );
+
+console.log( Date.now(), "ready!" );

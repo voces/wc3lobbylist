@@ -28,7 +28,7 @@ const obj = { send: ( ...args ) => {
 
 client.on( "ready", async () => {
 
-	console.log( "discord ready" );
+	console.log( Date.now(), "discord ready" );
 	const channelId = process.env.NODE_ENV === "production" ?
 		"232301665666072577" : // STC live-lobbies
 		"457570641638326274"; // WebCraft general
