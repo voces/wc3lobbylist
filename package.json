@@ -4,15 +4,14 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.4.2",
+    "discord.js": "^11.5.1",
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.12.1",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^5.16.0",
     "eslint-config-mdcs": "^4.2.3",
-    "eslint-config-verit": "^1.0.1",
-    "mysql2": "^1.6.4"
+    "eslint-config-verit": "^1.0.2"
   },
   "scripts": {
     "start": "node --experimental-modules --no-warnings index.js",
