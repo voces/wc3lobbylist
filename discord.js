@@ -35,11 +35,6 @@ client.on( "ready", async () => {
 	const channel = await client.channels.get( channelId );
 	queue.forEach( send => channel.send( ...send ).then( send.resolve ).catch( send.resolve ) );
 	obj.send = ( ...args ) => channel.send( ...args );
-	obj.update = date =>
-		client.user.setActivity(
-			`lobby list, last updated ${date.toUTCString()}`,
-			{ type: "WATCHING" }
-		);
 
 } );
 
