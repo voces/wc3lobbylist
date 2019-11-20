@@ -9,9 +9,9 @@ let lastWork = 0;
 const isRelevantLobby = lobby =>
 	process.env.NODE_ENV === "production" ?
 		lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst|\bbd\b).*$/i ) &&
-		! lobby.name.match( /soldier/i) &&
-		! lobby.name.match( /civilization/i) :
-		true;
+		! lobby.name.match( /soldier/i ) &&
+		! lobby.name.match( /civilization/i ) :
+		lobby.name.match( /^[abc]/ );
 
 const format = lobby =>
 	escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
