@@ -8,7 +8,7 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.3",
+    "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-config-mdcs": "^4.2.3",
     "eslint-config-verit": "^1.0.2"
@@ -20,5 +20,8 @@
   },
   "author": "verit",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=13.0.1"
+  }
 }

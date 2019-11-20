@@ -1,19 +1,19 @@
-
 import fetch from "node-fetch";
 
-export default () => fetch( "https://www.wc3maps.com/vue/gamelist.php" )
-	.then( response => response.json() )
-	.then( data => data.map( ( {
-		name,
-		path: map,
-		playersa: occupied,
-		playersb: max,
-		realm: server,
-		img: preview
-	} ) => ( {
-		server,
-		name,
-		slots: { occupied, max },
-		map,
-		preview: `http://wc3maps.com${preview}`
-	} ) ) );
+export default () => fetch(
+	"http://wc3maps.com/api/v1/listgames", {
+		headers: { Referer: "http://wc3maps.com/live" }
+	} )
+	.then( async response => response.json() )
+	.then( data =>
+		data.results.map( ( {
+			name,
+			slots_taken: occupied,
+			slots_total: max,
+			server
+		} ) => ( {
+			server,
+			name,
+			slots: { occupied, max }
+		} ) )
+	);
