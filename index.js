@@ -87,7 +87,7 @@ const update = async () => {
 	} catch ( err ) {
 
 		console.error( err );
-		setTimeout( update, 5000 );
+		setTimeout( update, 10_000 );
 
 	}
 
@@ -119,7 +119,7 @@ const update = async () => {
 
 	oldLobbies = lobbyMap;
 
-	setTimeout( update, start + 5000 - Date.now() );
+	setTimeout( update, start + 10_000 - Date.now() );
 
 };
 
