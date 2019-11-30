@@ -8,34 +8,27 @@ if ( ! process.env.DISCORD_TOKEN ) {
 
 }
 
+// load Discord
 const client = new Discord.Client();
 client.login( process.env.DISCORD_TOKEN );
 
-const queue = [];
-const obj = { send: ( ...args ) => {
-
-	const promise = new Promise( ( resolve, reject ) => {
-
-		args.resolve = resolve;
-		args.reject = reject;
-
-	} );
-
-	queue.push( args );
-	return promise;
-
-} };
-
+// a simple promise to make sure discord is ready
+const ready = new Promise( resolve =>
+	setTimeout( () => ready.resolve = resolve ) );
 client.on( "ready", async () => {
 
 	console.log( Date.now(), "discord ready" );
-	const channelId = process.env.NODE_ENV === "production" ?
-		"232301665666072577" : // STC live-lobbies
-		"457570641638326274"; // WebCraft general
-	const channel = await client.channels.get( channelId );
-	queue.forEach( send => channel.send( ...send ).then( send.resolve ).catch( send.resolve ) );
-	obj.send = ( ...args ) => channel.send( ...args );
+
+	ready.resolve();
 
 } );
 
-export default obj;
+// method for sending messages
+const send = async ( channelId, ...args ) => {
+
+	await ready;
+	return client.channels.get( channelId ).send( ...args );
+
+};
+
+export default { send };
