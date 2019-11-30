@@ -9,15 +9,8 @@ let lastWork = 0;
 
 const configEntries = Object.entries( config );
 const getChannelIds = lobby => configEntries
-	.filter( ( [ , filter ] ) => filter( lobby ) )
+	.filter( ( [ , { filter } ] ) => filter( lobby ) )
 	.map( ( [ channelId ] ) => channelId );
-
-const isRelevantLobby = lobby =>
-	process.env.NODE_ENV === "production" ?
-		lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst).*$/i ) &&
-		! lobby.name.match( /soldier/i ) &&
-		! lobby.name.match( /civilization/i ) :
-		lobby.name.match( /^[abc]/ );
 
 const format = lobby =>
 	escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
@@ -35,7 +28,7 @@ const onNewLobby = async lobby => {
 
 				try {
 
-					return promiseTimeout( discord.send( channelId, `**${format( lobby )}**` ) );
+					return promiseTimeout( discord.send( channelId, `**${( config[ channelId ].format || format )( lobby )}**` ) );
 
 				} catch ( err ) {
 
@@ -71,7 +64,7 @@ const onUpdateLobby = async lobby => {
 
 				try {
 
-					return promiseTimeout( message.edit( `**${format( lobby )}**` ) );
+					return promiseTimeout( message.edit( `**${( config[ message.channel.id ].format || format )( lobby )}**` ) );
 
 				} catch ( err ) {
 
@@ -93,7 +86,7 @@ const onUpdateLobby = async lobby => {
 
 const onDeleteLobby = async lobby => {
 
-	if ( ! isRelevantLobby( lobby ) ) return;
+	if ( ! getChannelIds( lobby ).length ) return;
 
 	lastWork = Date.now();
 
@@ -104,7 +97,7 @@ const onDeleteLobby = async lobby => {
 
 				try {
 
-					return promiseTimeout( message.edit( `~~${format( lobby )}~~` ) );
+					return promiseTimeout( message.edit( `~~${( config[ message.channel.id ].format || format )( lobby )}~~` ) );
 
 				} catch ( err ) {
 
@@ -184,4 +177,4 @@ setInterval( () => {
 
 }, 30_000 );
 
-console.log( Date.now(), "ready!" );
+console.log( Date.now(), "ready!", process.env.NODE_ENV );
