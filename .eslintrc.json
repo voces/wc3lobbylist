@@ -1,6 +1,7 @@
 {
-	"extends": [ "verit" ],
-	"globals": { "lighterhtml": true },
+    "extends": [ "verit" ],
 	"parser": "babel-eslint",
-	"parserOptions": { "ecmaVersion": 2018 }
+	"rules": {
+		"require-atomic-updates": 0
+	}
 }

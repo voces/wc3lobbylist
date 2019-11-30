@@ -2,13 +2,19 @@
 import discord from "./discord.js";
 import fetchLobbies from "./fetchLobbies.js";
 import { escapeMarkdown, promiseTimeout } from "./util.js";
+import config from "./config.js";
 
 let oldLobbies = {};
 let lastWork = 0;
 
+const configEntries = Object.entries( config );
+const getChannelIds = lobby => configEntries
+	.filter( ( [ , filter ] ) => filter( lobby ) )
+	.map( ( [ channelId ] ) => channelId );
+
 const isRelevantLobby = lobby =>
 	process.env.NODE_ENV === "production" ?
-		lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst|\bbd\b).*$/i ) &&
+		lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst).*$/i ) &&
 		! lobby.name.match( /soldier/i ) &&
 		! lobby.name.match( /civilization/i ) :
 		lobby.name.match( /^[abc]/ );
@@ -18,13 +24,29 @@ const format = lobby =>
 
 const onNewLobby = async lobby => {
 
-	if ( ! isRelevantLobby( lobby ) ) return;
+	const channelIds = getChannelIds( lobby );
+	if ( ! channelIds.length ) return;
 
 	try {
 
 		lastWork = Date.now();
-		lobby.message = await promiseTimeout( discord.send( `**${format( lobby )}**` ) );
-		console.log( new Date(), "n", format( lobby ), !! lobby.message );
+		lobby.messages = await Promise.all(
+			channelIds.map( channelId => {
+
+				try {
+
+					return promiseTimeout( discord.send( channelId, `**${format( lobby )}**` ) );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
+
+			} ),
+
+		);
+		console.log( new Date(), "n", format( lobby ), !! ( lobby.messages && lobby.messages.length ) );
 
 	} catch ( err ) {
 
@@ -32,19 +54,34 @@ const onNewLobby = async lobby => {
 
 	}
 
+	debugger;
+
 };
 
 const onUpdateLobby = async lobby => {
 
-	if ( ! isRelevantLobby( lobby ) ) return;
+	if ( ! getChannelIds( lobby ).length ) return;
 
 	lastWork = Date.now();
 
 	try {
 
-		if ( lobby.message )
-			await promiseTimeout( lobby.message.edit( `**${format( lobby )}**` ) );
-		console.log( new Date(), "u", format( lobby ), !! lobby.message );
+		if ( lobby.messages && lobby.messages.length )
+			await Promise.all( lobby.messages.map( message => {
+
+				try {
+
+					return promiseTimeout( message.edit( `**${format( lobby )}**` ) );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
+
+			} ) );
+
+		console.log( new Date(), "u", format( lobby ), !! ( lobby.messages && lobby.messages.length ) );
 
 	} catch ( err ) {
 
@@ -62,9 +99,22 @@ const onDeleteLobby = async lobby => {
 
 	try {
 
-		if ( lobby.message )
-			await promiseTimeout( lobby.message.edit( `~~${format( lobby )}~~` ) );
-		console.log( new Date(), "d", format( lobby ), !! lobby.message );
+		if ( lobby.messages && lobby.messages.length )
+			await Promise.all( lobby.messages.map( message => {
+
+				try {
+
+					return promiseTimeout( message.edit( `~~${format( lobby )}~~` ) );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
+
+			} ) );
+
+		console.log( new Date(), "d", format( lobby ), !! ( lobby.messages && lobby.messages.length ) );
 
 	} catch ( err ) {
 
@@ -101,7 +151,7 @@ const update = async () => {
 		const oldLobby = oldLobbies[ keys[ i ] ];
 		if ( oldLobby ) {
 
-			newLobby.message = oldLobby.message;
+			newLobby.messages = oldLobby.messages;
 			if ( oldLobby.slots.occupied !== newLobby.slots.occupied )
 				await onUpdateLobby( newLobby );
 
