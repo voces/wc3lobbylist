@@ -17,14 +17,15 @@ export default {
 	"650062967903354901": {
 		filter: lobby => process.env.NODE_ENV === "production" &&
 			lobby.name.match( /tree.*tag/i ),
+		format: lobby => `<@&650493683166216203> [${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})`,
 	},
 	"457570641638326274": {
 		filter: lobby => process.env.NODE_ENV !== "production" &&
-			lobby.name.match( /^[abcde]/ ),
+			lobby.name.match( /^[abc]/i ),
 		format: lobby => `<@&650382637369786381> [${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})`,
 	},
 	"650369363811106820": {
 		filter: lobby => process.env.NODE_ENV !== "production" &&
-			lobby.name.match( /^[bcdef]/ ),
+			lobby.name.match( /^[bcd]/i ),
 	},
 };

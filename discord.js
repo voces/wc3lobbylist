@@ -17,7 +17,7 @@ const ready = new Promise( resolve =>
 	setTimeout( () => ready.resolve = resolve ) );
 client.on( "ready", async () => {
 
-	console.log( Date.now(), "discord ready" );
+	console.log( new Date(), "discord ready" );
 
 	ready.resolve();
 
