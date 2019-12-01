@@ -4,6 +4,11 @@ import fetchLobbies from "./fetchLobbies.js";
 import { escapeMarkdown, promiseTimeout } from "./util.js";
 import config from "./config.js";
 
+const TEN_SECONDS = 10 * 1000;
+const THIRTY_SECONDS = 30 * 1000;
+const ONE_MINUTE = 60 * 1000;
+const FIVE_MINUTES = 5 * ONE_MINUTE;
+
 let oldLobbies = {};
 let lastWork = 0;
 
@@ -46,8 +51,6 @@ const onNewLobby = async lobby => {
 		console.error( err );
 
 	}
-
-	debugger;
 
 };
 
@@ -130,7 +133,7 @@ const update = async () => {
 	} catch ( err ) {
 
 		console.error( err );
-		setTimeout( update, 10_000 );
+		setTimeout( update, TEN_SECONDS );
 
 	}
 
@@ -145,7 +148,7 @@ const update = async () => {
 		if ( oldLobby ) {
 
 			newLobby.messages = oldLobby.messages;
-			if ( oldLobby.slots.occupied !== newLobby.slots.occupied )
+			if ( oldLobby.slots.occupied !== newLobby.slots.occupied || oldLobby.deleted )
 				await onUpdateLobby( newLobby );
 
 		} else
@@ -157,12 +160,23 @@ const update = async () => {
 		[ key, newLobbies[ i ] ] ) );
 
 	for ( const prop in oldLobbies )
-		if ( ! lobbyMap[ prop ] )
-			await onDeleteLobby( oldLobbies[ prop ] );
+		if ( ! lobbyMap[ prop ] ) {
+
+			if ( ! oldLobbies[ prop ].deleted ) {
+
+				await onDeleteLobby( oldLobbies[ prop ] );
+				oldLobbies[ prop ].deleted = Date.now();
+
+			}
+
+			if ( oldLobbies[ prop ].deleted > Date.now() - FIVE_MINUTES )
+				lobbyMap[ prop ] = oldLobbies[ prop ];
+
+		}
 
 	oldLobbies = lobbyMap;
 
-	setTimeout( update, start + 10_000 - Date.now() );
+	setTimeout( update, start + TEN_SECONDS - Date.now() );
 
 };
 
@@ -170,11 +184,11 @@ update();
 
 setInterval( () => {
 
-	if ( Date.now() - lastWork < 60_000 ) return;
+	if ( Date.now() - lastWork < ONE_MINUTE ) return;
 
-	console.log( Date.now(), "looks dead, killing..." );
+	console.log( new Date(), "looks dead, killing..." );
 	process.exit( 1 );
 
-}, 30_000 );
+}, THIRTY_SECONDS );
 
-console.log( Date.now(), "ready!", process.env.NODE_ENV );
+console.log( new Date(), "ready!", process.env.NODE_ENV );
