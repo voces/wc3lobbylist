@@ -32,7 +32,7 @@ const update = async () => {
 
 	try {
 
-		await v2( newLobbies );
+		await v2( newLobbies.map( l => ( { ...l } ) ) );
 
 	} catch ( err ) {
 
@@ -42,7 +42,7 @@ const update = async () => {
 
 	try {
 
-		await v1( newLobbies );
+		await v1( newLobbies.map( l => ( { ...l } ) ) );
 
 	} catch ( err ) {
 
