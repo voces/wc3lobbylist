@@ -31,4 +31,4 @@ const send = async ( channelId, ...args ) => {
 
 };
 
-export default { send };
+export default Object.assign( client, { send } );
