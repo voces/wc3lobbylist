@@ -1,12 +1,7 @@
 
 export default {
 	// sheep tag
-	"232301665666072577": {
-		filter: lobby => process.env.NODE_ENV === "production" &&
-			lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst).*$/i ) &&
-			! lobby.name.match( /soldier/i ) &&
-			! lobby.name.match( /civilization/i ),
-	},
+	"232301665666072577": {},
 	// vamp zero
 	"650285615140569115": {
 		filter: lobby => process.env.NODE_ENV === "production" &&
