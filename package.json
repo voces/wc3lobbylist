@@ -16,6 +16,7 @@
   "scripts": {
     "start": "node --experimental-modules --no-warnings index.js",
     "debug": "node --experimental-modules --no-warnings --inspect-brk index.js",
+    "sandbox": "node --experimental-modules --no-warnings --inspect-brk sandbox.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "verit",

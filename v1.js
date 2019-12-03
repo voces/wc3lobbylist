@@ -1,6 +1,7 @@
 
+import Discord from "discord.js";
 import discord from "./discord.js";
-import { escapeMarkdown, promiseTimeout } from "./util.js";
+import { promiseTimeout } from "./util.js";
 import config from "./config.js";
 
 const ONE_MINUTE = 60 * 1000;
@@ -14,7 +15,7 @@ const getChannelIds = lobby => configEntries
 	.map( ( [ channelId ] ) => channelId );
 
 const format = lobby =>
-	escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
+	Discord.escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
 
 const onNewLobby = async lobby => {
 

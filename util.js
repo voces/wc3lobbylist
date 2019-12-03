@@ -1,13 +1,4 @@
 
-// https://stackoverflow.com/a/39543625/1567335
-export const escapeMarkdown = text => {
-
-	const unescaped = text.replace( /\\(\*|_|`|~|\\)/g, "$1" ); // unescape any "backslashed" character
-	const escaped = unescaped.replace( /(\*|_|`|~|\\)/g, "\\$1" ); // escape *, _, `, ~, \
-	return escaped;
-
-};
-
 // taken from https://italonascimento.github.io/applying-a-timeout-to-your-promises/
 export const promiseTimeout = function ( promise ) {
 

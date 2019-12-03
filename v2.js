@@ -1,7 +1,6 @@
 
 import Discord from "discord.js";
 import discord from "./discord.js";
-import { escapeMarkdown } from "./util.js";
 import LobbyEmbed from "./LobbyEmbed.js";
 import config from "./config.js";
 
@@ -15,7 +14,7 @@ let oldLobbies = {};
 const getLobbyKey = lobby => `${lobby.server}-${lobby.name.toLowerCase()}`;
 
 const format = lobby =>
-	escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?"})` );
+	Discord.escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?"})` );
 
 const updateEmbeds = async ( lobby, fn, fnDo ) => {
 
@@ -81,8 +80,7 @@ discord.on( "message", async message => {
 		! message.channel.memberPermissions( message.guild.me )
 			.hasPermission( Discord.Permissions.FLAGS.SEND_MESSAGES ) ||
 		! message.channel.memberPermissions( message.guild.me )
-			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) ||
-		message.channel.id !== "457570641638326274" )
+			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) )
 
 		return;
 
