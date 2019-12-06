@@ -10,13 +10,6 @@ const extractField = ( embed, fieldName ) => {
 
 };
 
-const withoutStrikeout = str => str
-	.replace( /^~~/, "" )
-	.replace( /~~$/, "" );
-
-const withStrikeout = ( str, hasStrikeout ) =>
-	hasStrikeout && str && str.length ? `~~${str}~~` : str;
-
 export default class LobbyEmbed {
 
 	title = "";
@@ -27,24 +20,25 @@ export default class LobbyEmbed {
 	author = "?";
 	realm = "?";
 	players = "?";
-	strikeout = false;
+	color = "";
+	created = "";
 
 	constructor( sourceEmbed ) {
 
 		if ( ! sourceEmbed ) return;
 
-		this.title = withoutStrikeout( sourceEmbed.title || "" );
+		this.title = sourceEmbed.title || "";
 		this.url = sourceEmbed.url;
 		if ( sourceEmbed.thumbnail )
 			this.thumbnail = sourceEmbed.thumbnail.url;
 		if ( sourceEmbed.footer )
 			this.footer = { text: sourceEmbed.footer.text, icon: sourceEmbed.footer.iconURL };
-		const rawGameName = extractField( sourceEmbed, "Game Name" );
-		this.gameName = withoutStrikeout( rawGameName );
-		this.author = withoutStrikeout( extractField( sourceEmbed, "Hosted by" ) );
-		this.realm = withoutStrikeout( extractField( sourceEmbed, "Realm" ) );
-		this.players = withoutStrikeout( extractField( sourceEmbed, "Players" ) );
-		this.strikeout = this.title.startsWith( "~~" );
+		this.gameName = extractField( sourceEmbed, "Game Name" );
+		this.author = extractField( sourceEmbed, "Hosted by" );
+		this.realm = extractField( sourceEmbed, "Realm" );
+		this.players = extractField( sourceEmbed, "Players" );
+		this.color = sourceEmbed.color;
+		this.created = extractField( sourceEmbed, "Creation Time" );
 
 	}
 
@@ -58,14 +52,15 @@ export default class LobbyEmbed {
 	toEmbed() {
 
 		return new Discord.RichEmbed()
-			.setTitle( withStrikeout( this.title, this.strikeout ) )
+			.setTitle( this.title )
 			.setURL( this.url )
 			.setThumbnail( this.thumbnail )
 			.setFooter( this.footer.text, this.footer.icon )
-			.addField( "Game Name", withStrikeout( this.gameName, this.strikeout ) )
-			.addField( "Hosted by", withStrikeout( this.author, this.strikeout ), true )
-			.addField( "Realm", withStrikeout( this.realm, this.strikeout ), true )
-			.addField( "Players", withStrikeout( this.players, this.strikeout ), true );
+			.addField( "Game Name", this.gameName )
+			.addField( "Hosted by", this.author, true )
+			.addField( "Realm", this.realm, true )
+			.addField( "Players", this.players, true )
+			.setColor( this.color );
 
 	}
 

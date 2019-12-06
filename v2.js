@@ -42,7 +42,7 @@ const onUpdateLobby = async lobby =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
-			.set( "strikeout", false )
+			.set( "color", undefined )
 			.set(
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
@@ -54,7 +54,7 @@ const onKillLobby = async lobby =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
-			.set( "strikeout", true )
+			.set( "color", 0xe69500 )
 			.set(
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
@@ -66,7 +66,7 @@ const onDeleteLobby = async lobby =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
-			.set( "strikeout", true )
+			.set( "color", 0xff7d9c )
 			.set(
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
@@ -76,15 +76,12 @@ const onDeleteLobby = async lobby =>
 
 discord.on( "message", async message => {
 
-	if (
-		message.author.id !== TRIGGS_ID ||
+	if ( message.author.id !== TRIGGS_ID ||
 		! message.channel.memberPermissions( message.guild.me )
 			.hasPermission( Discord.Permissions.FLAGS.SEND_MESSAGES ) ||
 		! message.channel.memberPermissions( message.guild.me )
-			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) ||
-        config.whitelistOnly && ! config[ message.channel.id ] ||
-        config.blacklist && config.blacklist[ message.channel.id ]
-	)
+			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) )
+
 		return;
 
 	// Delete Trigg's message
