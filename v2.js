@@ -76,12 +76,15 @@ const onDeleteLobby = async lobby =>
 
 discord.on( "message", async message => {
 
-	if ( message.author.id !== TRIGGS_ID ||
+	if (
+		message.author.id !== TRIGGS_ID ||
 		! message.channel.memberPermissions( message.guild.me )
 			.hasPermission( Discord.Permissions.FLAGS.SEND_MESSAGES ) ||
 		! message.channel.memberPermissions( message.guild.me )
-			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) )
-
+			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) ||
+		config.whitelistOnly && ! config[ message.channel.id ] ||
+		config.blacklist && config.blacklist[ message.channel.id ]
+	)
 		return;
 
 	// Delete Trigg's message

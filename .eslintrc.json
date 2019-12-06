@@ -1,6 +1,9 @@
 {
     "extends": [ "verit" ],
 	"parser": "babel-eslint",
+	"globals": {
+		"globalThis": false
+	},
 	"rules": {
 		"require-atomic-updates": 0
 	}
