@@ -76,60 +76,70 @@ const onDeleteLobby = async lobby =>
 
 discord.on( "message", async message => {
 
-	if (
-		message.author.id !== TRIGGS_ID ||
-		! message.channel.memberPermissions( message.guild.me )
-			.hasPermission( Discord.Permissions.FLAGS.SEND_MESSAGES ) ||
-		! message.channel.memberPermissions( message.guild.me )
-			.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) ||
-		config.whitelistOnly && ! config[ message.channel.id ] ||
-		config.blacklist && config.blacklist[ message.channel.id ]
-	)
-		return;
+	try {
 
-	// Delete Trigg's message
-	message.delete();
+		if (
+			message.author.id !== TRIGGS_ID ||
+			! message.embeds.length ||
+			! message.embeds[ 0 ].footer ||
+			! message.channel.memberPermissions( message.guild.me )
+				.hasPermission( Discord.Permissions.FLAGS.SEND_MESSAGES ) ||
+			! message.channel.memberPermissions( message.guild.me )
+				.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) ||
+			config.whitelistOnly && ! config[ message.channel.id ] ||
+			config.blacklist && config.blacklist[ message.channel.id ]
+		)
+			return;
 
-	// Extract and clone the embed
-	const sourceEmbed = message.embeds[ 0 ];
-	const embed = new LobbyEmbed( sourceEmbed );
+		// Delete Trigg's message
+		message.delete();
 
-	// Generate some lobby data (we store this)
-	const lobbyData = {
-		map: embed.title,
-		wc3maps: embed.url.split( "/" ).pop(),
-		name: embed.gameName,
-		author: embed.author,
-		server: embed.realm,
-		created: embed.created,
-	};
+		// Extract and clone the embed
+		const sourceEmbed = message.embeds[ 0 ];
+		const embed = new LobbyEmbed( sourceEmbed );
 
-	// Merge with lobby live list
-	const key = getLobbyKey( lobbyData );
-	const oldLobby = oldLobbies[ key ];
+		// Generate some lobby data (we store this)
+		const lobbyData = {
+			map: embed.title,
+			wc3maps: embed.url.split( "/" ).pop(),
+			name: embed.gameName,
+			author: embed.author,
+			server: embed.realm,
+			created: embed.created,
+		};
 
-	if ( oldLobby ) Object.assign( oldLobby, lobbyData );
-	else oldLobbies[ key ] = lobbyData;
+		// Merge with lobby live list
+		const key = getLobbyKey( lobbyData );
+		const oldLobby = oldLobbies[ key ];
 
-	const lobby = oldLobbies[ key ];
+		if ( oldLobby ) Object.assign( oldLobby, lobbyData );
+		else oldLobbies[ key ] = lobbyData;
 
-	// Update player count on embed
-	embed.players = lobby.slots ?
-		`${lobby.slots.occupied}/${lobby.slots.max}` :
-		"?/?";
+		const lobby = oldLobbies[ key ];
 
-	// Post the new message
-	const channelConfig = config[ message.channel.id ];
-	const newMessage = await message.channel.send(
-		channelConfig && channelConfig.message || "",
-		embed.toEmbed(),
-	).catch( console.error );
+		// Update player count on embed
+		embed.players = lobby.slots ?
+			`${lobby.slots.occupied}/${lobby.slots.max}` :
+			"?/?";
 
-	// Store the new message
-	if ( ! lobby.messages ) lobby.messages = [];
-	lobby.messages.push( newMessage );
+		// Post the new message
+		const channelConfig = config[ message.channel.id ];
+		const newMessage = await message.channel.send(
+			channelConfig && channelConfig.message || "",
+			embed.toEmbed(),
+		).catch( console.error );
 
-	console.log( new Date(), "v2 n", format( lobby ) );
+		// Store the new message
+		if ( ! lobby.messages ) lobby.messages = [];
+		lobby.messages.push( newMessage );
+
+		console.log( new Date(), "v2 n", format( lobby ) );
+
+	} catch ( err ) {
+
+		console.error( err );
+
+	}
 
 } );
 
