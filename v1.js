@@ -11,6 +11,7 @@ let oldLobbies = {};
 
 const configEntries = Object.entries( config );
 const getChannelIds = lobby => configEntries
+	.filter( ( [ , value ] ) => typeof value === "object" && ! Array.isArray( value ) )
 	.filter( ( [ , { filter } = {} ] ) => filter && filter( lobby ) )
 	.map( ( [ channelId ] ) => channelId );
 
