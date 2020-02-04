@@ -3,6 +3,7 @@ export default process.env.NODE_ENV === "production" ? {
 	blacklist: [ "457570641638326274" ],
 	// sheep tag
 	"232301665666072577": {
+		version: 3,
 		filter: lobby => process.env.NODE_ENV === "production" &&
 			lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst).*$/i ) &&
 			! lobby.name.match( /soldier/i ) &&
@@ -21,6 +22,8 @@ export default process.env.NODE_ENV === "production" ? {
 } : {
 	whitelistOnly: true,
 	"457570641638326274": {
+		version: 3,
 		message: "<@&650382637369786381>",
+		filter: lobby => lobby.name.match( /^[a-c]/ ),
 	},
 };

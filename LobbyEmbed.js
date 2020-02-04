@@ -15,7 +15,7 @@ export default class LobbyEmbed {
 	title = "";
 	url = "";
 	thumbnail = "";
-	footer = "";
+	footer = { text: "", icon: "" };
 	gameName = "?";
 	author = "?";
 	realm = "?";

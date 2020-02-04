@@ -3,12 +3,15 @@ import fetchLobbies from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
 import v1 from "./v1.js";
 import v2 from "./v2.js";
+import v3 from "./v3.js";
 
 const TEN_SECONDS = 10 * 1000;
 const THIRTY_SECONDS = 30 * 1000;
 const ONE_MINUTE = 60 * 1000;
 
 let lastWork = 0;
+
+const versions = [ v3, v2, v1 ];
 
 const update = async () => {
 
@@ -30,25 +33,16 @@ const update = async () => {
 
 	console.log( new Date(), "l", newLobbies.length );
 
-	try {
+	for ( const verison of versions )
+		try {
 
-		await v2( newLobbies.map( l => ( { ...l } ) ) );
+			await verison( newLobbies.map( l => ( { ...l } ) ) );
 
-	} catch ( err ) {
+		} catch ( err ) {
 
-		console.error( err );
+			console.error( err );
 
-	}
-
-	try {
-
-		await v1( newLobbies.map( l => ( { ...l } ) ) );
-
-	} catch ( err ) {
-
-		console.error( err );
-
-	}
+		}
 
 	setTimeout( update, start + TEN_SECONDS - Date.now() );
 

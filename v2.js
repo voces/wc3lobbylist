@@ -5,7 +5,7 @@ import LobbyEmbed from "./LobbyEmbed.js";
 import config from "./config.js";
 
 const ONE_MINUTE = 60 * 1000;
-const TEN_MINUTES = 10 * ONE_MINUTE;
+export const TEN_MINUTES = 10 * ONE_MINUTE;
 
 const TRIGGS_ID = "538039264261308417";
 
@@ -13,10 +13,10 @@ let oldLobbies = {};
 
 const getLobbyKey = lobby => `${lobby.server}-${lobby.name.toLowerCase()}`;
 
-const format = lobby =>
+export const format = lobby =>
 	Discord.escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?"})` );
 
-const updateEmbeds = async ( lobby, fn, fnDo ) => {
+export const updateEmbeds = async ( lobby, fn, fnDo ) => {
 
 	if ( ! lobby.messages || ! lobby.messages.length ) return;
 
@@ -38,7 +38,7 @@ const updateEmbeds = async ( lobby, fn, fnDo ) => {
 
 };
 
-const onUpdateLobby = async lobby =>
+export const onUpdateLobby = async lobby =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
@@ -47,10 +47,10 @@ const onUpdateLobby = async lobby =>
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
 			),
-		lobby => console.log( new Date(), "v2 u", format( lobby ) ),
+		lobby => console.log( new Date(), "v2/3 u", format( lobby ) ),
 	);
 
-const onKillLobby = async lobby =>
+export const onKillLobby = async lobby =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
@@ -59,10 +59,10 @@ const onKillLobby = async lobby =>
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
 			),
-		lobby => console.log( new Date(), "v2 k", format( lobby ) ),
+		lobby => console.log( new Date(), "v2/3 k", format( lobby ) ),
 	);
 
-const onDeleteLobby = async lobby =>
+export const onDeleteLobby = async lobby =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
@@ -71,7 +71,7 @@ const onDeleteLobby = async lobby =>
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
 			),
-		lobby => console.log( new Date(), "v2 d", format( lobby ) ),
+		lobby => console.log( new Date(), "v2/3 d", format( lobby ) ),
 	);
 
 discord.on( "message", async message => {
