@@ -2,7 +2,12 @@
 export default process.env.NODE_ENV === "production" ? {
 	blacklist: [ "457570641638326274" ],
 	// sheep tag
-	"232301665666072577": {},
+	"232301665666072577": {
+		filter: lobby => process.env.NODE_ENV === "production" &&
+			lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst).*$/i ) &&
+			! lobby.name.match( /soldier/i ) &&
+			! lobby.name.match( /civilization/i ),
+	},
 	// vamp zero
 	"650285615140569115": {
 		filter: lobby => lobby.name.match( /vamp.*zero/i ),
