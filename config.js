@@ -5,12 +5,12 @@ export default process.env.NODE_ENV === "production" ? {
 	"232301665666072577": {
 		version: 3,
 		filter: lobby => process.env.NODE_ENV === "production" &&
-			// name match
-			( lobby.name.match( /^.*(sh(e{2,})p.*tag|\b(st)+\b|\bst[^a-z]|stbd|bdst).*$/i ) &&
-			! lobby.name.match( /soldier/i ) &&
-			! lobby.name.match( /civilization/i ) ||
-			// map match
-			lobby.map && lobby.map.match( /sheep.*tag/i ) ),
+			(
+				// name match
+				lobby.name.match( /sh(e{2,})p.*tag/i ) ||
+				// map match
+				lobby.map && lobby.map.match( /(sheep.*tag|bulldog.*excursion)/i )
+			),
 	},
 	// vamp zero
 	"650285615140569115": {
