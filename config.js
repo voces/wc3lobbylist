@@ -19,7 +19,9 @@ export default process.env.NODE_ENV === "production" ? {
 	},
 	// tree tag
 	"650062967903354901": {
+		version: 3,
 		filter: lobby => lobby.name.match( /tree.*tag/i ),
+		message: "<@&650493683166216203>",
 		format: lobby => `<@&650493683166216203> [${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})`,
 	},
 } : {

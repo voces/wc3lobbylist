@@ -27,8 +27,9 @@ const onNewLobby = async lobby => {
 			.set( "realm", lobby.server )
 			.set( "players", `${lobby.slots.occupied}/${lobby.slots.max}` );
 
-		const newMessage = await discord.send( channelId,
-			embed.toEmbed(),
+		const newMessage = await discord.send(
+			channelId,
+			...config[ channelId ].message ? [ config[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
 		).catch( console.error );
 
 		console.log( new Date(), "v3 n", format( lobby ) );
