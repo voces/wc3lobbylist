@@ -24,6 +24,11 @@ export default process.env.NODE_ENV === "production" ? {
 		message: "<@&650493683166216203>",
 		format: lobby => `<@&650493683166216203> [${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})`,
 	},
+	// helm's deep
+	"674688464721149993": {
+		version: 3,
+		filter: lobby => lobby.map && lobby.map.match( /^Helm.*Deep.*6/i ),
+	},
 } : {
 	whitelistOnly: true,
 	"457570641638326274": {
