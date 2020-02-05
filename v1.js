@@ -41,7 +41,7 @@ const onNewLobby = async lobby => {
 			} ),
 
 		);
-		console.log( new Date(), channelIds, "v1 n", format( lobby ), !! ( lobby.messages && lobby.messages.length ) );
+		console.log( new Date(), "v1 n", format( lobby ), !! ( lobby.messages && lobby.messages.length ) );
 
 	} catch ( err ) {
 
