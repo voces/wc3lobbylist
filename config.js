@@ -37,7 +37,7 @@ export default process.env.NODE_ENV === "production" ? {
 	// world war iii
 	"675030847774261258": {
 		version: 3,
-		filter: lobby => lobby.map && lobby.map.match( /world.*war.*(3|iii)/i ),
+		filter: lobby => lobby.map && lobby.map.match( /(ww3|world.*war.*(3|iii))/i ),
 	},
 } : {
 	whitelistOnly: true,
