@@ -67,7 +67,7 @@ const healthCheck = setInterval( () => {
 
 console.log( new Date(), "ready!", process.env.NODE_ENV );
 
-process.on( "SIGINT", async () => {
+const onProcessClose = async () => {
 
 	console.log( new Date(), "received kill signal" );
 
@@ -80,4 +80,7 @@ process.on( "SIGINT", async () => {
 
 	process.exit();
 
-} );
+};
+
+process.on( "SIGINT", onProcessClose );
+process.on( "SIGTERM", onProcessClose );
