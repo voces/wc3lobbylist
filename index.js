@@ -67,7 +67,11 @@ const healthCheck = setInterval( () => {
 
 console.log( new Date(), "ready!", process.env.NODE_ENV );
 
+let killing = false;
 const onProcessClose = async () => {
+
+	if ( killing ) return;
+	killing = true;
 
 	console.log( new Date(), "received kill signal" );
 
