@@ -29,11 +29,16 @@ export default process.env.NODE_ENV === "production" ? {
 		version: 3,
 		filter: lobby => lobby.map && lobby.map.match( /^Helm.*Deep.*6/i ),
 	},
+	// broken alliances
+	"674781657697353751": {
+		version: 3,
+		filter: lobby => lobby.name.match( /Broken.*Alliances/i ),
+	},
 } : {
 	whitelistOnly: true,
 	"457570641638326274": {
 		version: 3,
 		message: "<@&650382637369786381>",
-		filter: lobby => lobby.name.match( /^[a-c]/ ),
+		filter: lobby => lobby.name.match( /^[a-b]/ ),
 	},
 };

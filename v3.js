@@ -58,20 +58,20 @@ export default async newLobbies => {
 
 	const lobbyMap = Object.fromEntries( newLobbies.map( l => [ l.id, l ] ) );
 
-	for ( const prop in oldLobbies )
-		if ( ! lobbyMap[ prop ] ) {
+	for ( const id in oldLobbies )
+		if ( ! lobbyMap[ id ] ) {
 
-			if ( ! oldLobbies[ prop ].deleted ) {
+			if ( ! oldLobbies[ id ].deleted ) {
 
-				await onKillLobby( oldLobbies[ prop ] );
-				oldLobbies[ prop ].deleted = Date.now();
+				await onKillLobby( oldLobbies[ id ] );
+				oldLobbies[ id ].deleted = Date.now();
 
 			}
 
-			if ( oldLobbies[ prop ].deleted > Date.now() - TEN_MINUTES )
-				lobbyMap[ prop ] = oldLobbies[ prop ];
+			if ( oldLobbies[ id ].deleted > Date.now() - TEN_MINUTES )
+				lobbyMap[ id ] = oldLobbies[ id ];
 
-			else await onDeleteLobby( oldLobbies[ prop ] );
+			else await onDeleteLobby( oldLobbies[ id ] );
 
 		}
 
