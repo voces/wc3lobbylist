@@ -1,9 +1,9 @@
 
 import fetchLobbies from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
-import v1 from "./v1.js";
-import v2 from "./v2.js";
-import v3 from "./v3.js";
+import { newLobbies as v1NewLobbies, onExit as v1OnExit } from "./v1.js";
+import { newLobbies as v2NewLobbies, onExit as v2OnExit } from "./v2.js";
+import { newLobbies as v3NewLobbies, onExit as v3OnExit } from "./v3.js";
 
 const TEN_SECONDS = 10 * 1000;
 const THIRTY_SECONDS = 30 * 1000;
@@ -11,7 +11,11 @@ const ONE_MINUTE = 60 * 1000;
 
 let lastWork = 0;
 
-const versions = [ v3, v2, v1 ];
+const newLobbiesHandlers = [ v3NewLobbies, v2NewLobbies, v1NewLobbies ];
+const onExitHandlers = [ v3OnExit, v2OnExit, v1OnExit ];
+
+let exiting = false;
+let updateTimeout;
 
 const update = async () => {
 
@@ -26,17 +30,18 @@ const update = async () => {
 	} catch ( err ) {
 
 		console.error( err );
-		setTimeout( update, TEN_SECONDS );
+		if ( ! exiting )
+			updateTimeout = setTimeout( update, TEN_SECONDS );
 		return;
 
 	}
 
 	console.log( new Date(), "l", newLobbies.length );
 
-	for ( const verison of versions )
+	for ( const newLobbiesHandler of newLobbiesHandlers )
 		try {
 
-			await verison( newLobbies.map( l => ( { ...l } ) ) );
+			await newLobbiesHandler( newLobbies.map( l => ( { ...l } ) ) );
 
 		} catch ( err ) {
 
@@ -44,13 +49,14 @@ const update = async () => {
 
 		}
 
-	setTimeout( update, start + TEN_SECONDS - Date.now() );
+	if ( ! exiting )
+		updateTimeout = setTimeout( update, start + TEN_SECONDS - Date.now() );
 
 };
 
 update();
 
-setInterval( () => {
+const healthCheck = setInterval( () => {
 
 	if ( Date.now() - lastWork < ONE_MINUTE ) return;
 
@@ -60,3 +66,18 @@ setInterval( () => {
 }, THIRTY_SECONDS );
 
 console.log( new Date(), "ready!", process.env.NODE_ENV );
+
+process.on( "SIGINT", async () => {
+
+	console.log( new Date(), "received kill signal" );
+
+	exiting = true;
+	clearTimeout( updateTimeout );
+	clearInterval( healthCheck );
+
+	for ( const onExitHandler of onExitHandlers )
+		await onExitHandler();
+
+	process.exit();
+
+} );

@@ -39,6 +39,6 @@ export default process.env.NODE_ENV === "production" ? {
 	"457570641638326274": {
 		version: 3,
 		message: "<@&650382637369786381>",
-		filter: lobby => lobby.name.match( /^[a-b]/ ),
+		filter: lobby => lobby.name.match( /^[a]/ ),
 	},
 };

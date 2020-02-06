@@ -113,7 +113,7 @@ const onDeleteLobby = async lobby => {
 
 };
 
-export default async newLobbies => {
+export const newLobbies = async newLobbies => {
 
 	const keys = newLobbies.map( l =>
 		`${l.server}-${l.name.toLowerCase()}-${l.slots.max}-${l.map}` );
@@ -155,3 +155,9 @@ export default async newLobbies => {
 
 };
 
+export const onExit = async () => {
+
+	for ( const lobbyId in oldLobbies )
+		await onDeleteLobby( oldLobbies[ lobbyId ] );
+
+};

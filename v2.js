@@ -143,7 +143,7 @@ discord.on( "message", async message => {
 
 } );
 
-export default async newLobbies => {
+export const newLobbies = async newLobbies => {
 
 	const keys = newLobbies.map( getLobbyKey );
 
@@ -186,5 +186,12 @@ export default async newLobbies => {
 		}
 
 	oldLobbies = lobbyMap;
+
+};
+
+export const onExit = async () => {
+
+	for ( const lobbyId in oldLobbies )
+		await onDeleteLobby( oldLobbies[ lobbyId ] );
 
 };

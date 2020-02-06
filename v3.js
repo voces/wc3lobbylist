@@ -40,7 +40,7 @@ const onNewLobby = async lobby => {
 
 };
 
-export default async newLobbies => {
+export const newLobbies = async newLobbies => {
 
 	for ( const newLobby of newLobbies ) {
 
@@ -76,5 +76,12 @@ export default async newLobbies => {
 		}
 
 	oldLobbies = lobbyMap;
+
+};
+
+export const onExit = async () => {
+
+	for ( const lobbyId in oldLobbies )
+		await onDeleteLobby( oldLobbies[ lobbyId ] );
 
 };
