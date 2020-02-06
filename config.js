@@ -34,6 +34,11 @@ export default process.env.NODE_ENV === "production" ? {
 		version: 3,
 		filter: lobby => lobby.name.match( /Broken.*Alliances/i ),
 	},
+	// world war iii
+	"675030847774261258": {
+		version: 3,
+		filter: lobby => lobby.name.match( /world.*war.*(3|iii)/i ),
+	},
 } : {
 	whitelistOnly: true,
 	"457570641638326274": {
