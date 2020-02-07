@@ -44,6 +44,12 @@ export default process.env.NODE_ENV === "production" ? {
 		version: 3,
 		filter: lobby => lobby.map && lobby.map.match( /monolith/i ),
 	},
+	// M.Z.I_
+	"242775537825742848": {
+		version: 3,
+		filter: lobby => lobby.map && lobby.map.match( /^M\.Z\.I_/ ),
+		message: "<@&267800832051773440>",
+	},
 } : {
 	whitelistOnly: true,
 	"457570641638326274": {
