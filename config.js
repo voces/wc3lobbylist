@@ -43,7 +43,6 @@ export default process.env.NODE_ENV === "production" ? {
 	"661040840512241705": {
 		version: 3,
 		filter: lobby => lobby.map && lobby.map.match( /monolith/i ),
-		message: "<@&661205254351880192>",
 	},
 } : {
 	whitelistOnly: true,
