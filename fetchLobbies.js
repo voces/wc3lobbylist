@@ -41,7 +41,7 @@ export default () => fetchWc3Stats()
 			id,
 			map: map.slice( 0, - 4 ),
 			name,
-			server: server.replace( "usw", "us" ),
+			server: server && server.replace( "usw", "us" ),
 			slots: { occupied: slotsTaken, max: slotsTotal },
 		} ) ),
 	] );
