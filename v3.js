@@ -21,7 +21,7 @@ const onNewLobby = async lobby => {
 
 		const embed = new LobbyEmbed();
 		embed
-			.set( "title", lobby.map.replace( /_/g, " " ) )
+			.set( "title", lobby.map ? lobby.map.replace( /_/g, " " ) : undefined )
 			.set( "gameName", lobby.name )
 			.set( "author", lobby.host )
 			.set( "realm", lobby.server )
