@@ -39,6 +39,12 @@ export default process.env.NODE_ENV === "production" ? {
 		version: 3,
 		filter: lobby => lobby.map && lobby.map.match( /(ww3|world.*war[^\d]*(3|iii))/i ),
 	},
+	// bolty
+	"661040840512241705": {
+		version: 3,
+		filter: lobby => lobby.map && lobby.map.match( /monolith/i ),
+		message: "<@&661205254351880192>",
+	},
 } : {
 	whitelistOnly: true,
 	"457570641638326274": {
