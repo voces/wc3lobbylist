@@ -1,9 +1,9 @@
 
 import fetchLobbies from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
-import { newLobbies as v1NewLobbies, onExit as v1OnExit } from "./v1.js";
-import { newLobbies as v2NewLobbies, onExit as v2OnExit } from "./v2.js";
-import { newLobbies as v3NewLobbies, onExit as v3OnExit } from "./v3.js";
+import { newLobbies as v1NewLobbies, onExit as v1OnExit } from "./versions/v1.js";
+import { newLobbies as v2NewLobbies, onExit as v2OnExit } from "./versions/v2.js";
+import { newLobbies as v3NewLobbies, onExit as v3OnExit } from "./versions/v3.js";
 
 const TEN_SECONDS = 10 * 1000;
 const THIRTY_SECONDS = 30 * 1000;
@@ -17,7 +17,7 @@ const onExitHandlers = [ v3OnExit, v2OnExit, v1OnExit ];
 let exiting = false;
 let updateTimeout;
 
-const update = async () => {
+const update = async (): Promise<void> => {
 
 	const start = Date.now();
 	lastWork = Date.now();
@@ -68,7 +68,7 @@ const healthCheck = setInterval( () => {
 console.log( new Date(), "ready!", process.env.NODE_ENV );
 
 let killing = false;
-const onProcessClose = async () => {
+const onProcessClose = async (): Promise<void> => {
 
 	if ( killing ) return;
 	killing = true;

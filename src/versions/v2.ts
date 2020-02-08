@@ -1,8 +1,10 @@
 
-import Discord from "discord.js";
-import discord from "./discord.js";
-import LobbyEmbed from "./LobbyEmbed.js";
-import config from "./config.js";
+import Discord, { MessageEmbed } from "discord.js";
+import discord from "../discord.js";
+import { LobbyEmbed } from "../LobbyEmbed.js";
+import { config } from "../../config.js";
+import { isChannelGuildChannel } from "../util.js";
+import { Lobby } from "../fetchLobbies.js";
 
 const ONE_MINUTE = 60 * 1000;
 export const TEN_MINUTES = 10 * ONE_MINUTE;
@@ -11,18 +13,24 @@ const TRIGGS_ID = "538039264261308417";
 
 let oldLobbies = {};
 
-const getLobbyKey = lobby => `${lobby.server}-${lobby.name.toLowerCase()}`;
+const getLobbyKey = ( lobby: Lobby ): string => `${lobby.server}-${lobby.name?.toLowerCase()}`;
 
-export const format = lobby =>
-	Discord.escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?"})` );
+export const format = ( lobby: Lobby ): string =>
+	Discord.Util.escapeMarkdown(
+		`[${lobby.server}] ${lobby.name} (${lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?"})`,
+	);
 
-export const updateEmbeds = async ( lobby, fn, fnDo ) => {
+export const updateEmbeds = async (
+	lobby: Lobby,
+	fn: ( embed?: MessageEmbed ) => LobbyEmbed,
+	fnDo?: ( lobby: Lobby ) => void,
+): Promise<void> => {
 
 	if ( ! lobby.messages || ! lobby.messages.length ) return;
 
 	if ( fnDo ) fnDo( lobby );
 
-	return await Promise.all( lobby.messages.map( message => {
+	await Promise.all( lobby.messages.map( message => {
 
 		try {
 
@@ -38,11 +46,11 @@ export const updateEmbeds = async ( lobby, fn, fnDo ) => {
 
 };
 
-export const onUpdateLobby = async lobby =>
+export const onUpdateLobby = async ( lobby: Lobby ): Promise<void> =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
-			.set( "color", undefined )
+			.set( "color", "" )
 			.set(
 				"players",
 				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
@@ -50,7 +58,7 @@ export const onUpdateLobby = async lobby =>
 		lobby => console.log( new Date(), "v2/3 u", format( lobby ) ),
 	);
 
-export const onKillLobby = async lobby =>
+export const onKillLobby = async ( lobby: Lobby ): Promise<void> =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
@@ -62,7 +70,7 @@ export const onKillLobby = async lobby =>
 		lobby => console.log( new Date(), "v2/3 k", format( lobby ) ),
 	);
 
-export const onDeleteLobby = async lobby =>
+export const onDeleteLobby = async ( lobby: Lobby ): Promise<void> =>
 	updateEmbeds(
 		lobby,
 		embed => new LobbyEmbed( embed )
@@ -74,20 +82,33 @@ export const onDeleteLobby = async lobby =>
 		lobby => console.log( new Date(), "v2/3 d", format( lobby ) ),
 	);
 
+const hasPermission = ( message: Discord.Message, permission: Discord.PermissionResolvable ): boolean => {
+
+	const channel = message.channel;
+	if ( ! isChannelGuildChannel( channel ) )
+		return false;
+
+	const permissions = channel.memberPermissions( message.guild.me );
+	if ( ! permissions ) return false;
+
+	return permissions.hasPermission( permission );
+
+};
+
 discord.on( "message", async message => {
 
 	try {
+
+		const channel = message.channel;
 
 		if (
 			message.author.id !== TRIGGS_ID ||
 			! message.embeds.length ||
 			! message.embeds[ 0 ].footer ||
-			! message.channel.memberPermissions( message.guild.me )
-				.hasPermission( Discord.Permissions.FLAGS.SEND_MESSAGES ) ||
-			! message.channel.memberPermissions( message.guild.me )
-				.hasPermission( Discord.Permissions.FLAGS.MANAGE_MESSAGES ) ||
-			config.whitelistOnly && ! config[ message.channel.id ] ||
-			config.blacklist && config.blacklist[ message.channel.id ]
+			! hasPermission( message, "SEND_MESSAGES" ) ||
+			! hasPermission( message, "MANAGE_MESSAGES" ) ||
+			config.whitelistOnly && ! config.channels[ channel.id ] ||
+			config.blacklist && config.blacklist[ channel.id ]
 		)
 			return;
 
@@ -99,13 +120,17 @@ discord.on( "message", async message => {
 		const embed = new LobbyEmbed( sourceEmbed );
 
 		// Generate some lobby data (we store this)
-		const lobbyData = {
+		const lobbyData: Lobby = {
 			map: embed.title,
-			wc3maps: embed.url.split( "/" ).pop(),
+			wc3maps: parseInt( embed.url.split( "/" ).pop() ?? "" ),
 			name: embed.gameName,
-			author: embed.author,
-			server: embed.realm,
-			created: embed.created,
+			host: embed.host,
+			server: embed.realm === "eu" ? "eu" : "us",
+			created: parseInt( embed.created ),
+			checksum: undefined,
+			id: undefined,
+			slots: { occupied: undefined, max: undefined },
+			messages: [],
 		};
 
 		// Merge with lobby live list
@@ -123,7 +148,7 @@ discord.on( "message", async message => {
 			"?/?";
 
 		// Post the new message
-		const channelConfig = config[ message.channel.id ];
+		const channelConfig = config.channels[ message.channel.id ];
 		const newMessage = await message.channel.send(
 			channelConfig && channelConfig.message || "",
 			embed.toEmbed(),
@@ -143,7 +168,7 @@ discord.on( "message", async message => {
 
 } );
 
-export const newLobbies = async newLobbies => {
+export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 	const keys = newLobbies.map( getLobbyKey );
 
@@ -189,7 +214,7 @@ export const newLobbies = async newLobbies => {
 
 };
 
-export const onExit = async () => {
+export const onExit = async (): Promise<void> => {
 
 	for ( const lobbyId in oldLobbies )
 		await onDeleteLobby( oldLobbies[ lobbyId ] );

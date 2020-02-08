@@ -2,21 +2,27 @@
   "name": "w3mapz-discord",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/src/index.js",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "typescript": "^3.7.5"
   },
   "devDependencies": {
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/parser": "^2.19.0",
+    "@zerollup/ts-transform-paths": "^1.7.11",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.1",
     "eslint-config-mdcs": "^4.2.3",
     "eslint-config-verit": "^1.0.3"
   },
   "scripts": {
-    "start": "node --experimental-modules --no-warnings index.js",
-    "debug": "node --experimental-modules --no-warnings --inspect-brk index.js",
-    "sandbox": "node --experimental-modules --no-warnings --inspect-brk sandbox.js",
+    "build": "tsc",
+    "debug": "node --experimental-modules --no-warnings --inspect-brk dist/src/index.js",
+    "sandbox": "node --experimental-modules --no-warnings --inspect-brk dist/src/sandbox.js",
+    "start": "node --experimental-modules --no-warnings dist/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "verit",

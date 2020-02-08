@@ -1,7 +1,7 @@
 
-import Discord from "discord.js";
+import Discord, { MessageEmbed, ColorResolvable } from "discord.js";
 
-const extractField = ( embed, fieldName ) => {
+const extractField = ( embed: MessageEmbed, fieldName: string ): string => {
 
 	const field = embed.fields.find( f => f.name === fieldName );
 	if ( field ) return field.value;
@@ -10,46 +10,47 @@ const extractField = ( embed, fieldName ) => {
 
 };
 
-export default class LobbyEmbed {
+export class LobbyEmbed {
 
 	title = "";
 	url = "";
 	thumbnail = "";
 	footer = { text: "", icon: "" };
 	gameName = "?";
-	author = "?";
+	host = "?";
 	realm = "?";
 	players = "?";
-	color = "";
+	color: ColorResolvable = "";
 	created = "";
 
-	constructor( sourceEmbed ) {
+	constructor( sourceEmbed?: MessageEmbed ) {
 
 		if ( ! sourceEmbed ) return;
 
-		this.title = sourceEmbed.title || "";
+		this.title = sourceEmbed.title;
 		this.url = sourceEmbed.url;
 		if ( sourceEmbed.thumbnail )
 			this.thumbnail = sourceEmbed.thumbnail.url;
 		if ( sourceEmbed.footer )
-			this.footer = { text: sourceEmbed.footer.text, icon: sourceEmbed.footer.iconURL };
+			this.footer = { text: sourceEmbed.footer.text ?? "", icon: sourceEmbed.footer.iconURL ?? "" };
 		this.gameName = extractField( sourceEmbed, "Game Name" );
-		this.author = extractField( sourceEmbed, "Hosted by" );
+		this.host = extractField( sourceEmbed, "Hosted by" );
 		this.realm = extractField( sourceEmbed, "Realm" );
 		this.players = extractField( sourceEmbed, "Players" );
-		this.color = sourceEmbed.color;
+		this.color = sourceEmbed.color ?? 0xe69500;
 		this.created = extractField( sourceEmbed, "Creation Time" );
 
 	}
 
-	set( key, value ) {
+	set<A extends keyof LobbyEmbed>( key: A, value: LobbyEmbed[A] ): LobbyEmbed {
 
-		this[ key ] = value;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		this[ key ] = value as any;
 		return this;
 
 	}
 
-	toEmbed() {
+	toEmbed(): Discord.RichEmbed {
 
 		return new Discord.RichEmbed()
 			.setTitle( this.title )
@@ -57,10 +58,10 @@ export default class LobbyEmbed {
 			.setThumbnail( this.thumbnail )
 			.setFooter( this.footer.text, this.footer.icon )
 			.addField( "Game Name", this.gameName )
-			.addField( "Hosted by", this.author, true )
+			.addField( "Hosted by", this.host, true )
 			.addField( "Realm", this.realm, true )
 			.addField( "Players", this.players, true )
-			.setColor( this.color );
+			.setColor( this.color ?? "" );
 
 	}
 

@@ -1,50 +1,50 @@
 
-import discord from "./discord.js";
+import discord from "../discord.js";
 import { TEN_MINUTES, onUpdateLobby, onKillLobby, onDeleteLobby, format } from "./v2.js";
-import LobbyEmbed from "./LobbyEmbed.js";
-import config from "./config.js";
+import { LobbyEmbed } from "../LobbyEmbed.js";
+import { config } from "../../config.js";
+import { Lobby } from "../fetchLobbies.js";
 
 let oldLobbies = {};
 
-const configEntries = Object.entries( config );
-const getChannelIds = lobby => configEntries
-	.filter( ( [ , value ] ) => typeof value === "object" && ! Array.isArray( value ) )
-	.filter( ( [ , { version, filter } = {} ] ) => version === 3 && filter && filter( lobby ) )
+const configEntries = Object.entries( config.channels );
+const getChannelIds = ( lobby: Lobby ): string[] => configEntries
+	.filter( ( [ , { version, filter } ] ) => version === 3 && filter && filter( lobby ) )
 	.map( ( [ channelId ] ) => channelId );
 
-const onNewLobby = async lobby => {
+const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	const channelIds = getChannelIds( lobby );
 	if ( ! channelIds.length ) return;
 
-	lobby.messages = await Promise.all( channelIds.map( async channelId => {
+	lobby.messages = ( await Promise.all( channelIds.map( async channelId => {
 
 		const embed = new LobbyEmbed();
 		embed
-			.set( "title", lobby.map ? lobby.map.replace( /_/g, " " ) : undefined )
-			.set( "gameName", lobby.name )
-			.set( "author", lobby.host )
-			.set( "realm", lobby.server )
+			.set( "title", lobby.map?.replace( /_/g, " " ) ?? "?" )
+			.set( "gameName", lobby.name ?? "?" )
+			.set( "host", lobby.host ?? "?" )
+			.set( "realm", lobby.server ?? "?" )
 			.set( "players", `${lobby.slots.occupied}/${lobby.slots.max}` );
 
 		const newMessage = await discord.send(
 			channelId,
-			...config[ channelId ].message ? [ config[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
+			...config.channels[ channelId ].message ? [ config.channels[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
 		).catch( console.error );
 
 		console.log( new Date(), "v3 n", format( lobby ) );
 
 		return newMessage;
 
-	} ) );
+	} ) ) ).flat();
 
 };
 
-export const newLobbies = async newLobbies => {
+export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 	for ( const newLobby of newLobbies ) {
 
-		const oldLobby = oldLobbies[ newLobby.id ];
+		const oldLobby = oldLobbies[ newLobby.id ?? "" ];
 		if ( oldLobby ) {
 
 			newLobby.messages = oldLobby.messages;
@@ -79,7 +79,7 @@ export const newLobbies = async newLobbies => {
 
 };
 
-export const onExit = async () => {
+export const onExit = async (): Promise<void> => {
 
 	for ( const lobbyId in oldLobbies )
 		await onDeleteLobby( oldLobbies[ lobbyId ] );

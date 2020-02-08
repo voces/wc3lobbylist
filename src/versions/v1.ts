@@ -1,36 +1,36 @@
 
 import Discord from "discord.js";
-import discord from "./discord.js";
-import { promiseTimeout } from "./util.js";
-import config from "./config.js";
+import discord from "../discord.js";
+import { promiseTimeout } from "../util.js";
+import { config } from "../../config.js";
+import { Lobby } from "../fetchLobbies.js";
 
 const ONE_MINUTE = 60 * 1000;
 const FIVE_MINUTES = 5 * ONE_MINUTE;
 
 let oldLobbies = {};
 
-const configEntries = Object.entries( config );
-const getChannelIds = lobby => configEntries
-	.filter( ( [ , value ] ) => typeof value === "object" && ! Array.isArray( value ) )
-	.filter( ( [ , { version, filter } = {} ] ) => version === undefined && filter && filter( lobby ) )
+const configEntries = Object.entries( config.channels );
+const getChannelIds = ( lobby: Lobby ): string[] => configEntries
+	.filter( ( [ , { version, filter } ] ) => version === undefined && filter && filter( lobby ) )
 	.map( ( [ channelId ] ) => channelId );
 
-const format = lobby =>
-	Discord.escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
+const format = ( lobby: Lobby ): string =>
+	Discord.Util.escapeMarkdown( `[${lobby.server}] ${lobby.name} (${lobby.slots.occupied}/${lobby.slots.max})` );
 
-const onNewLobby = async lobby => {
+const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	const channelIds = getChannelIds( lobby );
 	if ( ! channelIds.length ) return;
 
 	try {
 
-		lobby.messages = await Promise.all(
+		lobby.messages = ( await Promise.all(
 			channelIds.map( channelId => {
 
 				try {
 
-					return promiseTimeout( discord.send( channelId, `**${( config[ channelId ].format || format )( lobby )}**` ) );
+					return promiseTimeout( discord.send( channelId, `**${( config.channels[ channelId ].format || format )( lobby )}**` ) );
 
 				} catch ( err ) {
 
@@ -40,7 +40,7 @@ const onNewLobby = async lobby => {
 
 			} ),
 
-		);
+		) ).flat();
 		console.log( new Date(), "v1 n", format( lobby ), !! ( lobby.messages && lobby.messages.length ) );
 
 	} catch ( err ) {
@@ -51,7 +51,7 @@ const onNewLobby = async lobby => {
 
 };
 
-const onUpdateLobby = async lobby => {
+const onUpdateLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	if ( ! getChannelIds( lobby ).length ) return;
 
@@ -62,7 +62,7 @@ const onUpdateLobby = async lobby => {
 
 				try {
 
-					return promiseTimeout( message.edit( `**${( config[ message.channel.id ].format || format )( lobby )}**` ) );
+					return promiseTimeout( message.edit( `**${( config.channels[ message.channel.id ].format || format )( lobby )}**` ) );
 
 				} catch ( err ) {
 
@@ -82,7 +82,7 @@ const onUpdateLobby = async lobby => {
 
 };
 
-const onDeleteLobby = async lobby => {
+const onDeleteLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	if ( ! getChannelIds( lobby ).length ) return;
 
@@ -93,7 +93,7 @@ const onDeleteLobby = async lobby => {
 
 				try {
 
-					return promiseTimeout( message.edit( `~~${( config[ message.channel.id ].format || format )( lobby )}~~` ) );
+					return promiseTimeout( message.edit( `~~${( config.channels[ message.channel.id ].format || format )( lobby )}~~` ) );
 
 				} catch ( err ) {
 
@@ -113,10 +113,10 @@ const onDeleteLobby = async lobby => {
 
 };
 
-export const newLobbies = async newLobbies => {
+export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 	const keys = newLobbies.map( l =>
-		`${l.server}-${l.name.toLowerCase()}-${l.slots.max}-${l.map}` );
+		`${l.server}-${l.name ? l.name.toLowerCase() : ""}-${l.slots.max}-${l.map}` );
 
 	for ( let i = 0; i < newLobbies.length; i ++ ) {
 
@@ -155,7 +155,7 @@ export const newLobbies = async newLobbies => {
 
 };
 
-export const onExit = async () => {
+export const onExit = async (): Promise<void> => {
 
 	for ( const lobbyId in oldLobbies )
 		await onDeleteLobby( oldLobbies[ lobbyId ] );
