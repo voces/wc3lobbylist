@@ -2,14 +2,20 @@
 import discord from "../discord.js";
 import { TEN_MINUTES, onUpdateLobby, onKillLobby, onDeleteLobby, format } from "./v2.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
-import { config } from "../../config.js";
+import { config } from "../config.js";
 import { Lobby } from "../fetchLobbies.js";
+import { ruleToFilter } from "../commands/ruleToFilter.js";
 
 let oldLobbies = {};
 
-const configEntries = Object.entries( config.channels );
-const getChannelIds = ( lobby: Lobby ): string[] => configEntries
-	.filter( ( [ , { version, filter } ] ) => version === 3 && filter && filter( lobby ) )
+const getChannelIds = ( lobby: Lobby ): string[] => Object.entries( config )
+	.filter( ( [ , config ] ) => {
+
+		if ( ! config.filterFunc ) config.filterFunc = ruleToFilter( config.filter );
+
+		return config.filterFunc( lobby );
+
+	} )
 	.map( ( [ channelId ] ) => channelId );
 
 const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
@@ -29,7 +35,7 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
 		const newMessage = await discord.send(
 			channelId,
-			...config.channels[ channelId ].message ? [ config.channels[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
+			...config[ channelId ].message ? [ config[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
 		).catch( console.error );
 
 		console.log( new Date(), "v3 n", format( lobby ) );

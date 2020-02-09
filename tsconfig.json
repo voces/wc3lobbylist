@@ -22,7 +22,7 @@
       ]
     },
     "plugins": [{ "transform": "@zerollup/ts-transform-paths" }],
-    "types": ["@types/node"],
+    "types": ["@types/jest", "@types/node"],
     "esModuleInterop": true
   },
   "include": ["src", "src/config.ts"],

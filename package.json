@@ -4,11 +4,15 @@
   "description": "",
   "main": "dist/src/index.js",
   "dependencies": {
+    "@babel/preset-env": "^7.8.4",
+    "@types/moo": "^0.5.1",
     "discord.js": "^11.5.1",
+    "moo": "^0.5.1",
     "node-fetch": "^2.6.0",
     "typescript": "^3.7.5"
   },
   "devDependencies": {
+    "@types/jest": "^25.1.2",
     "@types/node": "^13.7.0",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
@@ -16,14 +20,18 @@
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.1",
     "eslint-config-mdcs": "^4.2.3",
-    "eslint-config-verit": "^1.0.3"
+    "eslint-config-verit": "^1.0.3",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.0"
   },
   "scripts": {
     "build": "tsc",
     "debug": "node --experimental-modules --no-warnings --inspect-brk dist/src/index.js",
     "sandbox": "node --experimental-modules --no-warnings --inspect-brk dist/src/sandbox.js",
     "start": "node --experimental-modules --no-warnings dist/src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-debug": "node --inspect-brk --experimental-modules --no-warnings dist/src/index.js",
+    "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test": "jest"
   },
   "author": "verit",
   "license": "MIT",

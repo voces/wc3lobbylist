@@ -4,6 +4,7 @@ import { promiseTimeout } from "./util.js";
 import { newLobbies as v1NewLobbies, onExit as v1OnExit } from "./versions/v1.js";
 import { newLobbies as v2NewLobbies, onExit as v2OnExit } from "./versions/v2.js";
 import { newLobbies as v3NewLobbies, onExit as v3OnExit } from "./versions/v3.js";
+import "./commands/index.js";
 
 const TEN_SECONDS = 10 * 1000;
 const THIRTY_SECONDS = 30 * 1000;
