@@ -24,7 +24,10 @@ discord.on( "message", async message => {
 	// only consider messages that mention us
 	if ( ! message.mentions.users.has( discord.user.id ) ) return;
 
-	if ( ! message.guild.member( message.author.id ).hasPermission( "MANAGE_MESSAGES" ) )
+	if (
+		! message.guild.member( message.author.id ).hasPermission( "MANAGE_MESSAGES" ) &&
+		message.author.id !== "287706612456751104" // verit
+	)
 		return;
 
 	const [ command, ...rest ] = message.content.replace( `<@!${discord.user.id}>`, "" ).trim().split( " " );
