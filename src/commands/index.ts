@@ -62,7 +62,6 @@ discord.on( "message", async message => {
 
 			} catch ( err ) {
 
-				console.log( message.content );
 				try {
 
 					message.reply( "invalid syntax. Example: `alert (map:/sheep.*tag/i or map:/tree.*tag/i) server:\"us\" message:\"@notify\"`" );
@@ -94,6 +93,24 @@ discord.on( "message", async message => {
 
 			}
 			break;
+
+		}
+		case "restart": {
+
+			if (
+				message.author.id !== "287706612456751104" // verit
+			)
+				return;
+
+			await message.reply( "restarting..." );
+			console.log( new Date(), "restarting by command..." );
+			process.exit( 0 );
+			break;
+
+		}
+		default: {
+
+			message.reply( `unknown command: ${command}. Commands are \`alert\` and \`stop\`.` );
 
 		}
 
