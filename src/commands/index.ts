@@ -10,7 +10,16 @@ const checkAlert = ( message: Message ): void => {
 
 	if ( ! config[ message.channel.id ] ) {
 
-		message.reply( "there is no alert configured." );
+		try {
+
+			message.reply( "there is no alert configured." );
+
+		} catch ( err ) {
+
+			console.error( err );
+
+		}
+
 		return;
 
 	}
@@ -54,7 +63,15 @@ discord.on( "message", async message => {
 			} catch ( err ) {
 
 				console.log( message.content );
-				message.reply( "invalid syntax. Example: `alert (map:/sheep.*tag/i or map:/tree.*tag/i) server:\"us\" message:\"@notify\"`" );
+				try {
+
+					message.reply( "invalid syntax. Example: `alert (map:/sheep.*tag/i or map:/tree.*tag/i) server:\"us\" message:\"@notify\"`" );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
 
 			}
 			break;
@@ -67,7 +84,15 @@ discord.on( "message", async message => {
 				"./data/config.json",
 				JSON.stringify( config, stringifyReplacer, 2 ),
 			);
-			message.reply( "stopped!" );
+			try {
+
+				message.reply( "stopped!" );
+
+			} catch ( err ) {
+
+				console.error( err );
+
+			}
 			break;
 
 		}
