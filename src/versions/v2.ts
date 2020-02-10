@@ -108,7 +108,7 @@ discord.on( "message", async message => {
 			! hasPermission( message, "SEND_MESSAGES" ) ||
 			! hasPermission( message, "MANAGE_MESSAGES" ) ||
 			config.whitelistOnly && ! config.channels[ channel.id ] ||
-			config.blacklist && config.blacklist[ channel.id ]
+			config.blacklist && config.blacklist.includes( channel.id )
 		)
 			return;
 
@@ -118,6 +118,8 @@ discord.on( "message", async message => {
 		// Extract and clone the embed
 		const sourceEmbed = message.embeds[ 0 ];
 		const embed = new LobbyEmbed( sourceEmbed );
+
+		console.log( new Date(), "DEBUG", sourceEmbed );
 
 		// Generate some lobby data (we store this)
 		const lobbyData: Lobby = {
