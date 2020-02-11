@@ -5,6 +5,7 @@ import { config } from "../config.js";
 import { promises as fs } from "fs";
 import { Message } from "discord.js";
 import { stringifyReplacer } from "./stringify.js";
+import { onProcessClose } from "../index.js";
 
 const checkAlert = ( message: Message ): void => {
 
@@ -24,7 +25,15 @@ const checkAlert = ( message: Message ): void => {
 
 	}
 
-	message.reply( `\`${JSON.stringify( config[ message.channel.id ], stringifyReplacer ).replace( /`/g, "\\`" )}\`` );
+	try {
+
+		message.reply( `\`${JSON.stringify( config[ message.channel.id ], stringifyReplacer ).replace( /`/g, "\\`" )}\`` );
+
+	} catch ( err ) {
+
+		console.error( err );
+
+	}
 
 };
 
@@ -62,6 +71,8 @@ discord.on( "message", async message => {
 
 			} catch ( err ) {
 
+				console.log( "message", message.content );
+				console.error( err );
 				try {
 
 					message.reply( "invalid syntax. Example: `alert (map:/sheep.*tag/i or map:/tree.*tag/i) server:\"us\" message:\"@notify\"`" );
@@ -102,8 +113,18 @@ discord.on( "message", async message => {
 			)
 				return;
 
-			await message.reply( "restarting..." );
-			console.log( new Date(), "restarting by command..." );
+			try {
+
+				await message.reply( "restarting..." );
+				console.log( new Date(), "restarting by command..." );
+				await onProcessClose();
+
+			} catch ( err ) {
+
+				console.error( err );
+
+			}
+
 			process.exit( 0 );
 			break;
 

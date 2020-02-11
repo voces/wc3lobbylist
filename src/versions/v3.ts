@@ -56,9 +56,26 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 			newLobby.messages = oldLobby.messages;
 
 			if ( oldLobby.slots.occupied !== newLobby.slots.occupied )
-				await onUpdateLobby( newLobby );
+				try {
 
-		} else await onNewLobby( newLobby );
+					await onUpdateLobby( newLobby );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
+
+		} else
+			try {
+
+				await onNewLobby( newLobby );
+
+			} catch ( err ) {
+
+				console.error( err );
+
+			}
 
 	}
 
@@ -69,7 +86,16 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 			if ( ! oldLobbies[ id ].deleted ) {
 
-				await onKillLobby( oldLobbies[ id ] );
+				try {
+
+					await onKillLobby( oldLobbies[ id ] );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
+
 				oldLobbies[ id ].deleted = Date.now();
 
 			}
@@ -77,7 +103,16 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 			if ( oldLobbies[ id ].deleted > Date.now() - TEN_MINUTES )
 				lobbyMap[ id ] = oldLobbies[ id ];
 
-			else await onDeleteLobby( oldLobbies[ id ] );
+			else
+				try {
+
+					await onDeleteLobby( oldLobbies[ id ] );
+
+				} catch ( err ) {
+
+					console.error( err );
+
+				}
 
 		}
 
@@ -88,6 +123,14 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 export const onExit = async (): Promise<void> => {
 
 	for ( const lobbyId in oldLobbies )
-		await onDeleteLobby( oldLobbies[ lobbyId ] );
+		try {
+
+			await onDeleteLobby( oldLobbies[ lobbyId ] );
+
+		} catch ( err ) {
+
+			console.error( err );
+
+		}
 
 };
