@@ -50,6 +50,8 @@ discord.on( "message", async message => {
 
 	const [ command, ...rest ] = message.content.replace( `<@!${discord.user.id}>`, "" ).trim().split( " " );
 
+	console.log( command, rest );
+
 	switch ( command ) {
 
 		case "alert": {
@@ -126,6 +128,23 @@ discord.on( "message", async message => {
 			}
 
 			process.exit( 0 );
+			break;
+
+		}
+		case "bulkdelete": {
+
+			const amount = Math.min( parseInt( rest[ 0 ] ) || 10, 99 );
+			console.log( "bulk deleting", amount, "messages" );
+			try {
+
+				await message.channel.bulkDelete( amount + 1 );
+
+			} catch ( err ) {
+
+				console.error( err );
+
+			}
+
 			break;
 
 		}

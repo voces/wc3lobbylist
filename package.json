@@ -25,11 +25,12 @@
     "ts-jest": "^25.2.0"
   },
   "scripts": {
-    "build": "tsc",
+	"build": "tsc",
+	"dev": "tsc -w",
     "debug": "node --experimental-modules --no-warnings --inspect-brk dist/src/index.js",
     "sandbox": "node --experimental-modules --no-warnings --inspect-brk dist/src/sandbox.js",
-    "start": "node --experimental-modules --no-warnings dist/src/index.js",
     "start-debug": "node --inspect-brk --experimental-modules --no-warnings dist/src/index.js",
+    "start": "node --experimental-modules --no-warnings dist/src/index.js",
     "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "test": "jest"
   },
