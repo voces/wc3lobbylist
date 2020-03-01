@@ -40,7 +40,7 @@ const send = async (
 	await ready;
 	const channel = client.channels.get( channelId );
 	if ( ! channel || ! isChannelGuildChannel( channel ) || ! isTextChannel( channel ) )
-		throw new Error( `Trying to send to invalid channel: ${channel}` );
+		throw new Error( `Trying to send to invalid channel: ${channel} (${channelId})` );
 
 	return channel.send( ...args );
 
