@@ -1,10 +1,13 @@
 
+import Discord, { MessageEmbed } from "discord.js";
 import discord from "../discord.js";
-import { TEN_MINUTES, onUpdateLobby, onKillLobby, onDeleteLobby, format } from "./v2.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
 import { config } from "../config.js";
 import { Lobby } from "../fetchLobbies.js";
 import { ruleToFilter } from "../commands/ruleToFilter.js";
+
+const ONE_MINUTE = 60 * 1000;
+const TEN_MINUTES = 10 * ONE_MINUTE;
 
 let oldLobbies = {};
 
@@ -17,6 +20,11 @@ const getChannelIds = ( lobby: Lobby ): string[] => Object.entries( config )
 
 	} )
 	.map( ( [ channelId ] ) => channelId );
+
+const format = ( lobby: Lobby ): string =>
+	Discord.Util.escapeMarkdown(
+		`[${lobby.server}] ${lobby.name} (${lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?"})`,
+	);
 
 const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
@@ -45,6 +53,68 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 	} ) ) ).flat();
 
 };
+
+const updateEmbeds = async (
+	lobby: Lobby,
+	fn: ( embed?: MessageEmbed ) => LobbyEmbed,
+	fnDo?: ( lobby: Lobby ) => void,
+): Promise<void> => {
+
+	if ( ! lobby.messages || ! lobby.messages.length ) return;
+
+	if ( fnDo ) fnDo( lobby );
+
+	await Promise.all( lobby.messages.map( message => {
+
+		try {
+
+			return message.edit( message.content, fn( message.embeds[ 0 ] ).toEmbed() );
+
+		} catch ( err ) {
+
+			console.error( err );
+
+		}
+
+	} ) );
+
+};
+
+const onUpdateLobby = async ( lobby: Lobby ): Promise<void> =>
+	updateEmbeds(
+		lobby,
+		embed => new LobbyEmbed( embed )
+			.set( "color", "" )
+			.set(
+				"players",
+				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
+			),
+		lobby => console.log( new Date(), "v2/3 u", format( lobby ) ),
+	);
+
+const onKillLobby = async ( lobby: Lobby ): Promise<void> =>
+	updateEmbeds(
+		lobby,
+		embed => new LobbyEmbed( embed )
+			.set( "color", 0xe69500 )
+			.set(
+				"players",
+				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
+			),
+		lobby => console.log( new Date(), "v2/3 k", format( lobby ) ),
+	);
+
+const onDeleteLobby = async ( lobby: Lobby ): Promise<void> =>
+	updateEmbeds(
+		lobby,
+		embed => new LobbyEmbed( embed )
+			.set( "color", 0xff7d9c )
+			.set(
+				"players",
+				lobby.slots ? `${lobby.slots.occupied}/${lobby.slots.max}` : "?/?",
+			),
+		lobby => console.log( new Date(), "v2/3 d", format( lobby ) ),
+	);
 
 export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 

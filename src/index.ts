@@ -2,7 +2,6 @@
 import fetchLobbies from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
 import { newLobbies as v1NewLobbies, onExit as v1OnExit } from "./versions/v1.js";
-import { newLobbies as v2NewLobbies, onExit as v2OnExit } from "./versions/v2.js";
 import { newLobbies as v3NewLobbies, onExit as v3OnExit } from "./versions/v3.js";
 import "./commands/index.js";
 
@@ -12,8 +11,8 @@ const ONE_MINUTE = 60 * 1000;
 
 let lastWork = 0;
 
-const newLobbiesHandlers = [ v3NewLobbies, v2NewLobbies, v1NewLobbies ];
-const onExitHandlers = [ v3OnExit, v2OnExit, v1OnExit ];
+const newLobbiesHandlers = [ v3NewLobbies, v1NewLobbies ];
+const onExitHandlers = [ v3OnExit, v1OnExit ];
 
 let exiting = false;
 let updateTimeout;
