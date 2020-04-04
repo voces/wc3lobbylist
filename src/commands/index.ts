@@ -5,7 +5,7 @@ import { config } from "../config.js";
 import { promises as fs } from "fs";
 import { Message } from "discord.js";
 import { stringifyReplacer } from "./stringify.js";
-import { onProcessClose } from "../index.js";
+import { onProcessClose } from "../close.js";
 
 const checkAlert = ( message: Message ): void => {
 
@@ -40,17 +40,19 @@ const checkAlert = ( message: Message ): void => {
 discord.on( "message", async message => {
 
 	// only consider messages that mention us
-	if ( ! message.mentions.users.has( discord.user.id ) ) return;
+	if ( ! message.mentions.users.has( discord.user?.id || "" ) ) return;
+
+	const guildMember = message.guild?.member( message.author.id );
 
 	if (
-		! message.guild.member( message.author.id ).hasPermission( "MANAGE_MESSAGES" ) &&
+		! guildMember || ! guildMember.hasPermission( "MANAGE_MESSAGES" ) &&
 		message.author.id !== "287706612456751104" // verit
 	)
 		return;
 
-	const [ command, ...rest ] = message.content.replace( `<@!${discord.user.id}>`, "" ).trim().split( " " );
+	const [ command, ...rest ] = message.content.replace( `<@!${discord.user?.id}>`, "" ).trim().split( " " );
 
-	console.log( command, rest );
+	console.log( new Date(), message.guild?.id, message.channel.id, command, rest );
 
 	switch ( command ) {
 

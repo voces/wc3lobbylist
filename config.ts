@@ -1,5 +1,5 @@
 
-import { Lobby } from "./src/fetchLobbies";
+import { Lobby } from "./src/liveLobbies/fetchLobbies";
 
 type LobbyConfig = {
 	version?: number;

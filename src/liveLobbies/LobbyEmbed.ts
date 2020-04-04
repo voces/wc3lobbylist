@@ -12,8 +12,8 @@ const extractField = ( embed: MessageEmbed, fieldName: string ): string => {
 
 export class LobbyEmbed {
 
-	title = "";
-	url = "";
+	title: string | undefined = "";
+	url: string | undefined = "";
 	thumbnail = "";
 	footer = { text: "", icon: "" };
 	gameName = "?";
@@ -50,11 +50,11 @@ export class LobbyEmbed {
 
 	}
 
-	toEmbed(): Discord.RichEmbed {
+	toEmbed(): Discord.MessageEmbed {
 
-		return new Discord.RichEmbed()
+		return new Discord.MessageEmbed()
 			.setTitle( this.title )
-			.setURL( this.url )
+			.setURL( this.url ?? "" )
 			.setThumbnail( this.thumbnail )
 			.setFooter( this.footer.text, this.footer.icon )
 			.addField( "Game Name", this.gameName )

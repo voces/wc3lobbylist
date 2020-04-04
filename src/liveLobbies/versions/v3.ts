@@ -1,10 +1,10 @@
 
 import Discord, { MessageEmbed } from "discord.js";
-import discord from "../discord.js";
+import discord from "../../discord.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
-import { config } from "../config.js";
+import { config } from "../../config.js";
 import { Lobby } from "../fetchLobbies.js";
-import { ruleToFilter } from "../commands/ruleToFilter.js";
+import { ruleToFilter } from "../../commands/ruleToFilter.js";
 
 const ONE_MINUTE = 60 * 1000;
 const TEN_MINUTES = 10 * ONE_MINUTE;

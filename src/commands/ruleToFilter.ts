@@ -1,6 +1,6 @@
 
 import { Rule } from "./parser.js";
-import { Lobby } from "../fetchLobbies.js";
+import { Lobby } from "../liveLobbies/fetchLobbies.js";
 
 export const process = ( rule: Rule, lobby: Lobby ): boolean => {
 

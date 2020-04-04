@@ -1,7 +1,7 @@
 
 import fs from "fs";
 import { Rule } from "./commands/parser.js";
-import { Lobby } from "./fetchLobbies.js";
+import { Lobby } from "./liveLobbies/fetchLobbies.js";
 
 if ( ! fs.existsSync( "./data/config.json" ) ) {
 
@@ -14,6 +14,8 @@ export type ChannelConfig = {
 	filter: Rule;
 	filterFunc?: ( lobby: Lobby ) => boolean;
 	message?: string;
+	version?: number;
+	format?: ( lobby: Lobby ) => string;
 };
 
 export const config = JSON.parse(

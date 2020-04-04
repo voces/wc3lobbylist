@@ -1,6 +1,6 @@
 
-import Discord, { StringResolvable, MessageOptions, RichEmbed, Attachment } from "discord.js";
-import { isChannelGuildChannel, isTextChannel } from "./util.js";
+import Discord, { StringResolvable, MessageOptions, APIMessage, MessageAdditions } from "discord.js";
+import { isChannelGuildChannel, isTextChannel } from "./liveLobbies/util.js";
 
 if ( ! process.env.DISCORD_TOKEN ) {
 
@@ -27,9 +27,8 @@ client.on( "ready", async () => {
 } );
 
 type SendProps =
-	| [StringResolvable]
-	| [StringResolvable, MessageOptions | RichEmbed | Attachment]
-	| [MessageOptions | RichEmbed | Attachment]
+	| [StringResolvable | APIMessage]
+	| [StringResolvable | APIMessage, MessageOptions | MessageAdditions]
 
 // method for sending messages
 const send = async (
@@ -38,11 +37,13 @@ const send = async (
 ): Promise<Discord.Message | Discord.Message[]> => {
 
 	await ready;
-	const channel = client.channels.get( channelId );
+	const channel = await client.channels.fetch( channelId );
 	if ( ! channel || ! isChannelGuildChannel( channel ) || ! isTextChannel( channel ) )
 		throw new Error( `Trying to send to invalid channel: ${channel} (${channelId})` );
 
-	return channel.send( ...args );
+	const arg1: StringResolvable | APIMessage = args[ 0 ];
+
+	return channel.send( arg1, ...args.slice( 1 ) );
 
 };
 
