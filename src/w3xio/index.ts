@@ -334,10 +334,16 @@ const newReplay = async ( replayPartial: ReplaySummary ): Promise<void> => {
 
 			const page = await fetchPage( pageNumber );
 			const replay = page.body[ 0 ];
-			if ( replay ) {
+			if ( replay && replay.processed ) {
 
-				console.log( new Date(), "new replay!" );
-				await newReplay( replay );
+				if ( ! replay.isVoid ) {
+
+					console.log( new Date(), "new replay", replay.id );
+					await newReplay( replay );
+
+				} else
+					console.log( new Date(), "skipping voided replay", replay.id );
+
 				await updatePage( ++ pageNumber );
 
 			}
