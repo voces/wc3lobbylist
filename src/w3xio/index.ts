@@ -252,7 +252,6 @@ const newException = async ( {
 	if ( ! githubIssueId ) {
 
 		const { token } = ( await query( "SELECT token FROM tokens WHERE id = :id;", { id: tokenId } ) )[ 0 ];
-		console.log( { token } );
 
 		const { number: newGithubIssueId } = await fetch( `https://api.github.com/repos/${repo}/issues`, {
 			method: "POST",
@@ -278,9 +277,8 @@ const newException = async ( {
 
 		console.log( new Date(), "new issue:", newGithubIssueId );
 
-	}
-
-	console.log( new Date(), "new exception:", githubIssueId );
+	} else
+		console.log( new Date(), "new exception:", githubIssueId );
 
 };
 
