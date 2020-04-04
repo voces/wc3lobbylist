@@ -198,12 +198,14 @@ const toEvent = ( replayEvent: ReplayEvent ): Event => {
 	} as Event;
 
 	for ( let i = 0; i < replayEvent.event.params.length; i ++ )
-		event[ replayEvent.event.params[ i ] ] = replayEvent.args[ i ]
-			// w3mmd uses "\ " for spaces in values instead of just " "
-			.replace( /\\ /g, " " )
-			// we use to color strings, which looks like `|cff012345"abc"|r`
-			.replace( /\|cff[0-9a-fA-F]{6}"/g, "" )
-			.replace( /"\|r/g, "" );
+		event[ replayEvent.event.params[ i ] ] = typeof replayEvent.args[ i ] === "string" ?
+			replayEvent.args[ i ]
+				// w3mmd uses "\ " for spaces in values instead of just " "
+				.replace( /\\ /g, " " )
+				// we use to color strings, which looks like `|cff012345"abc"|r`
+				.replace( /\|cff[0-9a-fA-F]{6}"/g, "" )
+				.replace( /"\|r/g, "" ) :
+			"";
 
 	return event;
 
@@ -223,6 +225,12 @@ const newException = async ( {
 
 	const replayId = replay.id;
 	const replayUploadedAt = new Date( replay.playedOn * 1000 );
+	if ( ! event.message ) {
+
+		event.message = event.message || event.key;
+		event.key = "none";
+
+	}
 	const { key, message: eventMessage } = event;
 	const [ filename, line, ...rest ] = eventMessage.split( ":" );
 	const message = rest.join( ":" ).slice( 1 );
@@ -263,6 +271,7 @@ const newException = async ( {
 				body:
 					`replay: https://wc3stats.com/games/${replayId}\n` +
 					`filename: ${filename}\n` +
+					`key: ${key}\n` +
 					`line: ${line}\n` +
 					`message: ${message}\n` +
 					`time: ${replayUploadedAt}\n` +
@@ -313,21 +322,18 @@ const newReplay = async ( replayPartial: ReplaySummary ): Promise<void> => {
 	}
 
 };
-console.log( "w3xio" );
+
 ( async (): Promise<void> => {
 
-	console.log( "w3xio async" );
 	const config: Record<string, string> = {};
 	const rawConfig = await fetchConfig();
 	for ( const { key, value } of rawConfig )
 		config[ key ] = value;
-	console.log( "w3xio", { config } );
+
 	let pageNumber = parseInt( config.page );
-	console.log( "w3xio", { pageNumber } );
 
 	periodic( "wc3stats replays", ONE_MINUTE, async () => {
 
-		console.log( "w3xio", "periodic" );
 		let looping = true;
 		while ( looping ) {
 
@@ -340,7 +346,16 @@ console.log( "w3xio" );
 				if ( ! replay.isVoid ) {
 
 					console.log( new Date(), "new replay", replay.id );
-					await newReplay( replay );
+					try {
+
+						await newReplay( replay );
+
+					} catch ( err ) {
+
+						console.error( new Date(), err );
+
+					}
+
 					looping = true;
 
 				} else
@@ -348,8 +363,7 @@ console.log( "w3xio" );
 
 				await updatePage( ++ pageNumber );
 
-			} else
-				console.log( "w3xio", "nothing" );
+			}
 
 		}
 
