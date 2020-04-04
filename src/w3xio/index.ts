@@ -313,18 +313,21 @@ const newReplay = async ( replayPartial: ReplaySummary ): Promise<void> => {
 	}
 
 };
-
+console.log( "w3xio" );
 ( async (): Promise<void> => {
 
+	console.log( "w3xio async" );
 	const config: Record<string, string> = {};
 	const rawConfig = await fetchConfig();
 	for ( const { key, value } of rawConfig )
 		config[ key ] = value;
-
+	console.log( "w3xio", { config } );
 	let pageNumber = parseInt( config.page );
+	console.log( "w3xio", { pageNumber } );
 
 	periodic( "wc3stats replays", ONE_MINUTE, async () => {
 
+		console.log( "w3xio", "periodic" );
 		let looping = true;
 		while ( looping ) {
 
@@ -338,13 +341,15 @@ const newReplay = async ( replayPartial: ReplaySummary ): Promise<void> => {
 
 					console.log( new Date(), "new replay", replay.id );
 					await newReplay( replay );
+					looping = true;
 
 				} else
 					console.log( new Date(), "skipping voided replay", replay.id );
 
 				await updatePage( ++ pageNumber );
 
-			}
+			} else
+				console.log( "w3xio", "nothing" );
 
 		}
 
