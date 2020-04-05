@@ -189,6 +189,28 @@ type Event = {[key: string]: string} & {
 	time: number;
 }
 
+const trim = ( str: string ): string => {
+
+	const lines = str.split( "\n" );
+	const start = lines.findIndex( line => ! line.match( /^\s*$/ ) );
+	let end = lines.length;
+	while ( lines[ end - 1 ].match( /^\s*$/ ) ) end --;
+
+	const body = lines.slice( start, end );
+
+	const min = body.reduce( ( min, line ) => {
+
+		const match = line.match( /^\s+/ );
+		return match && match[ 0 ].length < min ? match[ 0 ].length : min;
+
+	}, Infinity );
+
+	const trimmed = min === Infinity ? body : body.map( line => line.slice( min ) );
+
+	return trimmed.join( "\n" );
+
+};
+
 const toEvent = ( replayEvent: ReplayEvent ): Event => {
 
 	const event = {
@@ -268,14 +290,15 @@ const newException = async ( {
 			},
 			body: JSON.stringify( {
 				title: `Exception: ${eventMessage}`,
-				body:
-					`replay: https://wc3stats.com/games/${replayId}\n` +
-					`filename: ${filename}\n` +
-					`key: ${key}\n` +
-					`line: ${line}\n` +
-					`message: ${message}\n` +
-					`time: ${replayUploadedAt}\n` +
-					`tracker id: ${issueId}\n`,
+				body: trim( `
+					An exception was detected in a replay.
+
+					- Replay: https://wc3stats.com/games/${replayId}
+					- Key: \`${key}\`
+					- Line: \`${line}\`
+					- Error message: \`${message}\`
+					- Internal tracker id: \`${issueId}\`
+				` ),
 				labels: [ "bug", version ],
 			} ),
 		} ).then( r => r.json() );
@@ -318,6 +341,8 @@ const newReplay = async ( replayPartial: ReplaySummary ): Promise<void> => {
 			console.error( new Date(), err );
 
 		}
+
+		process.exit( 1 );
 
 	}
 
