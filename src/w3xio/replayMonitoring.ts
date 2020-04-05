@@ -342,8 +342,6 @@ const newReplay = async ( replayPartial: ReplaySummary ): Promise<void> => {
 
 		}
 
-		process.exit( 1 );
-
 	}
 
 };
