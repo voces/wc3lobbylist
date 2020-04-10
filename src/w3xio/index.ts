@@ -1,2 +1,2 @@
 
-import "./replayMonitoring.js";
+import "./replays/index.js";

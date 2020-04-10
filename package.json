@@ -23,6 +23,7 @@
     "eslint-config-mdcs": "^4.2.3",
     "eslint-config-verit": "^1.0.4",
     "jest": "^25.2.3",
+    "npm-watch": "^0.6.0",
     "ts-jest": "^25.2.1",
     "typescript": "^3.8.3"
   },
@@ -34,7 +35,11 @@
     "start-debug": "node --inspect-brk --experimental-modules --no-warnings dist/index.js",
     "start": "node --experimental-modules --no-warnings dist/index.js",
     "test-debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "test": "jest"
+    "test": "jest",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": "src"
   },
   "author": "verit",
   "license": "MIT",

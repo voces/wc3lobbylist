@@ -15,4 +15,3 @@ export const query = async (
 	values?: any,
 ): Promise<RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[]> =>
 	pool.query( sql, values ).then( r => r[ 0 ] );
-
