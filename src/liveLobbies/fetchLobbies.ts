@@ -1,6 +1,6 @@
 
 import { Message } from "discord.js";
-import { wc3stats } from "../shared/fetch";
+import { wc3stats } from "../shared/fetch.js";
 
 export type Lobby = {
 	checksum: string | number | undefined;
