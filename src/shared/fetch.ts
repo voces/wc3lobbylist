@@ -27,11 +27,11 @@ export const wc3stats = {
 		get: ( replay: number ): Promise<Replay> =>
 			fetch( `https://api.wc3stats.com/replays/${replay}` )
 				.then( r => r.json() )
-				.then( r => r.body ),
+				.then( r => ( console.log( r ), r.body ) ),
 	},
 	gamelist: (): Promise<Array<Wc3StatsLobby>> => fetch( "https://api.wc3stats.com/gamelist" )
 		.then( r => r.json() )
-		.then( r => r.body ),
+		.then( r => typeof r.body === "string" ? [] : r.body ),
 };
 
 export const github = {

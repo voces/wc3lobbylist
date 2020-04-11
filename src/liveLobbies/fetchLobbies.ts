@@ -25,7 +25,7 @@ const cleanServer = ( server: string | undefined ): "us" | "eu" | undefined => {
 };
 
 export default (): Promise<Array<Lobby>> => wc3stats.gamelist()
-	.then( wc3stats => wc3stats.map( ( {
+	.then( games => games.map( ( {
 		checksum,
 		host,
 		id,
