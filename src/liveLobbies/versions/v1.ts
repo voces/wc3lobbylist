@@ -34,7 +34,7 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -45,7 +45,7 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	} catch ( err ) {
 
-		console.error( err );
+		console.error( new Date(), err );
 
 	}
 
@@ -66,7 +66,7 @@ const onUpdateLobby = async ( lobby: Lobby ): Promise<void> => {
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -76,7 +76,7 @@ const onUpdateLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	} catch ( err ) {
 
-		console.error( err );
+		console.error( new Date(), err );
 
 	}
 
@@ -97,7 +97,7 @@ const onDeleteLobby = async ( lobby: Lobby ): Promise<void> => {
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -107,7 +107,7 @@ const onDeleteLobby = async ( lobby: Lobby ): Promise<void> => {
 
 	} catch ( err ) {
 
-		console.error( err );
+		console.error( new Date(), err );
 
 	}
 

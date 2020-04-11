@@ -21,7 +21,7 @@ periodic( "liveLobbies", TEN_SECONDS, async () => {
 
 	} catch ( err ) {
 
-		console.error( err );
+		console.error( new Date(), err );
 		return;
 
 	}
@@ -35,7 +35,7 @@ periodic( "liveLobbies", TEN_SECONDS, async () => {
 
 		} catch ( err ) {
 
-			console.error( err );
+			console.error( new Date(), err );
 
 		}
 

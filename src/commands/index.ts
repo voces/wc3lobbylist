@@ -17,7 +17,7 @@ const checkAlert = ( message: Message ): void => {
 
 		} catch ( err ) {
 
-			console.error( err );
+			console.error( new Date(), err );
 
 		}
 
@@ -31,7 +31,7 @@ const checkAlert = ( message: Message ): void => {
 
 	} catch ( err ) {
 
-		console.error( err );
+		console.error( new Date(), err );
 
 	}
 
@@ -75,15 +75,15 @@ discord.on( "message", async message => {
 
 			} catch ( err ) {
 
-				console.log( "message", message.content );
-				console.error( err );
+				console.log( new Date(), "message", message.content );
+				console.error( new Date(), err );
 				try {
 
 					message.reply( "invalid syntax. Example: `alert (map:/sheep.*tag/i or map:/tree.*tag/i) server:\"us\" message:\"@notify\"`" );
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -104,7 +104,7 @@ discord.on( "message", async message => {
 
 			} catch ( err ) {
 
-				console.error( err );
+				console.error( new Date(), err );
 
 			}
 			break;
@@ -125,7 +125,7 @@ discord.on( "message", async message => {
 
 			} catch ( err ) {
 
-				console.error( err );
+				console.error( new Date(), err );
 
 			}
 
@@ -136,14 +136,14 @@ discord.on( "message", async message => {
 		case "bulkdelete": {
 
 			const amount = Math.min( parseInt( rest[ 0 ] ) || 10, 99 );
-			console.log( "bulk deleting", amount, "messages" );
+			console.log( new Date(), "bulk deleting", amount, "messages" );
 			try {
 
 				await message.channel.bulkDelete( amount + 1 );
 
 			} catch ( err ) {
 
-				console.error( err );
+				console.error( new Date(), err );
 
 			}
 

@@ -111,7 +111,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer" );
+				console.warn( new Date(), "bad lexer" );
 				continue;
 
 			}
@@ -138,7 +138,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer" );
+				console.warn( new Date(), "bad lexer" );
 				continue;
 
 			}
@@ -163,7 +163,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer" );
+				console.warn( new Date(), "bad lexer" );
 				continue;
 
 			}
@@ -172,7 +172,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 				if ( rule.type === "term" && rule.value === "" )
 					continue;
 
-				console.warn( "bad lexer", rule, term );
+				console.warn( new Date(), "bad lexer", rule, term );
 				continue;
 
 			}
@@ -188,7 +188,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer" );
+				console.warn( new Date(), "bad lexer" );
 				continue;
 
 			}
@@ -202,7 +202,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer" );
+				console.warn( new Date(), "bad lexer" );
 				continue;
 
 			}
@@ -214,7 +214,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 					if ( ! prevRule ) {
 
-						console.warn( "bad lexer" );
+						console.warn( new Date(), "bad lexer" );
 						continue;
 
 					}
@@ -227,7 +227,7 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer", rule, term );
+				console.warn( new Date(), "bad lexer", rule, term );
 				continue;
 
 			}
@@ -242,13 +242,13 @@ export const parser = ( string: string ): {filter: Rule; options?: {message?: st
 
 				}
 
-				console.warn( "bad lexer" );
+				console.warn( new Date(), "bad lexer" );
 				continue;
 
 			}
 			default: {
 
-				console.warn( "bad lexer", rule, term );
+				console.warn( new Date(), "bad lexer", rule, term );
 				continue;
 
 			}
