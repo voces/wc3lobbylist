@@ -1,23 +1,6 @@
 
-import fetch from "node-fetch";
 import { Message } from "discord.js";
-
-type Wc3StatsLobby = {
-	checksum: undefined | string | number;
-	host: undefined | string;
-	id: undefined | string | number;
-	map: undefined | string;
-	name: undefined | string;
-	server: "us" | "eu" | string;
-	slotsTaken: undefined | number;
-	slotsTotal: undefined | number;
-	created: undefined | number;
-}
-
-const fetchWc3Stats = (): Promise<Array<Wc3StatsLobby>> =>
-	fetch( "https://api.wc3stats.com/gamelist" )
-		.then( r => r.json() )
-		.then( r => r.body );
+import { wc3stats } from "../shared/fetch";
 
 export type Lobby = {
 	checksum: string | number | undefined;
@@ -41,7 +24,7 @@ const cleanServer = ( server: string | undefined ): "us" | "eu" | undefined => {
 
 };
 
-export default (): Promise<Array<Lobby>> => fetchWc3Stats()
+export default (): Promise<Array<Lobby>> => wc3stats.gamelist()
 	.then( wc3stats => wc3stats.map( ( {
 		checksum,
 		host,

@@ -72,7 +72,7 @@ const updateEmbeds = async (
 
 		} catch ( err ) {
 
-			console.error( err );
+			console.error( new Date(), err );
 
 		}
 
@@ -132,7 +132,7 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -143,7 +143,7 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 			} catch ( err ) {
 
-				console.error( err );
+				console.error( new Date(), err );
 
 			}
 
@@ -162,7 +162,7 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -180,7 +180,7 @@ export const newLobbies = async ( newLobbies: Lobby[] ): Promise<void> => {
 
 				} catch ( err ) {
 
-					console.error( err );
+					console.error( new Date(), err );
 
 				}
 
@@ -199,7 +199,7 @@ export const onExit = async (): Promise<void> => {
 
 		} catch ( err ) {
 
-			console.error( err );
+			console.error( new Date(), err );
 
 		}
 
