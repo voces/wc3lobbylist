@@ -12,31 +12,11 @@ type Config = {
 	blacklist?: string[];
 	channels: Record<string, LobbyConfig>;
 	whitelistOnly?: boolean;
-	api: {
-		port: number;
-		ssl?: {
-			port: number;
-			credentials: {
-				key: string;
-				cert: string;
-				ca: string;
-			};
-		};
-	};
+	api: { port: number};
 }
 
 export const config: Config = process.env.NODE_ENV === "production" ? {
-	api: {
-		port: 80,
-		ssl: {
-			port: 443,
-			credentials: {
-				key: "/etc/letsencrypt/live/w3x.io/privkey.pem",
-				cert: "/etc/letsencrypt/live/w3x.io/cert.pem",
-				ca: "/etc/letsencrypt/live/w3x.io/chain.pem",
-			},
-		},
-	},
+	api: { port: 80 },
 	blacklist: [ "457570641638326274" ],
 	channels: {
 		// sheep tag

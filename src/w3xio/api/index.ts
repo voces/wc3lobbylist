@@ -1,5 +1,4 @@
 
-import https from "https";
 import express from "express";
 import morgan from "morgan";
 import { config } from "../../../config.js";
@@ -37,16 +36,3 @@ app.listen( port, () => {
 	console.log( new Date(), `server started at http://localhost:${ port }` );
 
 } );
-
-const ssl = config.api.ssl;
-if ( ssl ) {
-
-	const httpsServer = https.createServer( ssl.credentials, app );
-	httpsServer.listen( ssl.port, () => {
-
-		// tslint:disable-next-line:no-console
-		console.log( new Date(), `server started at https://localhost:${ ssl.port }` );
-
-	} );
-
-}
