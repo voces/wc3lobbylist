@@ -5,6 +5,7 @@ import { executeCallbacks } from "./common.js";
 import { wc3stats } from "../../shared/fetch.js";
 import "./exceptions.js";
 import "./todo.js";
+import "./fixusBias.js";
 
 const ONE_MINUTE = 60 * 1000;
 

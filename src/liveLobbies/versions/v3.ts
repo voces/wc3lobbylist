@@ -14,6 +14,7 @@ let oldLobbies = {};
 const getChannelIds = ( lobby: Lobby ): string[] => Object.entries( config )
 	.filter( ( [ , config ] ) => {
 
+		console.log( "hello", config );
 		if ( ! config.filterFunc ) config.filterFunc = ruleToFilter( config.filter );
 
 		return config.filterFunc( lobby );

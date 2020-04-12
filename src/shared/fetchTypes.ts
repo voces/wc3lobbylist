@@ -71,8 +71,7 @@ export type ReplayPlayer = {
 	apm: number;
 	activity: number[];
 	flags: string[];
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	variables: any;
+	variables: Record<string, string | number | null> | null;
 }
 
 export type ReplayEventData = {

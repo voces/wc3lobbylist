@@ -5,7 +5,7 @@
     "allowJs": false,
     "target": "es2017",
     "module": "ESNext",
-    "lib": ["es2020", "dom" ],
+    "lib": ["es2019", "es2020", "dom" ],
     "moduleResolution": "node",
     "strict": true,
     "noImplicitAny": false,
@@ -29,6 +29,6 @@
 	],
     "esModuleInterop": true
   },
-  "include": ["src", "src/config.ts"],
+  "include": ["src"],
   "exclude": ["node_modules", "**/*.test.ts"]
 }

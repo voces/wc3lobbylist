@@ -9,9 +9,9 @@ const pool = MySQL.createPool( {
 	database: "w3xio",
 } );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const query = async (
 	sql: string,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	values?: any,
 ): Promise<RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[]> =>
 	pool.query( sql, values ).then( r => r[ 0 ] );

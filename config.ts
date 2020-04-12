@@ -1,5 +1,5 @@
 
-import { Lobby } from "./src/liveLobbies/fetchLobbies";
+import { Lobby } from "./src/liveLobbies/fetchLobbies.js";
 
 type LobbyConfig = {
 	version?: number;
@@ -12,9 +12,11 @@ type Config = {
 	blacklist?: string[];
 	channels: Record<string, LobbyConfig>;
 	whitelistOnly?: boolean;
+	api: {port: number};
 }
 
 export const config: Config = process.env.NODE_ENV === "production" ? {
+	api: { port: 80 },
 	blacklist: [ "457570641638326274" ],
 	channels: {
 		// sheep tag
@@ -66,6 +68,7 @@ export const config: Config = process.env.NODE_ENV === "production" ? {
 		},
 	},
 } : {
+	api: { port: 8080 },
 	whitelistOnly: true,
 	channels: {
 		"457570641638326274": {
