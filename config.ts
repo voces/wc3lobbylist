@@ -16,7 +16,7 @@ type Config = {
 }
 
 export const config: Config = process.env.NODE_ENV === "production" ? {
-	api: { port: 80 },
+	api: { port: 3626 },
 	blacklist: [ "457570641638326274" ],
 	channels: {
 		// sheep tag
