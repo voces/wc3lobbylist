@@ -1,7 +1,6 @@
 
 import fetchLobbies, { Lobby } from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
-import { newLobbies as v1NewLobbies, onExit as v1OnExit } from "./versions/v1.js";
 import { newLobbies as v3NewLobbies, onExit as v3OnExit } from "./versions/v3.js";
 import "../commands/index.js";
 import { onExitHandlers } from "../close.js";
@@ -9,7 +8,7 @@ import { periodic } from "../shared/periodic.js";
 
 const TEN_SECONDS = 10 * 1000;
 
-const newLobbiesHandlers = [ v3NewLobbies, v1NewLobbies ];
+const newLobbiesHandlers = [ v3NewLobbies ];
 
 periodic( "liveLobbies", TEN_SECONDS, async () => {
 
@@ -41,7 +40,7 @@ periodic( "liveLobbies", TEN_SECONDS, async () => {
 
 } );
 
-onExitHandlers.push( v1OnExit, v3OnExit );
+onExitHandlers.push( v3OnExit );
 
 console.log( new Date(), "ready!", process.env.NODE_ENV );
 

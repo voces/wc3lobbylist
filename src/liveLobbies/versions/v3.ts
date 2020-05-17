@@ -1,6 +1,6 @@
 
 import Discord, { MessageEmbed } from "discord.js";
-import discord from "../../discord.js";
+import discord, { ChannelError } from "../../discord.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
 import { config, saveConfig } from "../../config.js";
 import { Lobby } from "../fetchLobbies.js";
@@ -46,9 +46,19 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 			...config[ channelId ].message ? [ config[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
 		).catch( err => err );
 
-		if ( newMessage instanceof Error )
-			console.error( new Date(), newMessage );
-		else {
+		if ( newMessage instanceof Error ) {
+
+			if ( newMessage instanceof ChannelError ) {
+
+				delete config[ channelId ];
+				saveConfig();
+				return;
+
+			}
+
+			return console.error( new Date(), newMessage );
+
+		} else {
 
 			console.log( new Date(), "v3 n", format( lobby ) );
 			if ( config[ channelId ].errors ) {

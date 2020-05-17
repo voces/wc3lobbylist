@@ -6,4 +6,3 @@ import { LobbyEmbed } from "./LobbyEmbed.js";
 Object.assign( globalThis, {
 	Discord, discord, LobbyEmbed,
 } );
-

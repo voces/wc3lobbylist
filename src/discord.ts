@@ -30,6 +30,19 @@ type SendProps =
 	| [StringResolvable | APIMessage]
 	| [StringResolvable | APIMessage, MessageOptions | MessageAdditions]
 
+export class ChannelError extends Error {
+
+	channel: string;
+
+	constructor( channel: string ) {
+
+		super( `Trying to send to invalid channel: ${channel}` );
+		this.channel = channel;
+
+	}
+
+}
+
 // method for sending messages
 const send = async (
 	channelId: string,
@@ -37,9 +50,14 @@ const send = async (
 ): Promise<Discord.Message | Discord.Message[]> => {
 
 	await ready;
-	const channel = await client.channels.fetch( channelId );
-	if ( ! channel || ! isChannelGuildChannel( channel ) || ! isTextChannel( channel ) )
-		throw new Error( `Trying to send to invalid channel: ${channel} (${channelId})` );
+	const channel = await client.channels.fetch( channelId ).catch( err => err );
+	if (
+		channel instanceof Error ||
+		! channel ||
+		! isChannelGuildChannel( channel ) ||
+		! isTextChannel( channel )
+	)
+		throw new ChannelError( channelId );
 
 	const arg1: StringResolvable | APIMessage = args[ 0 ];
 
