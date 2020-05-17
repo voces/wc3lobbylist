@@ -50,6 +50,7 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 
 			if ( newMessage instanceof ChannelError ) {
 
+				console.log( new Date(), "v3", "deleting invalid channel", channelId );
 				delete config[ channelId ];
 				saveConfig();
 				return;
