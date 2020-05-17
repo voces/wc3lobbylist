@@ -13,21 +13,16 @@ onNewReplay( async ( replay: Replay ): Promise<void> => {
 				0.25 :
 				1;
 
-			return {
-				player: p.name,
-				bias: biasChange * ( p.variables?.team === "sheep" ? 1 : - 1 ),
-			};
+			return [
+				p.name,
+				biasChange * ( p.variables?.team === "sheep" ? 1 : - 1 ),
+			];
 
-		} )
-		.map( p => [ p, p.bias ] );
+		} );
 
 	query(
-		biasChanges
-			.map( () =>
-				"INSERT INTO fixusbias VALUES SET ? ON DUPLICATE KEY UPDATE bias = bias + ?;",
-			)
-			.join( "\n" ),
-		biasChanges.flat(),
+		"INSERT INTO fixusbias ( player, bias ) VALUES ? ON DUPLICATE KEY UPDATE bias = bias + VALUES( bias );",
+		[ biasChanges ],
 	);
 
 } );
