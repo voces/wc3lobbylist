@@ -2,7 +2,7 @@
 import Discord, { MessageEmbed } from "discord.js";
 import discord from "../../discord.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
-import { config } from "../../config.js";
+import { config, saveConfig } from "../../config.js";
 import { Lobby } from "../fetchLobbies.js";
 import { ruleToFilter } from "../../commands/ruleToFilter.js";
 
@@ -44,13 +44,25 @@ const onNewLobby = async ( lobby: Lobby ): Promise<void> => {
 		const newMessage = await discord.send(
 			channelId,
 			...config[ channelId ].message ? [ config[ channelId ].message, embed.toEmbed() ] : [ embed.toEmbed() ],
-		).catch( console.error );
+		).catch( err => err );
 
-		console.log( new Date(), "v3 n", format( lobby ) );
+		if ( newMessage instanceof Error )
+			console.error( new Date(), newMessage );
+		else {
+
+			console.log( new Date(), "v3 n", format( lobby ) );
+			if ( config[ channelId ].errors ) {
+
+				delete config[ channelId ].errors;
+				saveConfig();
+
+			}
+
+		}
 
 		return newMessage;
 
-	} ) ) ).flat();
+	} ) ) ).filter( v => v ).flat();
 
 };
 

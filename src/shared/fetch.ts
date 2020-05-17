@@ -23,7 +23,8 @@ export const wc3stats = {
 	replays: {
 		list: ( { page }: {page: number} ): ( Promise<{body: [ReplaySummary] | []}> ) =>
 			fetch( `https://api.wc3stats.com/replays&map=Ultimate%20Sheep%20Tag%20Fixus&page=${page}&limit=1&sort=playedOn&order=asc` )
-				.then( r => r.json() ),
+				.then( r => r.json() )
+				.then( r => typeof r.body === "string" ? { body: [] } : r ),
 		get: ( replay: number ): Promise<Replay> =>
 			fetch( `https://api.wc3stats.com/replays/${replay}` )
 				.then( r => r.json() )

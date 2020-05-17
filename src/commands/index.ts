@@ -1,8 +1,7 @@
 
 import discord from "../discord.js";
 import { parser } from "./parser.js";
-import { config } from "../config.js";
-import { promises as fs } from "fs";
+import { config, saveConfig } from "../config.js";
 import { Message } from "discord.js";
 import { stringifyReplacer } from "./stringify.js";
 import { onProcessClose } from "../close.js";
@@ -67,10 +66,7 @@ discord.on( "message", async message => {
 				config[ message.channel.id ] = { filter };
 				if ( options && options.message )
 					config[ message.channel.id ].message = options.message;
-				fs.writeFile(
-					"./data/config.json",
-					JSON.stringify( config, stringifyReplacer, 2 ),
-				);
+				saveConfig();
 				message.reply( alreadyAdded ? "modified!" : "added!" );
 
 			} catch ( err ) {
@@ -94,10 +90,8 @@ discord.on( "message", async message => {
 		case "stop": {
 
 			delete config[ message.channel.id ];
-			fs.writeFile(
-				"./data/config.json",
-				JSON.stringify( config, stringifyReplacer, 2 ),
-			);
+			saveConfig();
+
 			try {
 
 				message.reply( "stopped!" );

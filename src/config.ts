@@ -2,6 +2,7 @@
 import fs from "fs";
 import { Rule } from "./commands/parser.js";
 import { Lobby } from "./liveLobbies/fetchLobbies.js";
+import { stringifyReplacer } from "./commands/stringify.js";
 
 if ( ! fs.existsSync( "./data/config.json" ) ) {
 
@@ -16,6 +17,7 @@ export type ChannelConfig = {
 	message?: string;
 	version?: number;
 	format?: ( lobby: Lobby ) => string;
+	errors?: number;
 };
 
 export const config = JSON.parse(
@@ -25,3 +27,13 @@ export const config = JSON.parse(
 		new RegExp( value.pattern, value.flags ) :
 		value,
 ) as Record<string, ChannelConfig>;
+
+export const saveConfig = (): void => {
+
+	fs.writeFile(
+		"./data/config.json",
+		JSON.stringify( config, stringifyReplacer, 2 ),
+		() => { /* do nothing */ },
+	);
+
+};

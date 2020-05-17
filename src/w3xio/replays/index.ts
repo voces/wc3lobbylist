@@ -43,7 +43,7 @@ const updatePage = async ( page: number ): Promise<void> => {
 
 				const page = await wc3stats.replays.list( { page: pageNumber } );
 				const replay = page.body[ 0 ];
-				if ( replay && replay.processed )
+				if ( replay && replay.processed ) {
 
 					if ( ! replay.isVoid ) {
 
@@ -63,7 +63,9 @@ const updatePage = async ( page: number ): Promise<void> => {
 					} else
 						console.log( new Date(), "skipping voided replay", replay.id );
 
-				await updatePage( ++ pageNumber );
+					await updatePage( ++ pageNumber );
+
+				}
 
 			}
 
