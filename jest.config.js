@@ -1,7 +1,6 @@
-
-module.exports = {
+export default {
 	globals: { "ts-jest": { tsConfig: "tsconfig.test.json" } },
-	moduleFileExtensions: [ "ts", "js" ],
+	moduleFileExtensions: ["ts", "js"],
 	transformIgnorePatterns: [],
 	transform: {
 		"^.+\\.ts$": "ts-jest",

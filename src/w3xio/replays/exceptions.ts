@@ -1,11 +1,16 @@
-
 import { CleanEvent } from "./types.js";
 import { query } from "../../shared/sql.js";
-import { toEvent, onNewReplay, getRepoAndVersionInfo, Metadata, trim } from "./common.js";
+import {
+	toEvent,
+	onNewReplay,
+	getRepoAndVersionInfo,
+	Metadata,
+	trim,
+} from "./common.js";
 import { github } from "../../shared/fetch.js";
 import { Replay } from "../../shared/fetchTypes.js";
 
-const newException = async ( {
+const newException = async ({
 	event,
 	replay,
 	metadata: { repo, versionId, token, version },
@@ -13,90 +18,95 @@ const newException = async ( {
 	event: CleanEvent;
 	replay: Replay;
 	metadata: Metadata;
-} ): Promise<void> => {
-
+}): Promise<void> => {
 	const replayId = replay.id;
-	const replayUploadedAt = new Date( replay.playedOn * 1000 );
-	if ( ! event.message ) {
-
+	const replayUploadedAt = new Date(replay.playedOn * 1000);
+	if (!event.message) {
 		event.message = event.message || event.key;
 		event.key = "none";
-
 	}
 	const { key, message: eventMessage } = event;
-	const [ filename, line, ...rest ] = eventMessage.split( ":" );
-	const message = rest.join( ":" ).slice( 1 );
+	const [filename, line, ...rest] = eventMessage.split(":");
+	const message = rest.join(":").slice(1);
 
 	// get the issue
-	const { id: issueId, githubIssueId } = ( await query( `
-		INSERT IGNORE INTO issues (\`key\`, filename, line, message, versionId) VALUES (:key, :filename, :line, :message, :version);
-		SELECT * FROM issues WHERE \`key\` = :key AND filename = :filename AND line = :line AND versionId = :version;
-	`, { key, filename, line, message, version: versionId } ) )[ 1 ][ 0 ];
+	const { id: issueId, githubIssueId } = (
+		await query(
+			`
+				INSERT IGNORE INTO issues (\`key\`, filename, line, message, versionId) VALUES (:key, :filename, :line, :message, :version);
+				SELECT * FROM issues WHERE \`key\` = :key AND filename = :filename AND line = :line AND versionId = :version;
+			`,
+			{ key, filename, line, message, version: versionId },
+		)
+	)[1][0];
 
 	// add an exception
-	await query( `
-		INSERT INTO exceptions (issueId, replayId, replayUploadedAt, eventTime) VALUES (:issue, :replay, :time, :eventTime);
-	`, { issue: issueId, replay: replayId, time: replayUploadedAt, eventTime: event.time } );
+	await query(
+		`
+			INSERT INTO exceptions (issueId, replayId, replayUploadedAt, eventTime) VALUES (:issue, :replay, :time, :eventTime);
+		`,
+		{
+			issue: issueId,
+			replay: replayId,
+			time: replayUploadedAt,
+			eventTime: event.time,
+		},
+	);
 
-	if ( ! githubIssueId ) {
+	if (!githubIssueId) {
+		const {
+			number: newGithubIssueId,
+			url,
+		} = await github.repos.issues.post({
+			repo,
+			token,
+			body: {
+				title: `Exception: ${eventMessage}`,
+				body: trim(`
+					An exception was detected in a replay.
 
-		const { number: newGithubIssueId, url } = await github.repos.issues.post( { repo, token, body: {
-			title: `Exception: ${eventMessage}`,
-			body: trim( `
-				An exception was detected in a replay.
+					- Replay: https://wc3stats.com/games/${replayId}
+					- Key: \`${key}\`
+					- Line: \`${line}\`
+					- Error message: \`${message}\`
+					- Internal tracker id: \`${issueId}\`
+				`),
+				labels: ["bug", version],
+			},
+		});
 
-				- Replay: https://wc3stats.com/games/${replayId}
-				- Key: \`${key}\`
-				- Line: \`${line}\`
-				- Error message: \`${message}\`
-				- Internal tracker id: \`${issueId}\`
-			` ),
-			labels: [ "bug", version ],
-		} } );
+		await query(
+			`
+				UPDATE issues SET githubIssueId = :githubIssueId WHERE id = :id;
+			`,
+			{ id: issueId, githubIssueId: newGithubIssueId },
+		);
 
-		await query( `
-			UPDATE issues SET githubIssueId = :githubIssueId WHERE id = :id;
-		`, { id: issueId, githubIssueId: newGithubIssueId } );
-
-		console.log( new Date(), "new issue:", newGithubIssueId, url );
-
-	} else
-		console.log( new Date(), "new exception:", githubIssueId );
-
+		console.log(new Date(), "new issue:", newGithubIssueId, url);
+	} else console.log(new Date(), "new exception:", githubIssueId);
 };
 
-onNewReplay( async ( replay: Replay ): Promise<void> => {
+onNewReplay(
+	async (replay: Replay): Promise<void> => {
+		console.log(new Date(), "processing", replay.id);
 
-	console.log( new Date(), "processing", replay.id );
+		const events = replay.data.game.events.map(toEvent);
+		let metadata: Metadata | undefined;
 
-	const events = replay.data.game.events.map( toEvent );
-	let metadata: Metadata | undefined;
+		try {
+			for (const event of events) {
+				if (event.name !== "log") continue;
 
-	try {
+				if (!metadata) metadata = await getRepoAndVersionInfo(replay);
 
-		for ( const event of events ) {
-
-			if ( event.name !== "log" ) continue;
-
-			if ( ! metadata )
-				metadata = await getRepoAndVersionInfo( replay );
-
-			try {
-
-				await newException( { event, replay, metadata } );
-
-			} catch ( err ) {
-
-				console.error( new Date(), err );
-
+				try {
+					await newException({ event, replay, metadata });
+				} catch (err) {
+					console.error(new Date(), err);
+				}
 			}
-
+		} catch (err) {
+			console.error(new Date(), err);
 		}
-
-	} catch ( err ) {
-
-		console.error( new Date(), err );
-
-	}
-
-} );
+	},
+);

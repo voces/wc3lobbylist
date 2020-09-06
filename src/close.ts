@@ -1,25 +1,20 @@
-
-export const onExitHandlers: ( () => ( Promise<void> | void ) )[] = [];
+export const onExitHandlers: (() => Promise<void> | void)[] = [];
 let exiting = false;
 export const isExiting = (): boolean => exiting;
 
 let killing = false;
 export const onProcessClose = async (): Promise<void> => {
-
-	if ( killing ) return;
+	if (killing) return;
 	killing = true;
 
-	console.log( new Date(), "received kill signal" );
+	console.log(new Date(), "received kill signal");
 
 	exiting = true;
 
-	for ( const onExitHandler of onExitHandlers )
-		await onExitHandler();
+	for (const onExitHandler of onExitHandlers) await onExitHandler();
 
 	process.exit();
-
 };
 
-process.on( "SIGINT", onProcessClose );
-process.on( "SIGTERM", onProcessClose );
-
+process.on("SIGINT", onProcessClose);
+process.on("SIGTERM", onProcessClose);

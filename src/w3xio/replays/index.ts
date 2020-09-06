@@ -1,4 +1,3 @@
-
 import { periodic } from "../../shared/periodic.js";
 import { query } from "../../shared/sql.js";
 import { executeCallbacks } from "./common.js";
@@ -9,72 +8,59 @@ import "./fixusBias.js";
 
 const ONE_MINUTE = 60 * 1000;
 
-const fetchConfig = async (): Promise<{key: string; value: string}[]> =>
-	( await query( "SELECT * from config;" ) ) as{key: string; value: string}[];
+const fetchConfig = async (): Promise<{ key: string; value: string }[]> =>
+	(await query("SELECT * from config;")) as { key: string; value: string }[];
 
-const updatePage = async ( page: number ): Promise<void> => {
-
+const updatePage = async (page: number): Promise<void> => {
 	try {
-
-		await query( "UPDATE config SET value = :page WHERE `key` = 'page';", { page } );
-
-	} catch ( err ) { console.error( new Date(), err ) }
-
+		await query("UPDATE config SET value = :page WHERE `key` = 'page';", {
+			page,
+		});
+	} catch (err) {
+		console.error(new Date(), err);
+	}
 };
 
-( async (): Promise<void> => {
-
+(async (): Promise<void> => {
 	try {
-
 		const config: Record<string, string> = {};
 
 		const rawConfig = await fetchConfig();
-		for ( const { key, value } of rawConfig )
-			config[ key ] = value;
+		for (const { key, value } of rawConfig) config[key] = value;
 
-		let pageNumber = parseInt( config.page );
+		let pageNumber = parseInt(config.page);
 
-		periodic( "wc3stats replays", ONE_MINUTE, async () => {
-
+		periodic("wc3stats replays", ONE_MINUTE, async () => {
 			let looping = true;
-			while ( looping ) {
-
+			while (looping) {
 				looping = false;
 
-				const page = await wc3stats.replays.list( { page: pageNumber } );
-				const replay = page.body[ 0 ];
-				if ( replay && replay.processed ) {
-
-					if ( ! replay.isVoid ) {
-
-						console.log( new Date(), "new replay", replay.id );
+				const page = await wc3stats.replays.list({ page: pageNumber });
+				const replay = page.body[0];
+				if (replay && replay.processed) {
+					if (!replay.isVoid) {
+						console.log(new Date(), "new replay", replay.id);
 						try {
-
-							executeCallbacks( await wc3stats.replays.get( replay.id ) );
-
-						} catch ( err ) {
-
-							console.error( new Date(), err );
-
+							executeCallbacks(
+								await wc3stats.replays.get(replay.id),
+							);
+						} catch (err) {
+							console.error(new Date(), err);
 						}
 
 						looping = true;
-
 					} else
-						console.log( new Date(), "skipping voided replay", replay.id );
+						console.log(
+							new Date(),
+							"skipping voided replay",
+							replay.id,
+						);
 
-					await updatePage( ++ pageNumber );
-
+					await updatePage(++pageNumber);
 				}
-
 			}
-
-		} );
-
-	} catch ( err ) {
-
-		console.log( new Date(), err );
-
+		});
+	} catch (err) {
+		console.log(new Date(), err);
 	}
-
-} )();
+})();

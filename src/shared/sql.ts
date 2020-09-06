@@ -1,17 +1,18 @@
-
 import MySQL, { RowDataPacket, OkPacket } from "mysql2/promise.js";
+import { config } from "../../config.js";
 
-const pool = MySQL.createPool( {
+const pool = MySQL.createPool({
 	host: "localhost",
 	multipleStatements: true,
 	namedPlaceholders: true,
 	user: "w3xio",
 	database: "w3xio",
-} );
+	port: config.mysql.port
+});
 
 export const query = async (
 	sql: string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	values?: any,
 ): Promise<RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[]> =>
-	pool.query( sql, values ).then( r => r[ 0 ] );
+	pool.query(sql, values).then((r) => r[0]);

@@ -1,8 +1,7 @@
-
 export type Player = {
 	colour: number;
 	name: string;
-}
+};
 
 export type ReplayPartial = {
 	name: string;
@@ -13,11 +12,11 @@ export type ReplayPartial = {
 	processed: boolean;
 	isVoid: boolean;
 	id: number;
-}
+};
 
 export type ReplaySummary = ReplayPartial & {
 	players: Player[];
-}
+};
 
 export type Key = {
 	name: string;
@@ -28,14 +27,14 @@ export type Key = {
 		round: string;
 		mode: string;
 	};
-}
+};
 
 export type Upload = {
 	saver: string;
 	file: string;
 	size: number;
 	timestamp: number;
-}
+};
 
 export type ReplayHeader = {
 	intro: string;
@@ -50,7 +49,7 @@ export type ReplayHeader = {
 	flags: number;
 	length: number;
 	checksum: number;
-}
+};
 
 export type ReplayPlayer = {
 	type: number;
@@ -72,7 +71,7 @@ export type ReplayPlayer = {
 	activity: number[];
 	flags: string[];
 	variables: Record<string, string | number | null> | null;
-}
+};
 
 export type ReplayEventData = {
 	id: number;
@@ -81,7 +80,7 @@ export type ReplayEventData = {
 	message: string;
 	type: string;
 	eventName: string;
-}
+};
 
 export type ReplayEvent = ReplayEventData & {
 	event: ReplayEventData & {
@@ -91,7 +90,7 @@ export type ReplayEvent = ReplayEventData & {
 	};
 	time: number;
 	args: string[];
-}
+};
 
 export type ReplayGame = {
 	name: string;
@@ -121,7 +120,7 @@ export type ReplayGame = {
 	events: ReplayEvent[];
 	saver: number;
 	hasW3MMD: boolean;
-}
+};
 
 export type ReplayChat = {
 	playerId: number;
@@ -130,13 +129,13 @@ export type ReplayChat = {
 	mode: number;
 	message: string;
 	time: number;
-}
+};
 
 export type ReplayData = {
 	header: ReplayHeader;
 	game: ReplayGame;
 	chatlog: ReplayChat[];
-}
+};
 
 export type Replay = ReplayPartial & {
 	hash: string;
@@ -162,4 +161,4 @@ export type Wc3StatsLobby = {
 	slotsTaken: undefined | number;
 	slotsTotal: undefined | number;
 	created: undefined | number;
-}
+};
