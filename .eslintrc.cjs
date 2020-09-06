@@ -6,5 +6,6 @@ module.exports = {
 			"error",
 			{ allowWholeFile: true },
 		],
+		"no-console": "off",
 	},
 };

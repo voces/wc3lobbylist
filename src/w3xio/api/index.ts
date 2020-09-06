@@ -25,6 +25,8 @@ app.get("/preferences", async (req, res) => {
 	);
 });
 
+app.use(express.static("src/w3xio/public"));
+
 // start the express server
 const port = config.api.port;
 app.listen(port, () => {
