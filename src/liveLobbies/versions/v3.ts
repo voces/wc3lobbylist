@@ -1,14 +1,17 @@
 import Discord, { MessageEmbed } from "discord.js";
-import discord, { ChannelError } from "../../discord.js";
-import { LobbyEmbed } from "../LobbyEmbed.js";
-import { config, saveConfig } from "../../config.js";
-import { Lobby } from "../fetchLobbies.js";
+
 import { ruleToFilter } from "../../commands/ruleToFilter.js";
+import { config, saveConfig } from "../../config.js";
+import discord, { ChannelError } from "../../discord.js";
+import { Lobby as APILobby } from "../fetchLobbies.js";
+import { LobbyEmbed } from "../LobbyEmbed.js";
 
 const ONE_MINUTE = 60 * 1000;
 const TEN_MINUTES = 10 * ONE_MINUTE;
 
-let oldLobbies = {};
+type Lobby = APILobby & { deleted?: number };
+
+let oldLobbies: Record<string, Lobby> = {};
 
 const getChannelIds = (lobby: Lobby): string[] =>
 	Object.entries(config)
@@ -176,17 +179,18 @@ export const newLobbies = async (newLobbies: Lobby[]): Promise<void> => {
 
 	for (const id in oldLobbies)
 		if (!lobbyMap[id]) {
-			if (!oldLobbies[id].deleted) {
+			let deleted = oldLobbies[id].deleted;
+			if (typeof deleted !== "number") {
 				try {
 					await onKillLobby(oldLobbies[id]);
 				} catch (err) {
 					console.error(new Date(), err);
 				}
 
-				oldLobbies[id].deleted = Date.now();
+				deleted = oldLobbies[id].deleted = Date.now();
 			}
 
-			if (oldLobbies[id].deleted > Date.now() - TEN_MINUTES)
+			if (deleted > Date.now() - TEN_MINUTES)
 				lobbyMap[id] = oldLobbies[id];
 			else
 				try {

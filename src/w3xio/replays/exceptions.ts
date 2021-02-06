@@ -1,14 +1,14 @@
-import { CleanEvent } from "./types.js";
-import { query } from "../../shared/sql.js";
-import {
-	toEvent,
-	onNewReplay,
-	getRepoAndVersionInfo,
-	Metadata,
-	trim,
-} from "./common.js";
 import { github } from "../../shared/fetch.js";
 import { Replay } from "../../shared/fetchTypes.js";
+import { query } from "../../shared/sql.js";
+import {
+	getRepoAndVersionInfo,
+	Metadata,
+	onNewReplay,
+	toEvent,
+	trim,
+} from "./common.js";
+import { CleanEvent } from "./types.js";
 
 const newException = async ({
 	event,

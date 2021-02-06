@@ -1,11 +1,7 @@
 module.exports = {
-	extends: ["plugin:eslint-comments/recommended", "verit"],
+	extends: ["verit"],
+	parserOptions: { project: "tsconfig.json" },
 	rules: {
-		"eslint-comments/no-unused-disable": "error",
-		"eslint-comments/disable-enable-pair": [
-			"error",
-			{ allowWholeFile: true },
-		],
 		"no-console": "off",
 	},
 };

@@ -1,6 +1,6 @@
-import { onNewReplay } from "./common.js";
 import { Replay } from "../../shared/fetchTypes";
 import { query } from "../../shared/sql.js";
+import { onNewReplay } from "./common.js";
 
 onNewReplay(
 	async (replay: Replay): Promise<void> => {

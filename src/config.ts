@@ -1,7 +1,8 @@
 import fs from "fs";
+
 import { Rule } from "./commands/parser.js";
-import { Lobby } from "./liveLobbies/fetchLobbies.js";
 import { stringifyReplacer } from "./commands/stringify.js";
+import { Lobby } from "./liveLobbies/fetchLobbies.js";
 
 if (!fs.existsSync("./data/config.json")) {
 	if (!fs.existsSync("./data")) fs.mkdirSync("./data");

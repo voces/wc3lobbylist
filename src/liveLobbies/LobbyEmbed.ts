@@ -1,4 +1,4 @@
-import Discord, { MessageEmbed, ColorResolvable } from "discord.js";
+import Discord, { ColorResolvable, MessageEmbed } from "discord.js";
 
 const extractField = (embed: MessageEmbed, fieldName: string): string => {
 	const field = embed.fields.find((f) => f.name === fieldName);
@@ -22,8 +22,8 @@ export class LobbyEmbed {
 	constructor(sourceEmbed?: MessageEmbed) {
 		if (!sourceEmbed) return;
 
-		this.title = sourceEmbed.title;
-		this.url = sourceEmbed.url;
+		this.title = sourceEmbed.title ?? undefined;
+		this.url = sourceEmbed.url ?? undefined;
 		if (sourceEmbed.thumbnail) this.thumbnail = sourceEmbed.thumbnail.url;
 		if (sourceEmbed.footer)
 			this.footer = {

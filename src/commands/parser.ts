@@ -36,6 +36,7 @@ const simplify = (rule: Rule): RootRule => {
 				return simplify(Object.assign(rule, rule.rules[0]));
 			else {
 				simplify(Object.assign(rule, rule.rules[0]));
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				delete rule.rules;
 				return rule;

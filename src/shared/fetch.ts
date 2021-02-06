@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
-import { ReplaySummary, Replay, Wc3StatsLobby } from "./fetchTypes";
+
+import { Replay, ReplaySummary, Wc3StatsLobby } from "./fetchTypes";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isStringified = (body: any): boolean => {

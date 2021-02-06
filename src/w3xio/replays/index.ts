@@ -1,10 +1,11 @@
-import { periodic } from "../../shared/periodic.js";
-import { query } from "../../shared/sql.js";
-import { executeCallbacks } from "./common.js";
-import { wc3stats } from "../../shared/fetch.js";
 import "./exceptions.js";
 import "./todo.js";
 import "./fixusBias.js";
+
+import { wc3stats } from "../../shared/fetch.js";
+import { periodic } from "../../shared/periodic.js";
+import { query } from "../../shared/sql.js";
+import { executeCallbacks } from "./common.js";
 
 const ONE_MINUTE = 60 * 1000;
 

@@ -1,9 +1,10 @@
+import { Message } from "discord.js";
+
+import { onProcessClose } from "../close.js";
+import { config, saveConfig } from "../config.js";
 import discord from "../discord.js";
 import { parser } from "./parser.js";
-import { config, saveConfig } from "../config.js";
-import { Message } from "discord.js";
 import { stringifyReplacer } from "./stringify.js";
-import { onProcessClose } from "../close.js";
 
 const checkAlert = (message: Message): void => {
 	if (!config[message.channel.id]) {
@@ -111,7 +112,7 @@ discord.on("message", async (message) => {
 		}
 		case "bulkdelete": {
 			if (message.channel.type === "dm") {
-				message.reply("cannot bulk delete in dm channels")
+				message.reply("cannot bulk delete in dm channels");
 				return;
 			}
 			const amount = Math.min(parseInt(rest[0]) || 10, 99);

@@ -1,12 +1,13 @@
+import "../commands/index.js";
+
+import { onExitHandlers } from "../close.js";
+import { periodic } from "../shared/periodic.js";
 import fetchLobbies, { Lobby } from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
 import {
 	newLobbies as v3NewLobbies,
 	onExit as v3OnExit,
 } from "./versions/v3.js";
-import "../commands/index.js";
-import { onExitHandlers } from "../close.js";
-import { periodic } from "../shared/periodic.js";
 
 const TEN_SECONDS = 10 * 1000;
 

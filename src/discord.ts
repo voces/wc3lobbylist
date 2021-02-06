@@ -1,9 +1,10 @@
 import Discord, {
-	StringResolvable,
-	MessageOptions,
 	APIMessage,
 	MessageAdditions,
+	MessageOptions,
+	StringResolvable,
 } from "discord.js";
+
 import { isChannelGuildChannel, isTextChannel } from "./liveLobbies/util.js";
 
 if (!process.env.DISCORD_TOKEN) {
@@ -41,7 +42,6 @@ export class ChannelError extends Error {
 		this.channel = channel;
 	}
 }
-
 // method for sending messages
 const send = async (
 	channelId: string,
@@ -59,7 +59,8 @@ const send = async (
 
 	const arg1: StringResolvable | APIMessage = args[0];
 
-	return channel.send(arg1, ...args.slice(1));
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	return channel.send(arg1, ...(args.slice(1) as [any]));
 };
 
 export default Object.assign(client, { send });

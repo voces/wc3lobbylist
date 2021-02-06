@@ -1,6 +1,6 @@
-import { process, ruleToFilter } from "./ruleToFilter";
-import { Rule, Key } from "./parser.js";
 import { Lobby } from "../liveLobbies/fetchLobbies.js";
+import { Key, Rule } from "./parser.js";
+import { process, ruleToFilter } from "./ruleToFilter";
 
 const buildTermRule = (key: Key, value: string | RegExp): Rule => ({
 	type: "term",

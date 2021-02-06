@@ -1,34 +1,25 @@
 {
-  "compilerOptions": {
-    "outDir": "dist",
-    "baseUrl": "src",
-    "allowJs": false,
-    "target": "es2017",
-    "module": "ESNext",
-    "lib": ["es2019", "es2020", "dom" ],
-    "moduleResolution": "node",
-    "strict": true,
-    "noImplicitAny": false,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    "declaration": false,
-    "strictNullChecks": true,
-    "paths": {
-      "*": [
-        "../node_modules/*/src/index",
-        "../node_modules/*/lib/index",
-        "../node_modules/*/index",
-        "../node_modules/*/dist/index"
-      ]
-    },
-    "plugins": [{ "transform": "@zerollup/ts-transform-paths" }],
-    "types": [
-		"@types/jest",
-		"@types/node",
-		"@types/mysql2"
-	],
-    "esModuleInterop": true
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "**/*.test.ts"]
+	"compilerOptions": {
+		"outDir": "dist",
+		"baseUrl": "src",
+		"allowJs": false,
+		"target": "es2017",
+		"module": "ESNext",
+		"lib": ["es2019", "es2020", "dom"],
+		"moduleResolution": "node",
+		"strict": true,
+		"declaration": false,
+		"paths": {
+			"*": [
+				"../node_modules/*/src/index",
+				"../node_modules/*/lib/index",
+				"../node_modules/*/index",
+				"../node_modules/*/dist/index"
+			]
+		},
+		"plugins": [{ "transform": "@zerollup/ts-transform-paths" }],
+		"types": ["@types/jest", "@types/node", "@types/mysql2"],
+		"esModuleInterop": true
+	},
+	"include": ["src"]
 }

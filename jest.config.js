@@ -1,5 +1,5 @@
 export default {
-	globals: { "ts-jest": { tsConfig: "tsconfig.test.json" } },
+	globals: { "ts-jest": { tsconfig: "tsconfig.json" } },
 	moduleFileExtensions: ["ts", "js"],
 	transformIgnorePatterns: [],
 	transform: {

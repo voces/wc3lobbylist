@@ -1,11 +1,11 @@
+import { github } from "../../shared/fetch.js";
+import { Replay } from "../../shared/fetchTypes";
 import {
-	onNewReplay,
 	getRepoAndVersionInfo,
 	Metadata,
+	onNewReplay,
 	trim,
 } from "./common.js";
-import { Replay } from "../../shared/fetchTypes";
-import { github } from "../../shared/fetch.js";
 
 const triggers = "-todo -log -report".split(" ");
 
@@ -43,7 +43,7 @@ onNewReplay(
 	async (replay: Replay): Promise<void> => {
 		const chatlog = replay.data.chatlog;
 		const players = replay.data.game.players;
-		const memory = {};
+		const memory: Record<string, string[]> = {};
 
 		let metadata: Metadata | undefined;
 

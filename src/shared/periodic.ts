@@ -1,4 +1,4 @@
-import { onExitHandlers, isExiting } from "../close.js";
+import { isExiting, onExitHandlers } from "../close.js";
 
 export const periodic = (
 	name: string,

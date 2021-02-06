@@ -1,5 +1,5 @@
-import { Rule } from "./parser.js";
 import { Lobby } from "../liveLobbies/fetchLobbies.js";
+import { Rule } from "./parser.js";
 
 export const process = (rule: Rule, lobby: Lobby): boolean => {
 	switch (rule.type) {

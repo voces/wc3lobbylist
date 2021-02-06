@@ -1,8 +1,8 @@
-import { CleanEvent } from "./types.js";
-import { ReplayEvent, Replay } from "../../shared/fetchTypes.js";
+import { Replay, ReplayEvent } from "../../shared/fetchTypes.js";
 import { query } from "../../shared/sql.js";
+import { CleanEvent } from "./types.js";
 
-export const VARIANT_REPO_MAP = {
+export const VARIANT_REPO_MAP: Record<string, string> = {
 	"Ultimate Sheep Tag Fixus": "voces/fixus",
 };
 
