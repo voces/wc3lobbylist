@@ -76,6 +76,7 @@ export const parser = (
 
 	lexer.reset(string);
 
+	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		const term = lexer.next();
 		if (term) terms.push(term);
