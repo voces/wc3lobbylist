@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 
-import { Replay, ReplaySummary, Wc3StatsLobby } from "./fetchTypes";
+import { List, Replay, ReplaySummary, Wc3StatsLobby } from "./fetchTypes";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isStringified = (body: any): boolean => {
@@ -15,13 +15,24 @@ const isStringified = (body: any): boolean => {
 
 export const wc3stats = {
 	replays: {
-		list: ({
-			page,
-		}: {
-			page: number;
-		}): Promise<{ body: [ReplaySummary] | [] }> =>
+		list: (
+			qs: Record<string, string | number>,
+		): Promise<List<ReplaySummary>> =>
 			fetch(
-				`https://api.wc3stats.com/replays&map=Ultimate%20Sheep%20Tag%20Fixus&page=${page}&limit=1&sort=playedOn&order=asc`,
+				`https://api.wc3stats.com/replays&${Object.entries({
+					limit: 1,
+					order: "asc",
+					sort: "playedOn",
+					...qs,
+				})
+					.filter(([, value]) => value !== undefined)
+					.map(
+						([key, value]) =>
+							`${encodeURIComponent(key)}=${encodeURIComponent(
+								value,
+							)}`,
+					)
+					.join("&")}`,
 			)
 				.then((r) => r.json())
 				.then((r) => (typeof r.body === "string" ? { body: [] } : r)),

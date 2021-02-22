@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 
 import { config } from "../../../config.js";
+import { logLine } from "../../shared/log.js";
 import { query } from "../../shared/sql.js";
 
 const app = express();
@@ -32,5 +33,5 @@ app.use(express.static("src/w3xio/public"));
 const port = config.api.port;
 app.listen(port, () => {
 	// tslint:disable-next-line:no-console
-	console.log(new Date(), `server started at http://localhost:${port}`);
+	logLine("w3xio", `server started at http://localhost:${port}`);
 });

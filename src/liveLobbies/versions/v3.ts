@@ -3,6 +3,7 @@ import Discord, { MessageEmbed } from "discord.js";
 import { ruleToFilter } from "../../commands/ruleToFilter.js";
 import { config, saveConfig } from "../../config.js";
 import discord, { ChannelError } from "../../discord.js";
+import { logLine } from "../../shared/log.js";
 import { Lobby as APILobby } from "../fetchLobbies.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
 
@@ -59,8 +60,8 @@ const onNewLobby = async (lobby: Lobby): Promise<void> => {
 
 				if (newMessage instanceof Error) {
 					if (newMessage instanceof ChannelError) {
-						console.log(
-							new Date(),
+						logLine(
+							"live-lobbies",
 							"v3",
 							"deleting invalid channel",
 							channelId,
@@ -72,7 +73,7 @@ const onNewLobby = async (lobby: Lobby): Promise<void> => {
 
 					return console.error(new Date(), newMessage);
 				} else {
-					console.log(new Date(), "v3 n", format(lobby));
+					logLine("live-lobbies", "v3 n", format(lobby));
 					if (config[channelId].errors) {
 						delete config[channelId].errors;
 						saveConfig();
@@ -122,7 +123,7 @@ const onUpdateLobby = async (lobby: Lobby): Promise<void> =>
 						? `${lobby.slots.occupied}/${lobby.slots.max}`
 						: "?/?",
 				),
-		(lobby) => console.log(new Date(), "v2/3 u", format(lobby)),
+		(lobby) => logLine("live-lobbies", "v2/3 u", format(lobby)),
 	);
 
 const onKillLobby = async (lobby: Lobby): Promise<void> =>
@@ -137,7 +138,7 @@ const onKillLobby = async (lobby: Lobby): Promise<void> =>
 						? `${lobby.slots.occupied}/${lobby.slots.max}`
 						: "?/?",
 				),
-		(lobby) => console.log(new Date(), "v2/3 k", format(lobby)),
+		(lobby) => logLine("live-lobbies", "v2/3 k", format(lobby)),
 	);
 
 const onDeleteLobby = async (lobby: Lobby): Promise<void> =>
@@ -152,7 +153,7 @@ const onDeleteLobby = async (lobby: Lobby): Promise<void> =>
 						? `${lobby.slots.occupied}/${lobby.slots.max}`
 						: "?/?",
 				),
-		(lobby) => console.log(new Date(), "v2/3 d", format(lobby)),
+		(lobby) => logLine("live-lobbies", "v2/3 d", format(lobby)),
 	);
 
 export const newLobbies = async (newLobbies: Lobby[]): Promise<void> => {

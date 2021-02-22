@@ -1,4 +1,5 @@
 import { isExiting, onExitHandlers } from "../close.js";
+import { logLine } from "./log.js";
 
 export const periodic = (
 	name: string,
@@ -11,7 +12,7 @@ export const periodic = (
 	const healthCheck = setInterval(() => {
 		if (Date.now() - lastWork < interval * 6) return;
 
-		console.log(new Date(), name, "looks dead, killing...");
+		logLine("", name, "looks dead, killing...");
 		process.exit(1);
 	}, interval * 3);
 

@@ -3,9 +3,11 @@ import "./todo.js";
 import "./fixusBias.js";
 
 import { wc3stats } from "../../shared/fetch.js";
+import { logLine } from "../../shared/log.js";
 import { periodic } from "../../shared/periodic.js";
-import { query } from "../../shared/sql.js";
+import { kvGet, query } from "../../shared/sql.js";
 import { executeCallbacks } from "./common.js";
+import { fetchReplayList } from "./revo/fetchReplayList.js";
 
 const ONE_MINUTE = 60 * 1000;
 
@@ -36,11 +38,14 @@ const updatePage = async (page: number): Promise<void> => {
 			while (looping) {
 				looping = false;
 
-				const page = await wc3stats.replays.list({ page: pageNumber });
+				const page = await wc3stats.replays.list({
+					page: pageNumber,
+					map: "Ultimate Sheep Tag Fixus",
+				});
 				const replay = page.body[0];
 				if (replay && replay.processed) {
 					if (!replay.isVoid) {
-						console.log(new Date(), "new replay", replay.id);
+						logLine("fixus", "new replay", replay.id);
 						try {
 							executeCallbacks(
 								await wc3stats.replays.get(replay.id),
@@ -51,17 +56,15 @@ const updatePage = async (page: number): Promise<void> => {
 
 						looping = true;
 					} else
-						console.log(
-							new Date(),
-							"skipping voided replay",
-							replay.id,
-						);
+						logLine("fixus", "skipping voided replay", replay.id);
 
 					await updatePage(++pageNumber);
 				}
 			}
+
+			fetchReplayList((await kvGet("pageNumber", "number")) ?? 1);
 		});
 	} catch (err) {
-		console.log(new Date(), err);
+		logLine("fixus", err);
 	}
 })();

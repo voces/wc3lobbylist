@@ -6,6 +6,7 @@ import Discord, {
 } from "discord.js";
 
 import { isChannelGuildChannel, isTextChannel } from "./liveLobbies/util.js";
+import { logLine } from "./shared/log.js";
 
 if (!process.env.DISCORD_TOKEN) {
 	console.error(new Error("Environmental variable DISCORD_TOKEN not set"));
@@ -25,7 +26,7 @@ const ready: Deferred<void> = new Promise((resolve) =>
 	setTimeout(() => (ready.resolve = resolve)),
 );
 client.on("ready", async () => {
-	console.log(new Date(), "discord ready");
+	logLine("discord", "discord ready");
 
 	ready.resolve && ready.resolve();
 });
@@ -42,6 +43,7 @@ export class ChannelError extends Error {
 		this.channel = channel;
 	}
 }
+
 // method for sending messages
 const send = async (
 	channelId: string,

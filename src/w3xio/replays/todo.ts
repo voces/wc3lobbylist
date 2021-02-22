@@ -1,5 +1,6 @@
 import { github } from "../../shared/fetch.js";
 import { Replay } from "../../shared/fetchTypes";
+import { logLine } from "../../shared/log.js";
 import {
 	getRepoAndVersionInfo,
 	Metadata,
@@ -36,7 +37,7 @@ const newTodo = async ({
 		},
 	});
 
-	console.log(new Date(), "new todo", `${player}: ${message}`, response?.url);
+	logLine("fixus", "new todo", `${player}: ${message}`, response?.url);
 };
 
 onNewReplay(

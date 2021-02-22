@@ -1,3 +1,5 @@
+import { logLine } from "./shared/log.js";
+
 export const onExitHandlers: (() => Promise<void> | void)[] = [];
 let exiting = false;
 export const isExiting = (): boolean => exiting;
@@ -7,7 +9,7 @@ export const onProcessClose = async (): Promise<void> => {
 	if (killing) return;
 	killing = true;
 
-	console.log(new Date(), "received kill signal");
+	logLine("", "received kill signal");
 
 	exiting = true;
 

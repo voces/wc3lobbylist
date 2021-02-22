@@ -1,5 +1,6 @@
 import { github } from "../../shared/fetch.js";
 import { Replay } from "../../shared/fetchTypes.js";
+import { logLine } from "../../shared/log.js";
 import { query } from "../../shared/sql.js";
 import {
 	getRepoAndVersionInfo,
@@ -82,13 +83,13 @@ const newException = async ({
 			{ id: issueId, githubIssueId: newGithubIssueId },
 		);
 
-		console.log(new Date(), "new issue:", newGithubIssueId, url);
-	} else console.log(new Date(), "new exception:", githubIssueId);
+		logLine("fixus", "new issue:", newGithubIssueId, url);
+	} else logLine("fixus", "new exception:", githubIssueId);
 };
 
 onNewReplay(
 	async (replay: Replay): Promise<void> => {
-		console.log(new Date(), "processing", replay.id);
+		logLine("fixus", "processing", replay.id);
 
 		const events = replay.data.game.events.map(toEvent);
 		let metadata: Metadata | undefined;

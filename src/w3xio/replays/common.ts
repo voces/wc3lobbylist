@@ -1,4 +1,5 @@
 import { Replay, ReplayEvent } from "../../shared/fetchTypes.js";
+import { logLine } from "../../shared/log.js";
 import { query } from "../../shared/sql.js";
 import { CleanEvent } from "./types.js";
 
@@ -32,8 +33,8 @@ export const onNewReplay = (fn: (replay: Replay) => void): void => {
 	onNewReplayCallbacks.push(fn);
 };
 export const executeCallbacks = (replay: Replay): void => {
-	console.log(
-		new Date(),
+	logLine(
+		"fixus",
 		"executeCallbacks",
 		replay.id,
 		onNewReplayCallbacks.length,

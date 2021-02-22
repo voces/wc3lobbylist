@@ -1,24 +1,42 @@
-export type Player = {
+export interface List<T> {
+	body: T[];
+	code: number;
+	pagination: {
+		before: number;
+		current: number;
+		first: number;
+		last: number;
+		next: number;
+		perPage: number;
+		totalItems: number;
+		totalPages: number;
+	};
+	queryTime: number;
+	status: string;
+}
+
+export interface Player {
 	colour: number;
 	name: string;
-};
+}
 
-export type ReplayPartial = {
-	name: string;
-	map: string;
+export interface ReplayPartial {
 	flags: number;
+	id: number;
+	isVoid: boolean;
 	length: number;
+	map: string;
+	name: string;
 	playedOn: number;
 	processed: boolean;
-	isVoid: boolean;
-	id: number;
-};
+	variant?: string;
+}
 
 export type ReplaySummary = ReplayPartial & {
 	players: Player[];
 };
 
-export type Key = {
+export interface Key {
 	name: string;
 	key: {
 		map: string;
@@ -27,16 +45,16 @@ export type Key = {
 		round: string;
 		mode: string;
 	};
-};
+}
 
-export type Upload = {
+export interface Upload {
 	saver: string;
 	file: string;
 	size: number;
 	timestamp: number;
-};
+}
 
-export type ReplayHeader = {
+export interface ReplayHeader {
 	intro: string;
 	headerSize: number;
 	compressedSize: number;
@@ -49,9 +67,9 @@ export type ReplayHeader = {
 	flags: number;
 	length: number;
 	checksum: number;
-};
+}
 
-export type ReplayPlayer = {
+export interface ReplayPlayer {
 	type: number;
 	id: number;
 	name: string;
@@ -71,16 +89,16 @@ export type ReplayPlayer = {
 	activity: number[];
 	flags: string[];
 	variables: Record<string, string | number | null> | null;
-};
+}
 
-export type ReplayEventData = {
+export interface ReplayEventData {
 	id: number;
 	intro: string;
 	header: string;
 	message: string;
 	type: string;
 	eventName: string;
-};
+}
 
 export type ReplayEvent = ReplayEventData & {
 	event: ReplayEventData & {
@@ -92,7 +110,7 @@ export type ReplayEvent = ReplayEventData & {
 	args: string[];
 };
 
-export type ReplayGame = {
+export interface ReplayGame {
 	name: string;
 	speed: number;
 	visibility: number;
@@ -120,22 +138,22 @@ export type ReplayGame = {
 	events: ReplayEvent[];
 	saver: number;
 	hasW3MMD: boolean;
-};
+}
 
-export type ReplayChat = {
+export interface ReplayChat {
 	playerId: number;
 	length: number;
 	flags: number;
 	mode: number;
 	message: string;
 	time: number;
-};
+}
 
-export type ReplayData = {
+export interface ReplayData {
 	header: ReplayHeader;
 	game: ReplayGame;
 	chatlog: ReplayChat[];
-};
+}
 
 export type Replay = ReplayPartial & {
 	hash: string;
@@ -151,7 +169,7 @@ export type Replay = ReplayPartial & {
 	overrideable: boolean;
 };
 
-export type Wc3StatsLobby = {
+export interface Wc3StatsLobby {
 	checksum: undefined | string | number;
 	host: undefined | string;
 	id: undefined | string | number;
@@ -161,4 +179,4 @@ export type Wc3StatsLobby = {
 	slotsTaken: undefined | number;
 	slotsTotal: undefined | number;
 	created: undefined | number;
-};
+}

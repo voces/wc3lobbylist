@@ -1,6 +1,7 @@
 import "../commands/index.js";
 
 import { onExitHandlers } from "../close.js";
+import { logLine } from "../shared/log.js";
 import { periodic } from "../shared/periodic.js";
 import fetchLobbies, { Lobby } from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
@@ -23,7 +24,7 @@ periodic("liveLobbies", TEN_SECONDS, async () => {
 		return;
 	}
 
-	console.log(new Date(), "l", newLobbies.length);
+	logLine("live-lobbies", "l", newLobbies.length);
 
 	for (const newLobbiesHandler of newLobbiesHandlers)
 		try {
@@ -35,4 +36,4 @@ periodic("liveLobbies", TEN_SECONDS, async () => {
 
 onExitHandlers.push(v3OnExit);
 
-console.log(new Date(), "ready!", process.env.NODE_ENV);
+logLine("live-lobbies", "ready!", process.env.NODE_ENV);
