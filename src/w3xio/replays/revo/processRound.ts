@@ -31,7 +31,7 @@ export const getSeason = (unix: number): string => {
 };
 
 export const data: Data = { modes: {}, setups: {} };
-{
+(async () => {
 	const setups = (await query("SELECT DISTINCT setup FROM elo.round;")) as {
 		setup: string;
 	}[];
@@ -63,7 +63,7 @@ export const data: Data = { modes: {}, setups: {} };
 		const seasonData = modeData[season] ?? (modeData[season] = {});
 		seasonData[player] = { rating, rounds };
 	}
-}
+})();
 
 const queryData = async (
 	setup: string,
