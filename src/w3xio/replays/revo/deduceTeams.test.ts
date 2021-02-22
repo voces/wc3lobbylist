@@ -1,4 +1,4 @@
-import { deduceTeams } from "./deduceTeams.js";
+import { deduceTeams } from "./deduceTeams";
 
 const test = (
 	teams: string,

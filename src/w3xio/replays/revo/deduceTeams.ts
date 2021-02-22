@@ -1,7 +1,3 @@
-import { logLine } from "../../../shared/log.js";
-
-const ROUND_DEBUGGING = false;
-
 const canBeOneChar = (
 	oneCharSlot: number,
 	playerIds: number[],
@@ -60,8 +56,7 @@ export const deduceTeams = (
 					? possibility.sheep[possibility.sheep.length - 1]
 					: possibility.wolves[possibility.wolves.length - 1]) ?? -1,
 			)
-		) {
-			if (ROUND_DEBUGGING) logLine("revo", "one char", oneCharSlot);
+		)
 			possibilities.push({
 				team: twoCharSlice.includes("v") ? "wolf" : possibility.team,
 				cursor: twoCharSlice.includes("v")
@@ -77,7 +72,6 @@ export const deduceTeams = (
 						: possibility.wolves,
 				usedSlots: [...possibility.usedSlots, oneCharSlot],
 			});
-		}
 
 		if (
 			canBeTwoChar(
@@ -88,8 +82,7 @@ export const deduceTeams = (
 					? possibility.sheep[possibility.sheep.length - 1]
 					: possibility.wolves[possibility.wolves.length - 1]) ?? -1,
 			)
-		) {
-			if (ROUND_DEBUGGING) logLine("revo", "two char", twoCharSlot);
+		)
 			possibilities.push({
 				team: nextCharIfTwoSlot === "v" ? "wolf" : possibility.team,
 				cursor:
@@ -106,7 +99,6 @@ export const deduceTeams = (
 						: possibility.wolves,
 				usedSlots: [...possibility.usedSlots, twoCharSlot],
 			});
-		}
 
 		possibilityIndex = possibilities.findIndex(
 			(p) => p.cursor < round.length,
