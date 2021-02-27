@@ -46,6 +46,6 @@ export const last = async (message: Message): Promise<void> => {
 							.map(cleanUsername),
 					)}`,
 			)
-			.join("\n")}\`\`\``,
+			.join("\n\n")}\`\`\``,
 	);
 };
