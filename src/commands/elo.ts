@@ -44,7 +44,8 @@ export const elo = async (message: Message, args: string[]): Promise<void> => {
 	message.reply(
 		`your rating in ${mode} in ${season} is ${rating.rating} with ${
 			rating.rounds
-		} rounds. Here are your last ten games:\`\`\`
+		} rounds. Here are your last ten games:
+\`\`\`
 Date                          Change  Replay
 ${history
 	.map(

@@ -5,6 +5,7 @@ import { config, saveConfig } from "../config.js";
 import discord from "../discord.js";
 import { info, logLine } from "../shared/log.js";
 import { elo } from "./elo.js";
+import { last } from "./last.js";
 import { matchup } from "./matchup.js";
 import { parser } from "./parser.js";
 import { rounds } from "./rounds.js";
@@ -110,6 +111,10 @@ const processCommand = async (
 			await rounds(message, rest);
 			break;
 		}
+		case "last": {
+			await last(message);
+			break;
+		}
 		case "bulkdelete": {
 			if (message.channel.type === "dm") {
 				message.reply("cannot bulk delete in dm channels");
@@ -179,7 +184,7 @@ discord.on("message", async (message) => {
 	);
 
 	try {
-		await processCommand(message, command, rest);
+		await processCommand(message, command.toLocaleLowerCase(), rest);
 	} catch (err) {
 		logLine("discord", err);
 	}

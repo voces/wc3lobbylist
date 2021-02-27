@@ -31,7 +31,8 @@ export const top = async (message: Message, args: string[]): Promise<void> => {
 	);
 
 	message.reply(
-		`top 10 in ${mode} in ${season}:\`\`\`${results
+		`top 10 in ${mode} in ${season}:
+\`\`\`${results
 			.map(
 				(r) =>
 					`${r.player.padEnd(
