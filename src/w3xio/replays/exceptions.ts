@@ -32,10 +32,10 @@ const newException = async ({
 
 	// get the issue
 	const { id: issueId, githubIssueId } = (
-		await query(
+		await query<[unknown, { id: number; githubIssueId: number }[]]>(
 			`
 				INSERT IGNORE INTO issues (\`key\`, filename, line, message, versionId) VALUES (:key, :filename, :line, :message, :version);
-				SELECT * FROM issues WHERE \`key\` = :key AND filename = :filename AND line = :line AND versionId = :version;
+				SELECT id, githubIssueId FROM issues WHERE \`key\` = :key AND filename = :filename AND line = :line AND versionId = :version;
 			`,
 			{ key, filename, line, message, version: versionId },
 		)

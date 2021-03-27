@@ -12,7 +12,7 @@ import { fetchReplayList } from "./revo/fetchReplayList.js";
 const ONE_MINUTE = 60 * 1000;
 
 const fetchConfig = async (): Promise<{ key: string; value: string }[]> =>
-	(await query("SELECT * from config;")) as { key: string; value: string }[];
+	await query("SELECT * from config;");
 
 const updatePage = async (page: number): Promise<void> => {
 	try {

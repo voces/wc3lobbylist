@@ -17,10 +17,10 @@ app.get("/preferences", async (req, res) => {
 
 	const players = rawPlayers.split(",");
 
-	const result = (await query(
+	const result = await query<{ player: string; bias: number }[]>(
 		"SELECT player, bias FROM fixusbias WHERE player IN (:players);",
 		{ players },
-	)) as { player: string; bias: number }[];
+	);
 
 	res.json(
 		Object.fromEntries(result.map(({ player, bias }) => [player, bias])),

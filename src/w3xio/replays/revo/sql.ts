@@ -1,5 +1,6 @@
 // import { config } from "../../../../config.js";
 // import discord from "../../../discord.js";
+import discord from "../../../discord.js";
 import { Replay } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
 import { query } from "../../../shared/sql.js";
@@ -67,39 +68,44 @@ export const endRound = (): void => {
 	currentRound = undefined;
 };
 
-const summarize = (replay: ReplayData) => {
-	const players = Array.from(
+const summarize = async (replay: ReplayData) => {
+	const rawPlayers = Array.from(
 		new Set(
 			replay.rounds
 				.flatMap((r) => r.outcomes)
 				.sort((a, b) => b.rating - a.rating)
 				.map((p) => p.player),
 		),
-	).map(cleanUsername);
+	);
+	const players = rawPlayers.map(cleanUsername);
+
+	const grouped = Object.values(
+		replay.rounds.reduce((data, round) => {
+			const setupData =
+				data[round.setup] ??
+				(data[round.setup] = {
+					setup: round.setup,
+					rounds: 0,
+					players: {},
+				});
+			setupData.rounds++;
+			round.outcomes.forEach((o) => {
+				setupData.players[o.player] = {
+					change:
+						(setupData.players[o.player]?.change ?? 0) + o.change,
+					rating: o.rating,
+				};
+			});
+			return data;
+		}, {} as Record<string, { setup: string; rounds: number; players: Record<string, { rating: number; change: number }> }>),
+	);
 
 	const modes =
 		formatList(
-			Object.values(
-				replay.rounds.reduce((data, round) => {
-					const setupData =
-						data[round.setup] ??
-						(data[round.setup] = {
-							setup: round.setup,
-							rounds: 0,
-							players: {},
-						});
-					setupData.rounds++;
-					round.outcomes.forEach(
-						(o) =>
-							(setupData.players[o.player] =
-								(setupData.players[o.player] ?? 0) + o.change),
-					);
-					return data;
-				}, {} as Record<string, { setup: string; rounds: number; players: Record<string, number> }>),
-			).map((mode) => {
+			grouped.map((mode) => {
 				const trendingUpPlayers = Object.entries(mode.players)
-					.filter(([, c]) => c > 0)
-					.sort((a, b) => b[1] - a[1])
+					.filter(([, c]) => c.change > 0)
+					.sort((a, b) => b[1].change - a[1].change)
 					.map((o) => cleanUsername(o[0]));
 
 				return `${mode.rounds}${
@@ -119,6 +125,44 @@ const summarize = (replay: ReplayData) => {
 	// 	config.revo.channel,
 	// 	`${formatList(players)} just finished ${modes}`,
 	// );
+
+	const r = await query<{ discordid: string; battlenettag: string }[]>(
+		`
+		SELECT discordid, battlenettag
+		FROM discordBattleNetMap
+		WHERE battlenettag IN (?) AND alert = 1;
+		`,
+		rawPlayers,
+	);
+
+	for (const { discordid, battlenettag } of r) {
+		const modeData = grouped
+			.map(({ setup, players }) => ({
+				setup,
+				score: players[battlenettag],
+			}))
+			.filter((m) => typeof m.score === "number");
+
+		if (modeData.length === 0) continue;
+
+		const user = await discord.users.fetch(discordid);
+		user.send(
+			`Replay processed! You went ${formatList(
+				modeData.map(
+					({ score, setup }) =>
+						`${score.change > 0 ? "up" : "down"} ${Math.abs(
+							score.change,
+						).toPrecision(2)} to ${Math.round(
+							score.rating,
+						)} in ${setup} ${
+							score.change > 0
+								? ":chart_with_upwards_trend:"
+								: ":chart_with_downwards_trend:"
+						}`,
+				),
+			)}.\nhttps://wc3stats.com/games/${replay.replayId}`,
+		);
+	}
 };
 
 export const endReplay = async (): Promise<void> => {
@@ -131,8 +175,6 @@ export const endReplay = async (): Promise<void> => {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { rounds, maxRankedRounds: _, ...replay } = currentReplay;
-
-	summarize(currentReplay);
 
 	await query(
 		`
@@ -155,6 +197,8 @@ export const endReplay = async (): Promise<void> => {
 			),
 		],
 	);
+
+	await summarize(currentReplay);
 
 	currentReplay = undefined;
 };

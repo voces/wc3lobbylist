@@ -4,10 +4,10 @@ import { query } from "../shared/sql.js";
 import { getSeason } from "../w3xio/replays/revo/processRound.js";
 
 export const elo = async (message: Message, args: string[]): Promise<void> => {
-	const name = await query(
+	const name = await query<{ battlenettag: string }[]>(
 		"SELECT battlenettag FROM elo.discordBattleNetMap WHERE discordid = ?;",
 		[message.author.id],
-	).then((r: { battlenettag: string }[]) => r[0]?.battlenettag);
+	).then((r) => r[0]?.battlenettag);
 
 	if (!name) {
 		message.reply(
@@ -18,15 +18,12 @@ export const elo = async (message: Message, args: string[]): Promise<void> => {
 
 	const [mode = "2v4", season = getSeason(Date.now() / 1000)] = args;
 
-	const [rating, history]: [
-		{ rating: number; rounds: number },
-		{ playedon: Date; change: number; replayid: string }[],
-	] = await Promise.all([
-		query(
-			"SELECT * FROM elo.elos WHERE player = ? AND `mode` = ? AND season = ?;",
+	const [rating, history] = await Promise.all([
+		query<{ rating: number; rounds: number }[]>(
+			"SELECT rating, rounds FROM elo.elos WHERE player = ? AND `mode` = ? AND season = ?;",
 			[name, mode, season],
 		).then((r) => r[0]),
-		query(
+		query<{ playedon: Date; change: number; replayid: string }[]>(
 			`SELECT playedon, SUM(\`change\`) \`change\`, replay.replayid
 			FROM elo.outcome
 				INNER JOIN elo.replay ON outcome.replayid = replay.replayid

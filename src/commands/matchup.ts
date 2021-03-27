@@ -17,7 +17,7 @@ const fromEntriesGroup = <V extends string, K>(
 };
 
 const queryFullPlayerNames = (players: string[]) =>
-	query(
+	query<{ input: string; player: string }[][]>(
 		players
 			.map(
 				() =>
@@ -25,9 +25,7 @@ const queryFullPlayerNames = (players: string[]) =>
 			)
 			.join("\n"),
 		players.flatMap((r) => [r, r + "%"]),
-	).then((r: { input: string; player: string }[][]) =>
-		fromEntriesGroup(r.flat().map((r) => [r.input, r.player])),
-	);
+	).then((r) => fromEntriesGroup(r.flat().map((r) => [r.input, r.player])));
 
 export const matchup = async (
 	message: Message,

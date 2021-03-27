@@ -59,8 +59,8 @@ export const getRepoAndVersionInfo = async (
 	const version = replay.data.game.map;
 
 	// get the repo id
-	const row: { id: number; token: string } = (
-		await query(
+	const row = (
+		await query<{ id: number; token: string }[]>(
 			`
 		SELECT repos.id, token
 		FROM repos
@@ -75,10 +75,10 @@ export const getRepoAndVersionInfo = async (
 
 	// get the version id
 	const versionId = (
-		await query(
+		await query<[unknown, { id: number }[]]>(
 			`
 		INSERT IGNORE INTO versions (\`version\`, repo) VALUES (:version, :repo);
-		SELECT * FROM versions WHERE \`version\` = :version AND repo = :repo;
+		SELECT id, repo FROM versions WHERE \`version\` = :version AND repo = :repo;
 	`,
 			{ version, repo: repoId },
 		)

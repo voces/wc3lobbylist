@@ -8,16 +8,16 @@ export const top = async (message: Message, args: string[]): Promise<void> => {
 	const [mode = "2v4", season = getSeason(Date.now() / 1000)] = args;
 	const results = [
 		{ rounds: "Rounds", rating: "Rating", player: "" },
-		...((await query(
-			"SELECT player, rating, rounds FROM elo.elos WHERE season = ? AND `mode` = ? ORDER BY rating DESC LIMIT 10;",
-			[season, mode],
-		)) as { player: string; rating: number; rounds: number }[]).map(
-			(r) => ({
-				rounds: r.rounds,
-				rating: Math.round(r.rating),
-				player: cleanUsername(r.player),
-			}),
-		),
+		...(
+			await query<{ player: string; rating: number; rounds: number }[]>(
+				"SELECT player, rating, rounds FROM elo.elos WHERE season = ? AND `mode` = ? ORDER BY rating DESC LIMIT 10;",
+				[season, mode],
+			)
+		).map((r) => ({
+			rounds: r.rounds,
+			rating: Math.round(r.rating),
+			player: cleanUsername(r.player),
+		})),
 	];
 
 	if (results.length === 1) {

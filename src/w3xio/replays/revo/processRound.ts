@@ -32,31 +32,37 @@ export const getSeason = (unix: number): string => {
 
 export const data: Data = { modes: {}, setups: {} };
 (async () => {
-	const setups = (await query("SELECT DISTINCT setup FROM elo.round;")) as {
-		setup: string;
-	}[];
+	const setups = await query<
+		{
+			setup: string;
+		}[]
+	>("SELECT DISTINCT setup FROM elo.round;");
 
 	await Promise.all(
 		setups.map(async ({ setup }) => {
-			data.setups[setup] = ((await query(
-				`SELECT duration
+			data.setups[setup] = (
+				await query<{ duration: number }[]>(
+					`SELECT duration
 				FROM elo.round
 				LEFT JOIN elo.replay ON round.replayId = replay.replayId
 				WHERE setup = ?
 				ORDER BY playedon DESC
 				LIMIT 100;`,
-				[setup],
-			)) as { duration: number }[]).map((r) => r.duration);
+					[setup],
+				)
+			).map((r) => r.duration);
 		}),
 	);
 
-	const rawElos = (await query("SELECT * FROM elo.elos;")) as {
-		player: string;
-		season: string;
-		mode: string;
-		rating: number;
-		rounds: number;
-	}[];
+	const rawElos = await query<
+		{
+			player: string;
+			season: string;
+			mode: string;
+			rating: number;
+			rounds: number;
+		}[]
+	>("SELECT * FROM elo.elos;");
 
 	for (const { mode, season, rating, rounds, player } of rawElos) {
 		const modeData = data.modes[mode] ?? (data.modes[mode] = {});

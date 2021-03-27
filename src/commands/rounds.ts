@@ -13,20 +13,22 @@ export const rounds = async (
 		return;
 	}
 
-	const data = (await query(
+	const data = await query<
+		{
+			round: number;
+			mode: string;
+			player: string;
+			change: number;
+			duration: number;
+		}[]
+	>(
 		`SELECT round.round, \`mode\`, player, \`change\`, duration
 		FROM elo.outcome
 		INNER JOIN elo.round ON outcome.replayid = round.replayid
 			AND outcome.round = round.round
 		WHERE outcome.replayid = ?;`,
 		[replay],
-	)) as {
-		round: string;
-		mode: string;
-		player: string;
-		change: number;
-		duration: number;
-	}[];
+	);
 
 	if (!data.length) {
 		message.reply("no rounds found.");
