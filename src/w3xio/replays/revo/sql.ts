@@ -129,7 +129,7 @@ const summarize = async (replay: ReplayData) => {
 	const r = await query<{ discordid: string; battlenettag: string }[]>(
 		`
 		SELECT discordid, battlenettag
-		FROM discordBattleNetMap
+		FROM elo.discordBattleNetMap
 		WHERE battlenettag IN (?) AND alert = 1;
 		`,
 		rawPlayers,
