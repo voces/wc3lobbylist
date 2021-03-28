@@ -132,7 +132,7 @@ const summarize = async (replay: ReplayData) => {
 		FROM elo.discordBattleNetMap
 		WHERE battlenettag IN (?) AND alert = 1;
 		`,
-		rawPlayers,
+		[rawPlayers],
 	);
 
 	try {
