@@ -1,10 +1,7 @@
-// import { config } from "../../../../config.js";
-// import discord from "../../../discord.js";
 import discord from "../../../discord.js";
 import { Replay } from "../../../shared/fetchTypes.js";
-import { logLine } from "../../../shared/log.js";
 import { query } from "../../../shared/sql.js";
-import { cleanUsername, formatList } from "../../../shared/util.js";
+import { formatList } from "../../../shared/util.js";
 import { Round } from "./types.js";
 
 interface RoundData {
@@ -69,7 +66,7 @@ export const endRound = (): void => {
 };
 
 const summarize = async (replay: ReplayData) => {
-	const rawPlayers = Array.from(
+	const players = Array.from(
 		new Set(
 			replay.rounds
 				.flatMap((r) => r.outcomes)
@@ -77,19 +74,13 @@ const summarize = async (replay: ReplayData) => {
 				.map((p) => p.player),
 		),
 	);
-	const players = rawPlayers.map(cleanUsername);
 
 	const grouped = Object.values(
 		replay.rounds.reduce((data, round) => {
-			const setupData =
-				data[round.setup] ??
-				(data[round.setup] = {
-					setup: round.setup,
-					rounds: 0,
-					players: {},
-				});
-			setupData.rounds++;
 			round.outcomes.forEach((o) => {
+				const setup = o.mode;
+				const setupData =
+					data[setup] ?? (data[setup] = { setup, players: {} });
 				setupData.players[o.player] = {
 					change:
 						(setupData.players[o.player]?.change ?? 0) + o.change,
@@ -97,34 +88,8 @@ const summarize = async (replay: ReplayData) => {
 				};
 			});
 			return data;
-		}, {} as Record<string, { setup: string; rounds: number; players: Record<string, { rating: number; change: number }> }>),
+		}, {} as Record<string, { setup: string; players: Record<string, { rating: number; change: number }> }>),
 	);
-
-	const modes =
-		formatList(
-			grouped.map((mode) => {
-				const trendingUpPlayers = Object.entries(mode.players)
-					.filter(([, c]) => c.change > 0)
-					.sort((a, b) => b[1].change - a[1].change)
-					.map((o) => cleanUsername(o[0]));
-
-				return `${mode.rounds}${
-					replay.maxRankedRounds ? "+" : ""
-				} rounds of ${mode.setup}${
-					trendingUpPlayers.length
-						? ` (${formatList(
-								trendingUpPlayers,
-						  )} :chart_with_upwards_trend:)`
-						: ""
-				}`;
-			}),
-		) + `\nhttps://wc3stats.com/games/${replay.replayId}`;
-
-	logLine("revo", `${formatList(players)} just finished ${modes}`);
-	// discord.send(
-	// 	config.revo.channel,
-	// 	`${formatList(players)} just finished ${modes}`,
-	// );
 
 	const r = await query<{ discordid: string; battlenettag: string }[]>(
 		`
@@ -132,44 +97,38 @@ const summarize = async (replay: ReplayData) => {
 		FROM elo.discordBattleNetMap
 		WHERE battlenettag IN (?) AND alert = 1;
 		`,
-		[rawPlayers],
+		[players],
 	);
 
-	try {
-		for (const { discordid, battlenettag } of r) {
-			const modeData = grouped
-				.map(({ setup, players }) => ({
-					setup,
-					score: players[battlenettag],
-				}))
-				.filter((m) => typeof m.score === "number");
+	for (const { discordid, battlenettag } of r) {
+		const modeData = grouped
+			.map(({ setup, players }) => ({
+				setup,
+				score: players[battlenettag],
+			}))
+			.filter((m) => m.score !== undefined);
 
-			if (modeData.length === 0) continue;
+		if (modeData.length === 0) continue;
 
-			try {
-				const user = await discord.users.fetch(discordid);
-				user.send(
-					`Replay processed! You went ${formatList(
-						modeData.map(
-							({ score, setup }) =>
-								`${score.change > 0 ? "up" : "down"} ${Math.abs(
-									score.change,
-								).toPrecision(2)} to ${Math.round(
-									score.rating,
-								)} in ${setup} ${
-									score.change > 0
-										? ":chart_with_upwards_trend:"
-										: ":chart_with_downwards_trend:"
-								}`,
-						),
-					)}.\nhttps://wc3stats.com/games/${replay.replayId}`,
-				);
-			} catch (err) {
-				console.error(err);
-			}
-		}
-	} catch (err) {
-		console.error(err);
+		const user = await discord.users.fetch(discordid);
+		user.send(
+			`Replay processed! You went ${formatList(
+				modeData
+					.sort((a, b) => a.setup.localeCompare(b.setup))
+					.map(
+						({ score, setup }) =>
+							`${score.change > 0 ? "up" : "down"} ${Math.abs(
+								score.change,
+							).toPrecision(2)} to ${Math.round(
+								score.rating,
+							)} in ${setup} ${
+								score.change > 0
+									? ":chart_with_upwards_trend:"
+									: ":chart_with_downwards_trend:"
+							}`,
+					),
+			)}.\nhttps://wc3stats.com/games/${replay.replayId}`,
+		);
 	}
 };
 
