@@ -206,7 +206,11 @@ export const endReplay = async (): Promise<void> => {
 		],
 	);
 
-	await summarize(currentReplay);
+	try {
+		await summarize(currentReplay);
+	} catch (err) {
+		console.error(err);
+	}
 
 	currentReplay = undefined;
 };
