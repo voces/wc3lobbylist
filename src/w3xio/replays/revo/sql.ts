@@ -135,33 +135,41 @@ const summarize = async (replay: ReplayData) => {
 		rawPlayers,
 	);
 
-	for (const { discordid, battlenettag } of r) {
-		const modeData = grouped
-			.map(({ setup, players }) => ({
-				setup,
-				score: players[battlenettag],
-			}))
-			.filter((m) => typeof m.score === "number");
+	try {
+		for (const { discordid, battlenettag } of r) {
+			const modeData = grouped
+				.map(({ setup, players }) => ({
+					setup,
+					score: players[battlenettag],
+				}))
+				.filter((m) => typeof m.score === "number");
 
-		if (modeData.length === 0) continue;
+			if (modeData.length === 0) continue;
 
-		const user = await discord.users.fetch(discordid);
-		user.send(
-			`Replay processed! You went ${formatList(
-				modeData.map(
-					({ score, setup }) =>
-						`${score.change > 0 ? "up" : "down"} ${Math.abs(
-							score.change,
-						).toPrecision(2)} to ${Math.round(
-							score.rating,
-						)} in ${setup} ${
-							score.change > 0
-								? ":chart_with_upwards_trend:"
-								: ":chart_with_downwards_trend:"
-						}`,
-				),
-			)}.\nhttps://wc3stats.com/games/${replay.replayId}`,
-		);
+			try {
+				const user = await discord.users.fetch(discordid);
+				user.send(
+					`Replay processed! You went ${formatList(
+						modeData.map(
+							({ score, setup }) =>
+								`${score.change > 0 ? "up" : "down"} ${Math.abs(
+									score.change,
+								).toPrecision(2)} to ${Math.round(
+									score.rating,
+								)} in ${setup} ${
+									score.change > 0
+										? ":chart_with_upwards_trend:"
+										: ":chart_with_downwards_trend:"
+								}`,
+						),
+					)}.\nhttps://wc3stats.com/games/${replay.replayId}`,
+				);
+			} catch (err) {
+				console.error(err);
+			}
+		}
+	} catch (err) {
+		console.error(err);
 	}
 };
 
