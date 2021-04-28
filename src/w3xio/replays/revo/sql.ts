@@ -132,7 +132,7 @@ const summarize = async (replay: ReplayData) => {
 	}
 };
 
-export const endReplay = async (): Promise<void> => {
+export const endReplay = async (pageNumber: number): Promise<void> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
 	if (currentReplay.rounds.length === 0) {
@@ -150,7 +150,7 @@ export const endReplay = async (): Promise<void> => {
 		INSERT elo.outcome VALUES ?;
 		`,
 		[
-			replay,
+			{ ...replay, pageNumber },
 			rounds.map((r) => [replay.replayId, r.round, r.setup, r.duration]),
 			rounds.flatMap((r) =>
 				r.outcomes.map((o) => [

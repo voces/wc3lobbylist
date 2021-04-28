@@ -1,9 +1,11 @@
 import { Message } from "discord.js";
 
+import { config as appConfig } from "../../config.js";
 import { onProcessClose } from "../close.js";
 import { config, saveConfig } from "../config.js";
 import discord from "../discord.js";
 import { info, logLine } from "../shared/log.js";
+import { deleteReplay } from "./deleteReplay.js";
 import { elo } from "./elo.js";
 import { last } from "./last.js";
 import { matchup } from "./matchup.js";
@@ -79,10 +81,7 @@ const processCommand = async (
 			break;
 		}
 		case "restart": {
-			if (
-				message.author.id !== "287706612456751104" // verit
-			)
-				return;
+			if (message.author.id !== appConfig.admin) return;
 
 			try {
 				await message.reply("restarting...");
@@ -113,6 +112,12 @@ const processCommand = async (
 		}
 		case "last": {
 			await last(message);
+			break;
+		}
+		case "deletereplay": {
+			if (message.author.id !== appConfig.admin) return;
+
+			await deleteReplay(message, rest);
 			break;
 		}
 		case "bulkdelete": {
@@ -153,7 +158,7 @@ discord.on("message", async (message) => {
 		(message.channel.type !== "dm" &&
 			(!guildMember ||
 				(!guildMember.hasPermission("MANAGE_MESSAGES") &&
-					message.author.id !== "287706612456751104"))) // verit
+					message.author.id !== appConfig.admin)))
 	)
 		return;
 

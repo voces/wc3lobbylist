@@ -31,7 +31,11 @@ export const getSeason = (unix: number): string => {
 };
 
 export const data: Data = { modes: {}, setups: {} };
-(async () => {
+export const fetchData = async (): Promise<void> => {
+	// Reset it
+	data.modes = {};
+	data.setups = {};
+
 	const setups = await query<
 		{
 			setup: string;
@@ -69,7 +73,8 @@ export const data: Data = { modes: {}, setups: {} };
 		const seasonData = modeData[season] ?? (modeData[season] = {});
 		seasonData[player] = { rating, rounds };
 	}
-})();
+};
+fetchData();
 
 const queryData = async (
 	setup: string,

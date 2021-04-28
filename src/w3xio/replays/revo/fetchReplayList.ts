@@ -24,7 +24,7 @@ export const fetchReplayList = async (pageNumber: number): Promise<void> => {
 			map.includes("revolution") || variant.includes("revolution");
 
 		if (isRevo && replay.processed && !replay.isVoid)
-			await processReplay(replay);
+			await processReplay(replay, pageNumber);
 	}
 
 	await kvSet("pageNumber", pageNumber + 1);

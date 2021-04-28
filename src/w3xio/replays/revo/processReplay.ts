@@ -43,6 +43,7 @@ const getSkipReplayReason = (game: ReplayGame) => {
 
 export const processReplay = async (
 	replaySummary: ReplaySummary,
+	pageNumber: number,
 ): Promise<void> => {
 	logLine("revo", "processing replay", replaySummary.id);
 
@@ -183,5 +184,5 @@ export const processReplay = async (
 		endRound();
 	}
 
-	await endReplay();
+	await endReplay(pageNumber);
 };
