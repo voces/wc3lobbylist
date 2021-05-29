@@ -6,14 +6,15 @@ export const summary = async (
 	message: Message,
 	args: string[],
 ): Promise<void> => {
-	const [replayid, mode = "2v4"] = args;
+	let replayid = args[0];
+	const mode = args[1] ?? "2v4";
 
-	if (!replayid) {
-		message.reply("incorrect syntax. Example: summary 93556");
-		return;
-	}
+	if (!replayid)
+		replayid = await query<{ replayid: number }[]>(
+			"SELECT replayid FROM elo.replay ORDER BY replayid DESC LIMIT 1;",
+		).then((d) => d[0].replayid.toString());
 
-	const data = await query<
+	let data = await query<
 		{
 			player: string;
 			change: number;
@@ -31,6 +32,8 @@ export const summary = async (
 		return;
 	}
 
+	data = data.map((r) => ({ ...r, player: r.player.split("#")[0] }));
+
 	const maxNameLength = data.reduce(
 		(max, r) => (max > r.player.length ? max : r.player.length),
 		6,
@@ -39,6 +42,8 @@ export const summary = async (
 	message.reply(
 		"changes in " +
 			mode +
+			" for " +
+			replayid +
 			":\n```\n" +
 			"Player".padStart(maxNameLength) +
 			" Change  Best Worst Rounds\n" +
