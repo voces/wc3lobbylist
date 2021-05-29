@@ -7,11 +7,14 @@ import discord from "../discord.js";
 import { info, logLine } from "../shared/log.js";
 import { deleteReplay } from "./deleteReplay.js";
 import { elo } from "./elo.js";
+import { js } from "./js.js";
 import { last } from "./last.js";
 import { matchup } from "./matchup.js";
 import { parser } from "./parser.js";
 import { rounds } from "./rounds.js";
+import { sql } from "./sql.js";
 import { stringifyReplacer } from "./stringify.js";
+import { summary } from "./summary.js";
 import { top } from "./top.js";
 
 const checkAlert = (message: Message): void => {
@@ -112,6 +115,22 @@ const processCommand = async (
 		}
 		case "last": {
 			await last(message);
+			break;
+		}
+		case "summary": {
+			await summary(message, rest);
+			break;
+		}
+		case "sql": {
+			if (message.author.id !== appConfig.admin) return;
+
+			await sql(message, rest);
+			break;
+		}
+		case "js": {
+			if (message.author.id !== appConfig.admin) return;
+
+			await js(message, rest);
 			break;
 		}
 		case "deletereplay": {
