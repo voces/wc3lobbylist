@@ -7,11 +7,12 @@ export const rounds = async (
 	message: Message,
 	args: string[],
 ): Promise<void> => {
-	const [replay] = args;
-	if (!replay) {
-		message.reply("incorrect syntax. Example: rounds 93556");
-		return;
-	}
+	let [replay] = args;
+
+	if (!replay)
+		replay = await query<{ replayid: number }[]>(
+			"SELECT replayid FROM elo.replay ORDER BY replayid DESC LIMIT 1;",
+		).then((d) => d[0].replayid.toString());
 
 	const data = await query<
 		{
