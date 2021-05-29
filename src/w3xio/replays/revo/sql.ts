@@ -127,7 +127,8 @@ const summarize = async (replay: ReplayData) => {
 									: ":chart_with_downwards_trend:"
 							}`,
 					),
-			)}.\nhttps://wc3stats.com/games/${replay.replayId}`,
+			)}.
+https://wc3stats.com/games/${replay.replayId}`,
 		);
 	}
 };

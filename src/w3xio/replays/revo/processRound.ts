@@ -190,6 +190,7 @@ const K = 16;
 
 export const avg = (a: number, b: number, _: number, arr: number[]): number =>
 	a + b / arr.length;
+
 const getMaxTime = (mode: string) => {
 	if (mode === "2v4") return 360;
 	if (mode === "3v5") return 600;
