@@ -35,6 +35,7 @@ const trackedMaps = [
 	"Sheep Tag ReVoLuTiOn 9.0.6.w3x",
 	"Sheep Tag ReVoLuTiOn 9.0.7.w3x",
 	"Sheep Tag ReVoLuTiOn 9.0.8.w3x",
+	"Sheep Tag ReVoLuTiOn 9.0.9.w3x",
 	"Sheep Tag ReVoLuTiOn Cagematch 8.6.3.w3x",
 	"Sheep Tag ReVoLuTiOn Xmas 9.0.5.w3x",
 	"Sheep Tag ReVoLuTiOn Xmas 9.0.6.w3x",
