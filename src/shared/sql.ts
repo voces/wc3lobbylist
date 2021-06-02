@@ -1,4 +1,5 @@
 import MySQL from "mysql2/promise";
+export { format } from "mysql2";
 
 import { config } from "../../config.js";
 

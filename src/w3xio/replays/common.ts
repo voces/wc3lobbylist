@@ -18,8 +18,6 @@ export const toEvent = (replayEvent: ReplayEvent): CleanEvent => {
 		event[replayEvent.event.params[i]] =
 			typeof replayEvent.args[i] === "string"
 				? replayEvent.args[i]
-						// w3mmd uses "\ " for spaces in values instead of just " "
-						.replace(/\\ /g, " ")
 						// we use to color strings, which looks like `|cff012345"abc"|r`
 						.replace(/\|cff[0-9a-fA-F]{6}"/g, "")
 						.replace(/"\|r/g, "")

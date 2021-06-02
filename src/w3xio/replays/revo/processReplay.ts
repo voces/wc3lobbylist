@@ -1,10 +1,9 @@
 import { wc3stats } from "../../../shared/fetch.js";
 import { ReplayGame, ReplaySummary } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
-import { deduceTeams } from "./deduceTeams.js";
+import { deduceRounds } from "./deduceRounds.js";
 import { processRound } from "./processRound.js";
 import { endReplay, endRound, startReplay, startRound } from "./sql.js";
-import { Round } from "./types.js";
 
 export const LOG = false;
 
@@ -47,7 +46,8 @@ const getSkipReplayReason = (game: ReplayGame) => {
 export const processReplay = async (
 	replaySummary: ReplaySummary,
 	pageNumber: number,
-): Promise<void> => {
+	save = true,
+): Promise<string | undefined> => {
 	logLine("revo", "processing replay", replaySummary.id);
 
 	const skipListReplayReason = getSkipListReplayReason(replaySummary);
@@ -79,106 +79,9 @@ export const processReplay = async (
 		return;
 	}
 
-	const players = replay.data.game.players;
-	const recordKeeper = players.find((p) => p.variables?.setup);
-	if (!recordKeeper) {
-		if (LOG)
-			logLine(
-				"revo",
-				"Skipping replay with no data",
-				replay.id,
-				"from",
-				new Date(replaySummary.playedOn * 1000),
-			);
-		return;
-	}
+	const rounds = deduceRounds(replay);
 
-	const playerTimes: {
-		times: number[];
-		cursor: number;
-		slot: number;
-		name: string;
-	}[] = [];
-	players.forEach((p) => {
-		playerTimes[p.slot] = {
-			times: (p.variables?.roundTimes?.toString() ?? "")
-				.split("|")
-				.map((round: string) => round.trim())
-				.filter(Boolean)
-				.map((round: string) => parseFloat(round)),
-			slot: p.slot,
-			cursor: 0,
-			name: p.name,
-		};
-	});
-
-	const rawSetup = recordKeeper.variables!.setup!.toString();
-	let max = false;
-	if (rawSetup.length === 218 && LOG) {
-		max = true;
-		logLine(
-			"revo",
-			"Max w3mmd value setup encountered; skipping last rounds",
-		);
-	}
-	const setup =
-		rawSetup.length === 218
-			? rawSetup.slice(0, rawSetup.lastIndexOf(" "))
-			: rawSetup;
-
-	const playerIds = players.map((p) => p.slot);
-
-	const teams = setup
-		.split(" ")
-		.map((round: string) => deduceTeams(playerIds, round.toLowerCase()))
-		.filter((v): v is [number[], number[]] => !!v);
-
-	const rounds = teams
-		.map(([sheep, wolves], matchId) => {
-			let time: number | undefined;
-			let inconsistentTime = false;
-			sheep.forEach((s: number, index: number) => {
-				const playerTime =
-					playerTimes[s].times[playerTimes[s].cursor++];
-				if (index === 0) time = playerTime;
-				else if (playerTime !== time) {
-					inconsistentTime = true;
-					if (LOG)
-						logLine("revo", "inconsistent time found", {
-							time,
-							playerTime,
-							index,
-							sheep,
-							wolves,
-							matchId,
-						});
-				}
-			});
-
-			if (inconsistentTime) {
-				if (LOG)
-					console.warn("Skipping match with multiple times", matchId);
-				return;
-			}
-
-			if (time === undefined) {
-				if (LOG)
-					console.warn(
-						"Skipping match that is missing a time",
-						matchId,
-					);
-				return;
-			}
-
-			return {
-				sheep: sheep.map((slot) => playerTimes[slot].name),
-				wolves: wolves.map((slot) => playerTimes[slot].name),
-				time,
-			};
-		})
-		.filter((v): v is Round => !!v);
-
-	startReplay(replay, max);
+	startReplay(replay);
 
 	let roundId = 0;
 	for (const round of rounds) {
@@ -187,5 +90,5 @@ export const processReplay = async (
 		endRound();
 	}
 
-	await endReplay(pageNumber);
+	return await endReplay(pageNumber, save);
 };

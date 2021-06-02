@@ -1,5 +1,3 @@
-import "../commands/index.js";
-
 import { onExitHandlers } from "../close.js";
 import { logLine } from "../shared/log.js";
 import { periodic } from "../shared/periodic.js";

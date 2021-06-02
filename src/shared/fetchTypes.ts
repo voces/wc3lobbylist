@@ -34,6 +34,7 @@ export interface ReplayPartial {
 
 export type ReplaySummary = ReplayPartial & {
 	players: Player[];
+	[propName: string]: unknown;
 };
 
 export interface Key {

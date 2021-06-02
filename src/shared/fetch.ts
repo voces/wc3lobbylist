@@ -39,7 +39,13 @@ export const wc3stats = {
 		get: (replay: number): Promise<Replay> =>
 			fetch(`https://api.wc3stats.com/replays/${replay}`)
 				.then((r) => r.json())
-				.then((r) => r.body),
+				.then(({ body }: { body: Replay }) => {
+					body.data.game.events = body.data.game.events.map((e) => ({
+						...e,
+						args: e.args.map((v) => v.replace(/\\ /g, " ")),
+					}));
+					return body;
+				}),
 	},
 	gamelist: (): Promise<Array<Wc3StatsLobby>> =>
 		fetch("https://api.wc3stats.com/gamelist")

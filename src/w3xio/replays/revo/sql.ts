@@ -1,6 +1,6 @@
 import discord from "../../../discord.js";
 import { Replay } from "../../../shared/fetchTypes.js";
-import { query } from "../../../shared/sql.js";
+import { format, query } from "../../../shared/sql.js";
 import { formatList } from "../../../shared/util.js";
 import { Round } from "./types.js";
 
@@ -23,17 +23,15 @@ interface ReplayData {
 	playedOn: Date;
 	gameName: string;
 	rounds: RoundData[];
-	maxRankedRounds: boolean;
 }
 
 let currentReplay: ReplayData | undefined;
 
-export const startReplay = (replay: Replay, maxRankedRounds: boolean): void => {
+export const startReplay = (replay: Replay): void => {
 	currentReplay = {
 		replayId: replay.id,
 		playedOn: new Date(replay.playedOn * 1000),
 		gameName: replay.name,
-		maxRankedRounds,
 		rounds: [],
 	};
 };
@@ -133,7 +131,10 @@ https://wc3stats.com/games/${replay.replayId}`,
 	}
 };
 
-export const endReplay = async (pageNumber: number): Promise<void> => {
+export const endReplay = async (
+	pageNumber: number,
+	save: boolean,
+): Promise<string | undefined> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
 	if (currentReplay.rounds.length === 0) {
@@ -141,10 +142,12 @@ export const endReplay = async (pageNumber: number): Promise<void> => {
 		return;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { rounds, maxRankedRounds: _, ...replay } = currentReplay;
+	const { rounds, ...replay } = currentReplay;
 
-	await query(
+	const result = await (save
+		? (...args: Parameters<typeof query>) =>
+				query<{ __ignoreMe: true }>(...args)
+		: format)(
 		`
 		INSERT elo.replay SET ?;
 		INSERT elo.round VALUES ?;
@@ -167,10 +170,12 @@ export const endReplay = async (pageNumber: number): Promise<void> => {
 	);
 
 	try {
-		await summarize(currentReplay);
+		if (save) await summarize(currentReplay);
 	} catch (err) {
 		console.error(err);
 	}
 
 	currentReplay = undefined;
+
+	if (typeof result === "string") return result;
 };
