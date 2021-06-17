@@ -1,12 +1,15 @@
+import cors from "cors";
 import express from "express";
 import morgan from "morgan";
 
 import { config } from "../../../config.js";
 import { logLine } from "../../shared/log.js";
 import { query } from "../../shared/sql.js";
+import { sqlProxy } from "./sqlProxy.js";
 
 const app = express();
 app.use(morgan("dev"));
+app.use(cors());
 
 // define a route handler for the default home page
 app.get("/preferences", async (req, res) => {
@@ -26,6 +29,8 @@ app.get("/preferences", async (req, res) => {
 		Object.fromEntries(result.map(({ player, bias }) => [player, bias])),
 	);
 });
+
+app.post("/sql", sqlProxy);
 
 app.use(express.static("src/w3xio/public"));
 
