@@ -72,17 +72,12 @@ const getPool = ({ database, host, password, port, user }: Config) => {
 export const sqlProxy: RequestHandler = async (req, res) => {
 	try {
 		const database = req.headers["x-dbproxy-database"]?.toString();
-		const host = req.headers["x-dbproxy-host"]?.toString() ?? "localhost";
+		const host = "w3x.io";
 		const password = req.headers["x-dbproxy-password"]?.toString();
 		const port =
 			parseInt(req.headers["x-dbproxy-port"]?.toString() ?? "3306") ??
 			3306;
 		const user = req.headers["x-dbproxy-user"]?.toString() ?? "public";
-
-		if (!user.endsWith("public")) {
-			res.json({ message: "user must end with public" });
-			return;
-		}
 
 		const pool = getPool({ database, host, password, port, user });
 
