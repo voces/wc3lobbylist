@@ -189,7 +189,7 @@ discord.on("message", async (message) => {
 		return;
 
 	const [command, ...rest] = message.content
-		.replace(`<@!${discord.user?.id}>`, "")
+		.replace(new RegExp(`<@!?${discord.user?.id}>`), "")
 		.trim()
 		.split(" ");
 
