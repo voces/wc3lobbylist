@@ -47,8 +47,8 @@ export const matchup = async (
 	const rawWolves = words.slice(pivot + 1);
 
 	const setup = `${rawSheep.length}v${rawWolves.length}`;
-	if (!["2v4", "3v5", "5v5"].includes(setup)) {
-		message.reply("unsupported matchup. Use 2v4, 3v5, or 5v5");
+	if (!["2v4", "3v5", "4v6", "5v5"].includes(setup)) {
+		message.reply("unsupported matchup. Use 2v4, 3v5, 4v6, or 5v5");
 		return;
 	}
 	const [sheepResults, wolfResults] = await Promise.all([

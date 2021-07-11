@@ -193,7 +193,8 @@ export const avg = (a: number, b: number, _: number, arr: number[]): number =>
 
 const getMaxTime = (mode: string) => {
 	if (mode === "2v4") return 360;
-	if (mode === "3v5") return 600;
+	if (mode === "3v5") return 480;
+	if (mode === "4v6") return 600;
 	if (mode === "5v5") return 1200;
 	throw new Error(`Unknown max time for ${mode}`);
 };
