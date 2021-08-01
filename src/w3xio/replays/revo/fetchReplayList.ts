@@ -6,10 +6,17 @@ import { processReplay } from "./processReplay.js";
 export const fetchReplayList = async (pageNumber: number): Promise<void> => {
 	logLine("revo", "Fetching", pageNumber);
 
-	const page = await wc3stats.replays.list({
-		search: "sheep tag",
-		page: pageNumber,
-	});
+	const page = await wc3stats.replays
+		.list({
+			search: "sheep tag",
+			page: pageNumber,
+		})
+		.catch((err: Error) => err);
+
+	if (page instanceof Error) {
+		console.error(page);
+		return;
+	}
 
 	// Wait until the replay is processed
 	if (page.body.length === 0 || !page.body[0].processed) {

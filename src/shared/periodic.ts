@@ -19,7 +19,11 @@ export const periodic = (
 	const wrappedFn = async (): Promise<void> => {
 		const start = (lastWork = Date.now());
 
-		await fn();
+		try {
+			await fn();
+		} catch (err) {
+			console.error(err);
+		}
 
 		if (!isExiting())
 			updateTimeout = setTimeout(
