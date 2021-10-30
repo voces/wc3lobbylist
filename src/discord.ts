@@ -34,6 +34,12 @@ client.on("ready", async () => {
 client.on("error", (err) => {
 	logLine("discord", err);
 });
+client.on("warn", (msg) => {
+	logLine("discord", msg);
+});
+client.on("rateLimit", (data) => {
+	logLine("discord", "[ratelimited]", data);
+});
 
 type SendProps =
 	| [StringResolvable | APIMessage]
