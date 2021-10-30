@@ -16,16 +16,7 @@ if (!process.env.DISCORD_TOKEN) {
 
 // load Discord
 const client = new Discord.Client();
-logLine(
-	"discord",
-	`Logging in with ${process.env.DISCORD_TOKEN.slice(
-		0,
-		3,
-	)}..${process.env.DISCORD_TOKEN.slice(-3)}`,
-);
-client.login(process.env.DISCORD_TOKEN).then((t) => {
-	logLine("discord", `Logged(?) in with ${t.slice(0, 3)}..${t.slice(-3)}`);
-});
+client.login(process.env.DISCORD_TOKEN);
 
 class Deferred<T> extends Promise<T> {
 	resolve?: (value?: T) => void;
