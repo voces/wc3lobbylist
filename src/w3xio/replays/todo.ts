@@ -36,48 +36,42 @@ const newTodo = async ({
 	logLine("fixus", "new todo", `${player}: ${message}`, response?.url);
 };
 
-onNewReplay(
-	async (replay: Replay): Promise<void> => {
-		const chatlog = replay.data.chatlog;
-		const players = replay.data.game.players;
-		const memory: Record<string, string[]> = {};
+onNewReplay(async (replay: Replay): Promise<void> => {
+	const chatlog = replay.data.chatlog;
+	const players = replay.data.game.players;
+	const memory: Record<string, string[]> = {};
 
-		let metadata: Metadata | undefined;
+	let metadata: Metadata | undefined;
 
-		try {
-			for (const { playerId, message } of chatlog)
-				if (message.startsWith("-")) {
-					const [command, ...parts] = message.split(" ");
-					if (!triggers.includes(command)) return;
+	try {
+		for (const { playerId, message } of chatlog)
+			if (message.startsWith("-")) {
+				const [command, ...parts] = message.split(" ");
+				if (!triggers.includes(command)) return;
 
-					const body = parts.join(" ");
-					const player =
-						players.find((p) => p.id === playerId)?.name ?? "";
+				const body = parts.join(" ");
+				const player =
+					players.find((p) => p.id === playerId)?.name ?? "";
 
-					if (!memory[player]) memory[player] = [];
-					if (
-						memory[player].includes(body) ||
-						memory[player].length > 2
-					)
-						return;
-					memory[player].push(body);
+				if (!memory[player]) memory[player] = [];
+				if (memory[player].includes(body) || memory[player].length > 2)
+					return;
+				memory[player].push(body);
 
-					if (!metadata)
-						metadata = await getRepoAndVersionInfo(replay);
+				if (!metadata) metadata = await getRepoAndVersionInfo(replay);
 
-					try {
-						await newTodo({
-							replay: replay.id,
-							message: body,
-							player,
-							metadata,
-						});
-					} catch (err) {
-						console.error(new Date(), err);
-					}
+				try {
+					await newTodo({
+						replay: replay.id,
+						message: body,
+						player,
+						metadata,
+					});
+				} catch (err) {
+					console.error(new Date(), err);
 				}
-		} catch (err) {
-			console.error(new Date(), err);
-		}
-	},
-);
+			}
+	} catch (err) {
+		console.error(new Date(), err);
+	}
+});
