@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 import { query } from "../shared/sql.js";
 import { fetchData } from "../w3xio/replays/revo/processRound.js";

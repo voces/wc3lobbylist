@@ -1,8 +1,8 @@
 import discord from "../../../discord.js";
-import { Replay } from "../../../shared/fetchTypes.js";
+import type { Replay } from "../../../shared/fetchTypes.js";
 import { format, query } from "../../../shared/sql.js";
 import { formatList } from "../../../shared/util.js";
-import { Round } from "./types.js";
+import type { Round } from "./types.js";
 
 interface RoundData {
 	round: number;

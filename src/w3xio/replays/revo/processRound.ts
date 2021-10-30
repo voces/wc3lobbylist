@@ -2,7 +2,7 @@ import { logLine } from "../../../shared/log.js";
 import { query } from "../../../shared/sql.js";
 import { LOG } from "./processReplay.js";
 import { addOutcome } from "./sql.js";
-import { Round } from "./types.js";
+import type { Round } from "./types.js";
 
 export interface PlayerData {
 	rating: number;

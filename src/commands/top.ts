@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 import { query } from "../shared/sql.js";
 import { cleanUsername } from "../shared/util.js";
@@ -35,10 +35,7 @@ export const top = async (message: Message, args: string[]): Promise<void> => {
 \`\`\`${results
 			.map(
 				(r) =>
-					`${r.player.padEnd(
-						maxUsername,
-						" ",
-					)} ${r.rating
+					`${r.player.padEnd(maxUsername, " ")} ${r.rating
 						.toString()
 						.padStart(6, " ")} ${r.rounds
 						.toString()

@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
 import MySQL from "mysql2/promise";
 
 import { logLine } from "../../shared/log.js";

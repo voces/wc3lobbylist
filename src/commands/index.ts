@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 import { config as appConfig } from "../../config.js";
 import { onProcessClose } from "../close.js";

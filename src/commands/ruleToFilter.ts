@@ -1,5 +1,5 @@
-import { Lobby } from "../liveLobbies/fetchLobbies.js";
-import { Rule } from "./parser.js";
+import type { Lobby } from "../liveLobbies/fetchLobbies.js";
+import type { Rule } from "./parser.js";
 
 export const process = (rule: Rule, lobby: Lobby): boolean => {
 	switch (rule.type) {
@@ -20,6 +20,7 @@ export const process = (rule: Rule, lobby: Lobby): boolean => {
 	}
 };
 
-export const ruleToFilter = (rule: Rule): ((lobby: Lobby) => boolean) => (
-	lobby: Lobby,
-): boolean => process(rule, lobby);
+export const ruleToFilter =
+	(rule: Rule): ((lobby: Lobby) => boolean) =>
+	(lobby: Lobby): boolean =>
+		process(rule, lobby);

@@ -1,7 +1,7 @@
-import { Replay } from "../../../shared/fetchTypes.js";
+import type { Replay } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
 import { deduceTeams } from "./deduceTeams.js";
-import { Round } from "./types.js";
+import type { Round } from "./types.js";
 
 const LOG = false;
 

@@ -1,12 +1,8 @@
 import { github } from "../../shared/fetch.js";
-import { Replay } from "../../shared/fetchTypes";
+import type { Replay } from "../../shared/fetchTypes";
 import { logLine } from "../../shared/log.js";
-import {
-	getRepoAndVersionInfo,
-	Metadata,
-	onNewReplay,
-	trim,
-} from "./common.js";
+import type { Metadata } from "./common.js";
+import { getRepoAndVersionInfo, onNewReplay, trim } from "./common.js";
 
 const triggers = "-todo -log -report".split(" ");
 
@@ -56,7 +52,7 @@ onNewReplay(
 
 					const body = parts.join(" ");
 					const player =
-						players.find((p) => p.id === playerId)?.name || "";
+						players.find((p) => p.id === playerId)?.name ?? "";
 
 					if (!memory[player]) memory[player] = [];
 					if (

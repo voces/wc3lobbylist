@@ -1,9 +1,10 @@
-import { parser, Rule } from "./parser";
+import type { Rule } from "./parser";
+import { parser } from "./parser";
 
-const expectParse = (
-	string: string,
-	result: { filter: Rule },
-): (() => void) => (): void => expect(parser(string)).toEqual(result);
+const expectParse =
+	(string: string, result: { filter: Rule }): (() => void) =>
+	(): void =>
+		expect(parser(string)).toEqual(result);
 
 it(
 	"simple",

@@ -1,7 +1,8 @@
 import { onExitHandlers } from "../close.js";
 import { logLine } from "../shared/log.js";
 import { periodic } from "../shared/periodic.js";
-import fetchLobbies, { Lobby } from "./fetchLobbies.js";
+import type { Lobby } from "./fetchLobbies.js";
+import fetchLobbies from "./fetchLobbies.js";
 import { promiseTimeout } from "./util.js";
 import {
 	newLobbies as v3NewLobbies,

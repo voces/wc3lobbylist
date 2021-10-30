@@ -1,4 +1,5 @@
-import Discord, { ColorResolvable, MessageEmbed } from "discord.js";
+import type { ColorResolvable, MessageEmbed } from "discord.js";
+import Discord from "discord.js";
 
 const extractField = (embed: MessageEmbed, fieldName: string): string => {
 	const field = embed.fields.find((f) => f.name === fieldName);

@@ -1,4 +1,4 @@
-import { Channel, GuildChannel, TextChannel } from "discord.js";
+import type { Channel, GuildChannel, TextChannel } from "discord.js";
 
 // taken from https://italonascimento.github.io/applying-a-timeout-to-your-promises/
 export const promiseTimeout = <T>(promise: Promise<T>): Promise<T> => {

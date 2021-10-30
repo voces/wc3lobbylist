@@ -20,7 +20,7 @@ export const query = async <T>(
 ): Promise<T> => pool.query(sql, values).then((r) => r[0] as any);
 
 export const kvGet = async <
-	T extends "number" | "string" | "boolean" = "string"
+	T extends "number" | "string" | "boolean" = "string",
 >(
 	key: string,
 	type?: T,

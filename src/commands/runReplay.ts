@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 import { wc3stats } from "../shared/fetch.js";
 import { processReplay } from "../w3xio/replays/revo/processReplay.js";

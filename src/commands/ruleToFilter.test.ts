@@ -1,5 +1,5 @@
-import { Lobby } from "../liveLobbies/fetchLobbies.js";
-import { Key, Rule } from "./parser.js";
+import type { Lobby } from "../liveLobbies/fetchLobbies.js";
+import type { Key, Rule } from "./parser.js";
 import { process, ruleToFilter } from "./ruleToFilter";
 
 const buildTermRule = (key: Key, value: string | RegExp): Rule => ({
@@ -41,21 +41,24 @@ const lobbies = [
 ];
 
 describe("process", () => {
-	const testLobbies = (
-		rule: Rule,
-		expected: boolean[],
-	): (() => void) => (): void =>
-		expect(lobbies.map((lobby) => process(rule, lobby))).toEqual(expected);
+	const testLobbies =
+		(rule: Rule, expected: boolean[]): (() => void) =>
+		(): void =>
+			expect(lobbies.map((lobby) => process(rule, lobby))).toEqual(
+				expected,
+			);
 
 	it("sheep tag", testLobbies(stRule, [true, false, false, true, false]));
 });
 
 describe("ruleToFilter", () => {
-	const testLobbies = (
-		filter: (lobby: Lobby) => boolean,
-		expected: boolean[],
-	): (() => void) => (): void =>
-		expect(lobbies.map((lobby) => filter(lobby))).toEqual(expected);
+	const testLobbies =
+		(
+			filter: (lobby: Lobby) => boolean,
+			expected: boolean[],
+		): (() => void) =>
+		(): void =>
+			expect(lobbies.map((lobby) => filter(lobby))).toEqual(expected);
 
 	it(
 		"sheep tag",

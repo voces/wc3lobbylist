@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 import { wc3stats } from "../shared/fetch.js";
 
@@ -37,7 +37,7 @@ export default (): Promise<Array<Lobby>> =>
 				created,
 			}) => ({
 				checksum,
-				host: host || "Unknown",
+				host: host ?? "Unknown",
 				id,
 				map: map ? map.slice(0, -4) : undefined,
 				name,

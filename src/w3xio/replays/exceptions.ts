@@ -1,15 +1,10 @@
 import { github } from "../../shared/fetch.js";
-import { Replay } from "../../shared/fetchTypes.js";
+import type { Replay } from "../../shared/fetchTypes.js";
 import { logLine } from "../../shared/log.js";
 import { query } from "../../shared/sql.js";
-import {
-	getRepoAndVersionInfo,
-	Metadata,
-	onNewReplay,
-	toEvent,
-	trim,
-} from "./common.js";
-import { CleanEvent } from "./types.js";
+import type { Metadata } from "./common.js";
+import { getRepoAndVersionInfo, onNewReplay, toEvent, trim } from "./common.js";
+import type { CleanEvent } from "./types.js";
 
 const newException = async ({
 	event,
@@ -55,15 +50,13 @@ const newException = async ({
 	);
 
 	if (!githubIssueId) {
-		const {
-			number: newGithubIssueId,
-			url,
-		} = await github.repos.issues.post({
-			repo,
-			token,
-			body: {
-				title: `Exception: ${eventMessage}`,
-				body: trim(`
+		const { number: newGithubIssueId, url } =
+			await github.repos.issues.post({
+				repo,
+				token,
+				body: {
+					title: `Exception: ${eventMessage}`,
+					body: trim(`
 					An exception was detected in a replay.
 
 					- Replay: https://wc3stats.com/games/${replayId}
@@ -72,9 +65,9 @@ const newException = async ({
 					- Error message: \`${message}\`
 					- Internal tracker id: \`${issueId}\`
 				`),
-				labels: ["bug", version],
-			},
-		});
+					labels: ["bug", version],
+				},
+			});
 
 		await query(
 			`
@@ -87,27 +80,25 @@ const newException = async ({
 	} else logLine("fixus", "new exception:", githubIssueId);
 };
 
-onNewReplay(
-	async (replay: Replay): Promise<void> => {
-		logLine("fixus", "processing", replay.id);
+onNewReplay(async (replay: Replay): Promise<void> => {
+	logLine("fixus", "processing", replay.id);
 
-		const events = replay.data.game.events.map(toEvent);
-		let metadata: Metadata | undefined;
+	const events = replay.data.game.events.map(toEvent);
+	let metadata: Metadata | undefined;
 
-		try {
-			for (const event of events) {
-				if (event.name !== "log") continue;
+	try {
+		for (const event of events) {
+			if (event.name !== "log") continue;
 
-				if (!metadata) metadata = await getRepoAndVersionInfo(replay);
+			if (!metadata) metadata = await getRepoAndVersionInfo(replay);
 
-				try {
-					await newException({ event, replay, metadata });
-				} catch (err) {
-					console.error(new Date(), err);
-				}
+			try {
+				await newException({ event, replay, metadata });
+			} catch (err) {
+				console.error(new Date(), err);
 			}
-		} catch (err) {
-			console.error(new Date(), err);
 		}
-	},
-);
+	} catch (err) {
+		console.error(new Date(), err);
+	}
+});

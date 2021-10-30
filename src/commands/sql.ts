@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 import { formatTable } from "../shared/formatTable.js";
 import { jsStringify } from "../shared/jsStringify.js";

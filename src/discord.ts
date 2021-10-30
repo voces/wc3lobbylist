@@ -1,9 +1,10 @@
-import Discord, {
+import type {
 	APIMessage,
 	MessageAdditions,
 	MessageOptions,
 	StringResolvable,
 } from "discord.js";
+import Discord from "discord.js";
 
 import { isChannelGuildChannel, isTextChannel } from "./liveLobbies/util.js";
 import { logLine } from "./shared/log.js";

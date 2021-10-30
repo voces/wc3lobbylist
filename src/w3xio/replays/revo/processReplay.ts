@@ -1,5 +1,5 @@
 import { wc3stats } from "../../../shared/fetch.js";
-import { ReplayGame, ReplaySummary } from "../../../shared/fetchTypes.js";
+import type { ReplayGame, ReplaySummary } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
 import { deduceRounds } from "./deduceRounds.js";
 import { processRound } from "./processRound.js";

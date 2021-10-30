@@ -1,10 +1,11 @@
-import Discord, { MessageEmbed } from "discord.js";
+import type { MessageEmbed } from "discord.js";
+import Discord from "discord.js";
 
 import { ruleToFilter } from "../../commands/ruleToFilter.js";
 import { config, saveConfig } from "../../config.js";
 import discord, { ChannelError } from "../../discord.js";
 import { logLine } from "../../shared/log.js";
-import { Lobby as APILobby } from "../fetchLobbies.js";
+import type { Lobby as APILobby } from "../fetchLobbies.js";
 import { LobbyEmbed } from "../LobbyEmbed.js";
 
 const ONE_MINUTE = 60 * 1000;

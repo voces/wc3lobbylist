@@ -140,7 +140,7 @@ export const jsStringify = (
 	const spaceWidth = space.replace(/\t/g, " ".repeat(tabWidth)).length;
 
 	const replacer =
-		options.replacer ||
+		options.replacer ??
 		(options.replacer = (obj, level = 0, curLength = 0): string => {
 			const cleanedOptions = options as {
 				wrapping: number;
