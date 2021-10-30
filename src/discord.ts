@@ -31,6 +31,9 @@ client.on("ready", async () => {
 
 	ready.resolve && ready.resolve();
 });
+client.on("error", (err) => {
+	logLine("discord", err);
+});
 
 type SendProps =
 	| [StringResolvable | APIMessage]
