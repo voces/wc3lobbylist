@@ -3,6 +3,7 @@ import type { RequestHandler } from "express";
 import MySQL from "mysql2/promise";
 
 import { logLine } from "../../shared/log.js";
+import { hasNumber, hasString, isError, isRecord } from "../../typeguards.js";
 
 const pools: Record<string, { pool: MySQL.Pool; lastUsed: number }> = {};
 
@@ -96,7 +97,12 @@ export const sqlProxy: RequestHandler = async (req, res) => {
 		res.json(resp[0]);
 	} catch (err) {
 		res.statusCode = 400;
-		res.json({ code: err.code, message: err.message });
+		const code = isRecord(err) && hasNumber(err, "code") ? err.code : -1;
+		const message =
+			isRecord(err) && hasString(err, "message")
+				? err.message
+				: "Unknown error";
+		if (isError(err)) res.json({ code, message });
 	}
 };
 
