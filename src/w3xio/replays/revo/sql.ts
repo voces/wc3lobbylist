@@ -63,6 +63,24 @@ export const endRound = (): void => {
 	currentRound = undefined;
 };
 
+const formatDiscordMessageModeData = ({
+	score,
+	setup,
+}: {
+	setup: string;
+	score: {
+		rating: number;
+		change: number;
+	};
+}) =>
+	`${score.change > 0 ? "up" : "down"} ${Math.abs(score.change).toPrecision(
+		2,
+	)} to ${Math.round(score.rating)} in ${setup} ${
+		score.change > 0
+			? ":chart_with_upwards_trend:"
+			: ":chart_with_downwards_trend:"
+	}`;
+
 const summarize = async (replay: ReplayData) => {
 	const players = Array.from(
 		new Set(
@@ -108,26 +126,19 @@ const summarize = async (replay: ReplayData) => {
 
 		if (modeData.length === 0) continue;
 
-		const user = await discord.users.fetch(discordid);
-		user.send(
-			`Replay processed! You went ${formatList(
+		try {
+			const user = await discord.users.fetch(discordid);
+			const message = `Replay processed! You went ${formatList(
 				modeData
 					.sort((a, b) => a.setup.localeCompare(b.setup))
-					.map(
-						({ score, setup }) =>
-							`${score.change > 0 ? "up" : "down"} ${Math.abs(
-								score.change,
-							).toPrecision(2)} to ${Math.round(
-								score.rating,
-							)} in ${setup} ${
-								score.change > 0
-									? ":chart_with_upwards_trend:"
-									: ":chart_with_downwards_trend:"
-							}`,
-					),
+					.map(formatDiscordMessageModeData),
 			)}.
-https://wc3stats.com/games/${replay.replayId}`,
-		);
+https://wc3stats.com/games/${replay.replayId}`;
+			user.send(message);
+		} catch (err) {
+			console.error(err);
+			/* do nothing */
+		}
 	}
 };
 
