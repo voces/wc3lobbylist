@@ -14,7 +14,7 @@ export const periodic = (
 
 		logLine("", name, "looks dead, killing...");
 		process.exit(1);
-	}, interval * 10);
+	}, Math.max(interval * 3, Math.min(interval * 60, 1_000 * 60 * 10)));
 
 	const wrappedFn = async (): Promise<void> => {
 		const start = (lastWork = Date.now());
