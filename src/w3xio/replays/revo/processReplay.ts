@@ -20,33 +20,15 @@ const getSkipListReplayReason = (replay: ReplaySummary) => {
 };
 
 const trackedMaps = [
-  "Sheep Tag ReVoLuTiOn 8.6.0.w3x",
-  "Sheep Tag ReVoLuTiOn 8.6.1.w3x",
-  "Sheep Tag ReVoLuTiOn 8.6.2.w3x",
-  "Sheep Tag ReVoLuTiOn 8.6.3.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.0.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.1.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.2.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.2~1.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.3.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.4.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.5.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.6.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.7.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.8.w3x",
-  "Sheep Tag ReVoLuTiOn 9.0.9.w3x",
-  "Sheep Tag ReVoLuTiOn 9.1.0.w3x",
-  "Sheep Tag ReVoLuTiOn 9.1.1.w3x",
-  "Sheep Tag ReVoLuTiOn 9.1.2.w3x",
-  "Sheep Tag ReVoLuTiOn 9.2.1.w3x",
-  "Sheep Tag ReVoLuTiOn 9.2.2.w3x",
-  "Sheep Tag ReVoLuTiOn 9.2.3.w3x",
+  "Sheep Tag ReVoLuTiOn 8.",
+  "Sheep Tag ReVoLuTiOn 9.",
   "Sheep Tag ReVoLuTiOn Cagematch 8.6.3.w3x",
-  "Sheep Tag ReVoLuTiOn Xmas 9.0.5.w3x",
-  "Sheep Tag ReVoLuTiOn Xmas 9.0.6.w3x",
+  "Sheep Tag ReVoLuTiOn Xmas 9.",
 ];
 const getSkipReplayReason = (game: ReplayGame) => {
-  if (!trackedMaps.includes(game.map)) return "not whitelisted: " + game.map;
+  if (!trackedMaps.some((map) => game.map.startsWith(map))) {
+    return "not whitelisted: " + game.map;
+  }
 };
 
 export const processReplay = async (
@@ -74,16 +56,14 @@ export const processReplay = async (
   const replay = await wc3stats.replays.get(replaySummary.id);
   const skipReplayReason = getSkipReplayReason(replay.data.game);
   if (skipReplayReason) {
-    if (LOG) {
-      logLine(
-        "revo",
-        "Skipping",
-        replaySummary.id,
-        "from",
-        new Date(replaySummary.playedOn * 1000),
-        skipReplayReason,
-      );
-    }
+    logLine(
+      "revo",
+      "Skipping",
+      replaySummary.id,
+      "from",
+      new Date(replaySummary.playedOn * 1000),
+      skipReplayReason,
+    );
     return;
   }
 
