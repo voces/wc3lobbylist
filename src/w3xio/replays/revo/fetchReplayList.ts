@@ -34,6 +34,7 @@ export const fetchReplayList = async (pageNumber: number): Promise<void> => {
         await processReplay(replay, pageNumber);
       } catch (err) {
         console.error(err);
+        return;
       }
     }
   }
