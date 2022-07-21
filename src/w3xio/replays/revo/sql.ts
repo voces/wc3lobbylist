@@ -145,7 +145,7 @@ https://wc3stats.com/games/${replay.replayId}`;
 export const endReplay = async (
 	pageNumber: number,
 	save: boolean,
-): Promise<string | undefined> => {
+) => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
 	if (currentReplay.rounds.length === 0) {
@@ -155,7 +155,7 @@ export const endReplay = async (
 
 	const { rounds, ...replay } = currentReplay;
 
-	const result = await (save
+	await (save
 		? (...args: Parameters<typeof query>) =>
 				query<{ __ignoreMe: true }>(...args)
 		: format)(
@@ -187,6 +187,4 @@ export const endReplay = async (
 	}
 
 	currentReplay = undefined;
-
-	if (typeof result === "string") return result;
 };

@@ -2,7 +2,7 @@ import { wc3stats } from "../../../shared/fetch.js";
 import type { ReplayGame, ReplaySummary } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
 import { deduceRounds } from "./deduceRounds.js";
-import { processRound } from "./processRound.js";
+import { fetchData, processRound } from "./processRound.js";
 import { endReplay, endRound, startReplay, startRound } from "./sql.js";
 
 export const LOG = false;
@@ -35,7 +35,7 @@ export const processReplay = async (
   replaySummary: ReplaySummary,
   pageNumber: number,
   save = true,
-): Promise<string | undefined> => {
+) => {
   logLine("revo", "processing replay", replaySummary.id);
 
   const skipListReplayReason = getSkipListReplayReason(replaySummary);
@@ -67,6 +67,7 @@ export const processReplay = async (
     return;
   }
 
+  await fetchData();
   const rounds = deduceRounds(replay);
 
   startReplay(replay);
@@ -78,5 +79,7 @@ export const processReplay = async (
     endRound();
   }
 
-  return await endReplay(pageNumber, save);
+  await endReplay(pageNumber, save);
+
+  logLine("revo", "done processing");
 };

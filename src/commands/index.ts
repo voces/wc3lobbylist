@@ -12,7 +12,6 @@ import { last } from "./last.js";
 import { matchup } from "./matchup.js";
 import { parser } from "./parser.js";
 import { rounds } from "./rounds.js";
-import { runReplay } from "./runReplay.js";
 import { sql } from "./sql.js";
 import { stringifyReplacer } from "./stringify.js";
 import { summary } from "./summary.js";
@@ -138,12 +137,6 @@ const processCommand = async (
 			if (message.author.id !== appConfig.admin) return;
 
 			await deleteReplay(message, rest);
-			break;
-		}
-		case "runreplay": {
-			if (message.author.id !== appConfig.admin) return;
-
-			await runReplay(message, rest);
 			break;
 		}
 		case "bulkdelete": {
