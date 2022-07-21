@@ -40,8 +40,4 @@ export const fetchReplayList = async (pageNumber: number): Promise<void> => {
   }
 
   await kvSet("pageNumber", pageNumber + 1);
-
-  if (page.pagination.next > page.pagination.current) {
-    await fetchReplayList(pageNumber + 1);
-  }
 };
