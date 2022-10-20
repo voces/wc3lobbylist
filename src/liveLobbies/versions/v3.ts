@@ -41,6 +41,7 @@ const onNewLobby = async (lobby: Lobby): Promise<void> => {
 			channelIds.map(async (channelId) => {
 				const embed = new LobbyEmbed();
 				embed
+					.set("color", 0x6edb6f)
 					.set("title", lobby.map?.replace(/_/g, " ") ?? "?")
 					.set("gameName", lobby.name ?? "?")
 					.set("host", lobby.host ?? "?")
@@ -117,7 +118,7 @@ const onUpdateLobby = async (lobby: Lobby): Promise<void> =>
 		lobby,
 		(embed) =>
 			new LobbyEmbed(embed)
-				.set("color", "")
+				.set("color", 0x6edb6f)
 				.set(
 					"players",
 					lobby.slots
