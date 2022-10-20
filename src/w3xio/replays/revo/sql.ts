@@ -145,7 +145,7 @@ https://wc3stats.com/games/${replay.replayId}`;
 export const endReplay = async (
 	pageNumber: number,
 	save: boolean,
-) => {
+): Promise<void> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
 	if (currentReplay.rounds.length === 0) {

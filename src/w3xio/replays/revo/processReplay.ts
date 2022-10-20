@@ -8,78 +8,77 @@ import { endReplay, endRound, startReplay, startRound } from "./sql.js";
 export const LOG = false;
 
 const getSkipListReplayReason = (replay: ReplaySummary) => {
-  if (!replay.processed) return "not processed";
-  if (replay.isVoid) return "voided";
-  if (replay.players.length <= 1) return "not enough players";
+	if (!replay.processed) return "not processed";
+	if (replay.isVoid) return "voided";
+	if (replay.players.length <= 1) return "not enough players";
 
-  const map = (replay.map ?? "").replace(/ /g, "").toLowerCase();
-  const variant = (replay.variant ?? "").replace(/ /g, "").toLowerCase();
-  const isRevo = map.includes("revolution") || variant.includes("revolution");
+	const map = (replay.map ?? "").replace(/ /g, "").toLowerCase();
+	const variant = (replay.variant ?? "").replace(/ /g, "").toLowerCase();
+	const isRevo = map.includes("revolution") || variant.includes("revolution");
 
-  if (!isRevo) return "not revo";
+	if (!isRevo) return "not revo";
 };
 
 const trackedMaps = [
-  "Sheep Tag ReVoLuTiOn 8.",
-  "Sheep Tag ReVoLuTiOn 9.",
-  "Sheep Tag ReVoLuTiOn Cagematch 8.6.3.w3x",
-  "Sheep Tag ReVoLuTiOn Xmas 9.",
+	"Sheep Tag ReVoLuTiOn 8.",
+	"Sheep Tag ReVoLuTiOn 9.",
+	"Sheep Tag ReVoLuTiOn Cagematch 8.6.3.w3x",
+	"Sheep Tag ReVoLuTiOn Xmas 9.",
 ];
 const getSkipReplayReason = (game: ReplayGame) => {
-  if (!trackedMaps.some((map) => game.map.startsWith(map))) {
-    return "not whitelisted: " + game.map;
-  }
+	if (!trackedMaps.some((map) => game.map.startsWith(map)))
+		return "not whitelisted: " + game.map;
 };
 
 export const processReplay = async (
-  replaySummary: ReplaySummary,
-  pageNumber: number,
-  save = true,
-) => {
-  logLine("revo", "processing replay", replaySummary.id);
+	replaySummary: ReplaySummary,
+	pageNumber: number,
+	save = true,
+): Promise<void> => {
+	logLine("revo", "processing replay", replaySummary.id);
 
-  const skipListReplayReason = getSkipListReplayReason(replaySummary);
-  if (skipListReplayReason) {
-    if (LOG) {
-      logLine(
-        "revo",
-        "Skipping",
-        replaySummary.id,
-        "from",
-        new Date(replaySummary.playedOn * 1000),
-        skipListReplayReason,
-      );
-    }
-    return;
-  }
+	const skipListReplayReason = getSkipListReplayReason(replaySummary);
+	if (skipListReplayReason) {
+		if (LOG)
+			logLine(
+				"revo",
+				"Skipping",
+				replaySummary.id,
+				"from",
+				new Date(replaySummary.playedOn * 1000),
+				skipListReplayReason,
+			);
 
-  const replay = await wc3stats.replays.get(replaySummary.id);
-  const skipReplayReason = getSkipReplayReason(replay.data.game);
-  if (skipReplayReason) {
-    logLine(
-      "revo",
-      "Skipping",
-      replaySummary.id,
-      "from",
-      new Date(replaySummary.playedOn * 1000),
-      skipReplayReason,
-    );
-    return;
-  }
+		return;
+	}
 
-  await fetchData();
-  const rounds = deduceRounds(replay);
+	const replay = await wc3stats.replays.get(replaySummary.id);
+	const skipReplayReason = getSkipReplayReason(replay.data.game);
+	if (skipReplayReason) {
+		logLine(
+			"revo",
+			"Skipping",
+			replaySummary.id,
+			"from",
+			new Date(replaySummary.playedOn * 1000),
+			skipReplayReason,
+		);
+		return;
+	}
 
-  startReplay(replay);
+	await fetchData();
+	const rounds = deduceRounds(replay);
 
-  let roundId = 0;
-  for (const round of rounds) {
-    startRound(round, roundId);
-    if (await processRound(round, replay.playedOn)) roundId++;
-    endRound();
-  }
+	startReplay(replay);
 
-  await endReplay(pageNumber, save);
+	let roundId = 0;
+	for (const round of rounds) {
+		startRound(round, roundId);
+		if (await processRound(round, replay.playedOn)) roundId++;
+		endRound();
+	}
 
-  logLine("revo", "done processing");
+	await endReplay(pageNumber, save);
+
+	logLine("revo", "done processing");
 };
