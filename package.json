@@ -37,7 +37,7 @@
 		"eslint-config-verit": "^4.0.0",
 		"eslint-plugin-prettier": "^4.0.0",
 		"eslint-plugin-simple-import-sort": "^7.0.0",
-		"express": "^4.17.1",
+		"express": "^4.17.3",
 		"jest": "^27.3.1",
 		"moo": "^0.5.1",
 		"morgan": "^1.10.0",
