@@ -46,15 +46,16 @@ export class LobbyEmbed {
 	}
 
 	toEmbed(): Discord.MessageEmbed {
-		return new Discord.MessageEmbed()
+		const message = new Discord.MessageEmbed()
 			.setTitle(this.title)
 			.setURL(this.url ?? "")
-			.setThumbnail(this.thumbnail)
 			.setFooter(this.footer.text, this.footer.icon)
 			.addField("Game Name", this.gameName)
 			.addField("Hosted by", this.host, true)
 			.addField("Realm", this.realm, true)
 			.addField("Players", this.players, true)
 			.setColor(this.color ?? "");
+		if (this.thumbnail) message.setThumbnail(this.thumbnail);
+		return message;
 	}
 }
