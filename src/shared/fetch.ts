@@ -21,8 +21,7 @@ export const wc3stats = {
 			fetch(
 				`https://api.wc3stats.com/replays&${Object.entries({
 					limit: 1,
-					order: "asc",
-					sort: "playedOn",
+					chat: 0,
 					...qs,
 				})
 					.filter(([, value]) => value !== undefined)

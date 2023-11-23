@@ -3,13 +3,13 @@ import { logLine } from "../../../shared/log.js";
 import { kvSet } from "../../../shared/sql.js";
 import { processReplay } from "./processReplay.js";
 
-export const fetchReplayList = async (pageNumber: number): Promise<void> => {
-	logLine("revo", "Fetching", pageNumber);
+export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
+	logLine("revo", "Fetching since", lastReplayId);
 
 	const page = await wc3stats.replays
 		.list({
 			search: "sheep tag",
-			page: pageNumber,
+			since: lastReplayId,
 		})
 		.catch((err: Error) => err);
 
@@ -32,12 +32,10 @@ export const fetchReplayList = async (pageNumber: number): Promise<void> => {
 
 		if (isRevo && replay.processed && !replay.isVoid)
 			try {
-				await processReplay(replay, pageNumber);
+				await processReplay(replay);
 			} catch (err) {
 				console.error(err);
 				return;
 			}
 	}
-
-	await kvSet("pageNumber", pageNumber + 1);
 };

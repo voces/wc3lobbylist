@@ -142,10 +142,7 @@ https://wc3stats.com/games/${replay.replayId}`;
 	}
 };
 
-export const endReplay = async (
-	pageNumber: number,
-	save: boolean,
-): Promise<void> => {
+export const endReplay = async (save: boolean): Promise<void> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
 	if (currentReplay.rounds.length === 0) {
@@ -165,7 +162,7 @@ export const endReplay = async (
 		INSERT elo.outcome VALUES ?;
 		`,
 		[
-			{ ...replay, pageNumber },
+			{ ...replay, pageNumber: 0 },
 			rounds.map((r) => [replay.replayId, r.round, r.setup, r.duration]),
 			rounds.flatMap((r) =>
 				r.outcomes.map((o) => [
