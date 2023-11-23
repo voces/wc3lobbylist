@@ -147,7 +147,7 @@ export const skipReplay = async (replay: {
 	replayId: number;
 	gameName: string;
 	playedOn: Date;
-}) => {
+}): Promise<void> => {
 	await query("INSERT elo.replay set ?;", [{ ...replay, voided: "Y" }]);
 };
 
