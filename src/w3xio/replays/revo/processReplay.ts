@@ -3,7 +3,13 @@ import type { ReplayGame, ReplaySummary } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
 import { deduceRounds } from "./deduceRounds.js";
 import { fetchData, processRound } from "./processRound.js";
-import { endReplay, endRound, startReplay, startRound } from "./sql.js";
+import {
+	endReplay,
+	endRound,
+	skipReplay,
+	startReplay,
+	startRound,
+} from "./sql.js";
 
 export const LOG = false;
 
@@ -47,7 +53,11 @@ export const processReplay = async (
 				new Date(replaySummary.playedOn * 1000),
 				skipListReplayReason,
 			);
-
+		await skipReplay({
+			replayId: replaySummary.id,
+			gameName: replaySummary.name,
+			playedOn: new Date(replaySummary.playedOn * 1000),
+		});
 		return;
 	}
 
@@ -62,6 +72,11 @@ export const processReplay = async (
 			new Date(replaySummary.playedOn * 1000),
 			skipReplayReason,
 		);
+		await skipReplay({
+			replayId: replay.id,
+			gameName: replay.name,
+			playedOn: new Date(replay.playedOn * 1000),
+		});
 		return;
 	}
 

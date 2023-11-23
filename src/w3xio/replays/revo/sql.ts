@@ -143,6 +143,14 @@ https://wc3stats.com/games/${replay.replayId}`;
 	}
 };
 
+export const skipReplay = async (replay: {
+	replayId: number;
+	gameName: string;
+	playedOn: Date;
+}) => {
+	await query("INSERT elo.replay set ?;", [{ ...replay, voided: "Y" }]);
+};
+
 export const endReplay = async (save: boolean): Promise<void> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
@@ -150,7 +158,7 @@ export const endReplay = async (save: boolean): Promise<void> => {
 
 	if (rounds.length === 0) {
 		logLine("revo", "no rounds but adding as void");
-		await query("INSERT elo.replay set ?;", [{ ...replay, voided: "Y" }]);
+		await skipReplay(replay);
 		currentReplay = undefined;
 		return;
 	}
@@ -165,7 +173,7 @@ export const endReplay = async (save: boolean): Promise<void> => {
 		INSERT elo.outcome VALUES ?;
 		`,
 		[
-			{ ...replay, pageNumber: 0 },
+			replay,
 			rounds.map((r) => [replay.replayId, r.round, r.setup, r.duration]),
 			rounds.flatMap((r) =>
 				r.outcomes.map((o) => [

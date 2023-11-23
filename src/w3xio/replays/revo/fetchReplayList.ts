@@ -49,7 +49,6 @@ export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
 					replayId: replay.id,
 					playedOn: new Date(replay.playedOn * 1000),
 					gamename: replay.name,
-					pagenumber: 0,
 					voided: "Y",
 				},
 			]);
