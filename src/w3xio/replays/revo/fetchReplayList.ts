@@ -1,5 +1,6 @@
 import { wc3stats } from "../../../shared/fetch.js";
 import { logLine } from "../../../shared/log.js";
+import { query } from "../../../shared/sql.js";
 import { processReplay } from "./processReplay.js";
 
 export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
@@ -29,12 +30,29 @@ export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
 		const isRevo =
 			map.includes("revolution") || variant.includes("revolution");
 
-		if (isRevo && replay.processed && !replay.isVoid)
+		if (!replay.processed) {
+			logLine("revo", "still processing");
+			break;
+		}
+
+		if (isRevo && !replay.isVoid) {
 			try {
 				await processReplay(replay);
 			} catch (err) {
 				console.error(err);
 				return;
 			}
+		} else {
+			logLine("revo", "not revo, inserting...");
+			await query("INSERT elo.replay SET ?;", [
+				{
+					replayId: replay.id,
+					playedOn: new Date(replay.playedOn * 1000),
+					gamename: replay.name,
+					pagenumber: 0,
+					voided: "Y",
+				},
+			]);
+		}
 	}
 };
