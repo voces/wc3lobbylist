@@ -5,7 +5,6 @@ import { onProcessClose } from "../close.js";
 import { config, saveConfig } from "../config.js";
 import discord from "../discord.js";
 import { info, logLine } from "../shared/log.js";
-import { deleteReplay } from "./deleteReplay.js";
 import { elo } from "./elo.js";
 import { js } from "./js.js";
 import { last } from "./last.js";
@@ -131,12 +130,6 @@ const processCommand = async (
 			if (message.author.id !== appConfig.admin) return;
 
 			await js(message, rest);
-			break;
-		}
-		case "deletereplay": {
-			if (message.author.id !== appConfig.admin) return;
-
-			await deleteReplay(message, rest);
 			break;
 		}
 		case "bulkdelete": {
