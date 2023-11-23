@@ -1,5 +1,6 @@
 import discord from "../../../discord.js";
 import type { Replay } from "../../../shared/fetchTypes.js";
+import { logLine } from "../../../shared/log.js";
 import { format, query } from "../../../shared/sql.js";
 import { formatList } from "../../../shared/util.js";
 import type { Round } from "./types.js";
@@ -148,7 +149,8 @@ export const endReplay = async (save: boolean): Promise<void> => {
 	const { rounds, ...replay } = currentReplay;
 
 	if (rounds.length === 0) {
-		await query(`INSERT elo.replay set ?;`, [{ ...replay, pageNumber: 0 }]);
+		logLine("revo", "no rounds but adding as void");
+		await query("INSERT elo.replay set ?;", [{ ...replay, voided: "Y" }]);
 		currentReplay = undefined;
 		return;
 	}

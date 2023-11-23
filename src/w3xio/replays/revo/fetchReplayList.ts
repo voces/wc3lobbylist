@@ -35,14 +35,14 @@ export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
 			break;
 		}
 
-		if (isRevo && !replay.isVoid) {
+		if (isRevo && !replay.isVoid)
 			try {
 				await processReplay(replay);
 			} catch (err) {
 				console.error(err);
 				return;
 			}
-		} else {
+		else {
 			logLine("revo", "not revo, inserting...");
 			await query("INSERT elo.replay SET ?;", [
 				{
