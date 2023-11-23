@@ -63,7 +63,7 @@ const ONE_MINUTE = 60 * 1000;
 			fetchReplayList(
 				(
 					await query<{ replayId: number }[]>(
-						`SELECT replayId FROM elo.replay ORDER BY replayId DESC LIMIT 1;`,
+						"SELECT replayId FROM elo.replay ORDER BY replayId DESC LIMIT 1;",
 					)
 				)[0]?.replayId ?? 1,
 			);

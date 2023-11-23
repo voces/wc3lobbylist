@@ -1,6 +1,5 @@
 import { wc3stats } from "../../../shared/fetch.js";
 import { logLine } from "../../../shared/log.js";
-import { kvSet } from "../../../shared/sql.js";
 import { processReplay } from "./processReplay.js";
 
 export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
