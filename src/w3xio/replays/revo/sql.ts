@@ -145,12 +145,13 @@ https://wc3stats.com/games/${replay.replayId}`;
 export const endReplay = async (save: boolean): Promise<void> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
-	if (currentReplay.rounds.length === 0) {
+	const { rounds, ...replay } = currentReplay;
+
+	if (rounds.length === 0) {
+		await query(`INSERT elo.replay set ?;`, [{ ...replay, pageNumber: 0 }]);
 		currentReplay = undefined;
 		return;
 	}
-
-	const { rounds, ...replay } = currentReplay;
 
 	await (save
 		? (...args: Parameters<typeof query>) =>
