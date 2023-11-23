@@ -7,7 +7,7 @@ export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
 
 	const page = await wc3stats.replays
 		.list({
-			search: "sheep tag",
+			search: "Sheep Tag",
 			since: lastReplayId,
 		})
 		.catch((err: Error) => err);

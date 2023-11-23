@@ -1,6 +1,7 @@
 import fetch from "node-fetch";
 
 import type { List, Replay, ReplaySummary, Wc3StatsLobby } from "./fetchTypes";
+import { logLine } from "./log.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isStringified = (body: any): boolean => {
@@ -17,24 +18,25 @@ export const wc3stats = {
 	replays: {
 		list: (
 			qs: Record<string, string | number>,
-		): Promise<List<ReplaySummary>> =>
-			fetch(
-				`https://api.wc3stats.com/replays&${Object.entries({
-					limit: 1,
-					chat: 0,
-					...qs,
-				})
-					.filter(([, value]) => value !== undefined)
-					.map(
-						([key, value]) =>
-							`${encodeURIComponent(key)}=${encodeURIComponent(
-								value,
-							)}`,
-					)
-					.join("&")}`,
-			)
+		): Promise<List<ReplaySummary>> => {
+			const url = `https://api.wc3stats.com/replays&${Object.entries({
+				limit: 1,
+				chat: 0,
+				...qs,
+			})
+				.filter(([, value]) => value !== undefined)
+				.map(
+					([key, value]) =>
+						`${encodeURIComponent(key)}=${encodeURIComponent(
+							value,
+						)}`,
+				)
+				.join("&")}`;
+			logLine("revo", url);
+			return fetch(url)
 				.then((r) => r.json())
-				.then((r) => (typeof r.body === "string" ? { body: [] } : r)),
+				.then((r) => (typeof r.body === "string" ? { body: [] } : r));
+		},
 		get: (replay: number): Promise<Replay> =>
 			fetch(`https://api.wc3stats.com/replays/${replay}`)
 				.then((r) => r.json())
