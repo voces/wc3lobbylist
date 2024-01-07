@@ -1,6 +1,5 @@
 import { logLine } from "../../../shared/log.js";
 import { query } from "../../../shared/sql.js";
-import { LOG } from "./processReplay.js";
 import { addOutcome } from "./sql.js";
 import type { Round } from "./types.js";
 
@@ -350,21 +349,20 @@ const processRoundForMode = async (
 		(wolfScore - expectedWolfScore);
 	wolves.forEach((p) => (players[p].newRating += wolfChange));
 
-	if (LOG)
-		logLine("revo", "round", {
-			mode,
-			sheep,
-			wolves,
-			expectedTime: tween(
-				[0, ...sortedMatches.map((v) => Math.min(v, maxTime)), maxTime],
-				expectedSheepScore,
-			),
-			sheepScore,
+	logLine("revo", "round", {
+		mode,
+		sheep,
+		wolves,
+		expectedTime: tween(
+			[0, ...sortedMatches.map((v) => Math.min(v, maxTime)), maxTime],
 			expectedSheepScore,
-			time,
-			sheepChange,
-			wolfChange,
-		});
+		),
+		sheepScore,
+		expectedSheepScore,
+		time,
+		sheepChange,
+		wolfChange,
+	});
 
 	await updateData(mode, sheep, wolves, players, time, playedOn);
 

@@ -11,8 +11,6 @@ import {
 	startRound,
 } from "./sql.js";
 
-export const LOG = false;
-
 const getSkipListReplayReason = (replay: ReplaySummary) => {
 	if (!replay.processed) return "not processed";
 	if (replay.isVoid) return "voided";
@@ -44,15 +42,14 @@ export const processReplay = async (
 
 	const skipListReplayReason = getSkipListReplayReason(replaySummary);
 	if (skipListReplayReason) {
-		if (LOG)
-			logLine(
-				"revo",
-				"Skipping",
-				replaySummary.id,
-				"from",
-				new Date(replaySummary.playedOn * 1000),
-				skipListReplayReason,
-			);
+		logLine(
+			"revo",
+			"Skipping",
+			replaySummary.id,
+			"from",
+			new Date(replaySummary.playedOn * 1000),
+			skipListReplayReason,
+		);
 		await skipReplay({
 			replayId: replaySummary.id,
 			gameName: replaySummary.name,
