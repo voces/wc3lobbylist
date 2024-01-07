@@ -28,6 +28,8 @@ const trackedMaps = [
 	"Sheep Tag ReVoLuTiOn 9.",
 	"Sheep Tag ReVoLuTiOn Cagematch 8.6.3.w3x",
 	"Sheep Tag ReVoLuTiOn Xmas 9.",
+	"Sheep Tag ReVoLuTiOn 23",
+	"Sheep Tag ReVoLuTiOn 24",
 ];
 const getSkipReplayReason = (game: ReplayGame) => {
 	if (!trackedMaps.some((map) => game.map.startsWith(map)))
