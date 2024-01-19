@@ -1,5 +1,5 @@
 diff --git a/node_modules/discord.js/src/client/actions/MessageCreate.js b/node_modules/discord.js/src/client/actions/MessageCreate.js
-index 7138707..6f01f55 100644
+index 7138707..2fae2f0 100644
 --- a/node_modules/discord.js/src/client/actions/MessageCreate.js
 +++ b/node_modules/discord.js/src/client/actions/MessageCreate.js
 @@ -7,7 +7,7 @@ class MessageCreateAction extends Action {
@@ -7,7 +7,7 @@ index 7138707..6f01f55 100644
      const client = this.client;
      const channel = client.channels.cache.get(data.channel_id);
 -    if (channel) {
-+    if (channel?.message.cache) {
++    if (channel?.messages.cache) {
        const existing = channel.messages.cache.get(data.id);
        if (existing) return { message: existing };
        const message = channel.messages.add(data);
