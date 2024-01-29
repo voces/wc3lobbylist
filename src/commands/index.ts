@@ -3,7 +3,7 @@ import type { Message } from "discord.js";
 import { config as appConfig } from "../../config.js";
 import { onProcessClose } from "../close.js";
 import { config, saveConfig } from "../config.js";
-import discord from "../discord.js";
+import discord, { messageAdmin } from "../discord.js";
 import { info, logLine } from "../shared/log.js";
 import { elo } from "./elo.js";
 import { js } from "./js.js";
@@ -58,6 +58,15 @@ const processCommand = async (
 					config[message.channel.id].message = options.message;
 				saveConfig();
 				message.reply(alreadyAdded ? "modified!" : "added!");
+				if (!alreadyAdded) {
+					messageAdmin(
+						`Alerting added in ${
+							"guild" in message.channel
+								? message.channel.guild.name
+								: `${message.author.username} (dm)`
+						}`,
+					).catch();
+				}
 			} catch (err) {
 				logLine("discord", "message", message.content);
 				console.error(new Date(), err);

@@ -7,7 +7,7 @@ index 7138707..2fae2f0 100644
      const client = this.client;
      const channel = client.channels.cache.get(data.channel_id);
 -    if (channel) {
-+    if (channel?.messages.cache) {
++    if (channel?.messages?.cache) {
        const existing = channel.messages.cache.get(data.id);
        if (existing) return { message: existing };
        const message = channel.messages.add(data);
