@@ -1,4 +1,4 @@
-import discord from "../../../discord.js";
+import discord, { messageAdmin } from "../../../discord.js";
 import type { Replay } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
 import { format, query } from "../../../shared/sql.js";
@@ -135,8 +135,13 @@ const summarize = async (replay: ReplayData) => {
 					.map(formatDiscordMessageModeData),
 			)}.
 https://wc3stats.com/games/${replay.replayId}`;
-			user.send(message);
+			await user.send(message);
 		} catch (err) {
+			messageAdmin(
+				`Could not message ${battlenettag}\n${
+					err instanceof Error ? err.stack : err
+				}`,
+			);
 			console.error(err);
 			/* do nothing */
 		}
