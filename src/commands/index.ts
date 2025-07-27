@@ -3,41 +3,16 @@ import type { Message } from "discord.js";
 import { config as appConfig } from "../../config.js";
 import { onProcessClose } from "../close.js";
 import { config, saveConfig } from "../config.js";
-import discord, { messageAdmin } from "../discord.js";
+import discord from "../discord.js";
 import { info, logLine } from "../shared/log.js";
 import { elo } from "./elo.js";
 import { js } from "./js.js";
 import { last } from "./last.js";
 import { matchup } from "./matchup.js";
-import { parser } from "./parser.js";
 import { rounds } from "./rounds.js";
 import { sql } from "./sql.js";
-import { stringifyReplacer } from "./stringify.js";
 import { summary } from "./summary.js";
 import { top } from "./top.js";
-
-const checkAlert = (message: Message): void => {
-	if (!config[message.channel.id]) {
-		try {
-			message.reply("there is no alert configured.");
-		} catch (err) {
-			console.error(new Date(), err);
-		}
-
-		return;
-	}
-
-	try {
-		message.reply(
-			`\`${JSON.stringify(
-				config[message.channel.id],
-				stringifyReplacer,
-			).replace(/`/g, "\\`")}\``,
-		);
-	} catch (err) {
-		console.error(new Date(), err);
-	}
-};
 
 const processCommand = async (
 	message: Message,
@@ -46,38 +21,7 @@ const processCommand = async (
 ) => {
 	switch (command) {
 		case "alert": {
-			if (rest.length === 0) return checkAlert(message);
-
-			try {
-				const { filter, options } = parser(
-					rest.join(" ").replace(/^`/, "").replace(/`$/, ""),
-				);
-				const alreadyAdded = !!config[message.channel.id];
-				config[message.channel.id] = { filter };
-				if (options && options.message)
-					config[message.channel.id].message = options.message;
-				saveConfig();
-				message.reply(alreadyAdded ? "modified!" : "added!");
-				if (!alreadyAdded) {
-					messageAdmin(
-						`Alerting added in ${
-							"guild" in message.channel
-								? message.channel.guild.name
-								: `${message.author.username} (dm)`
-						}`,
-					).catch();
-				}
-			} catch (err) {
-				logLine("discord", "message", message.content);
-				console.error(new Date(), err);
-				try {
-					message.reply(
-						'invalid syntax. Example: `alert (map:/sheep.*tag/i or map:/tree.*tag/i) server:"us" message:"@notify"`',
-					);
-				} catch (err) {
-					console.error(new Date(), err);
-				}
-			}
+			message.reply("Deprecated! Use /alert");
 			break;
 		}
 		case "stop": {
@@ -85,7 +29,7 @@ const processCommand = async (
 			saveConfig();
 
 			try {
-				message.reply("stopped!");
+				message.reply("stopped! To restart, use /alert");
 			} catch (err) {
 				console.error(new Date(), err);
 			}

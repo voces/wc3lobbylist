@@ -30,6 +30,12 @@ const trackedMaps = [
 	"Sheep Tag ReVoLuTiOn Xmas 9.",
 	"Sheep Tag ReVoLuTiOn 23",
 	"Sheep Tag ReVoLuTiOn 24",
+	"Sheep Tag ReVoLuTiOn 25",
+	"Sheep Tag ReVoLuTiOn 26",
+	"Sheep Tag ReVoLuTiOn 27",
+	"Sheep Tag ReVoLuTiOn 28",
+	"Sheep Tag ReVoLuTiOn 29",
+	"Sheep Tag ReVoLuTiOn 30",
 ];
 const getSkipReplayReason = (game: ReplayGame) => {
 	if (!trackedMaps.some((map) => game.map.startsWith(map)))
