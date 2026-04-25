@@ -6,7 +6,7 @@ import type {
 } from "discord.js";
 import Discord from "discord.js";
 
-import { isChannelGuildChannel, isTextChannel } from "./liveLobbies/util.js";
+import { isChannelGuildChannel, isTextChannel } from "./util.js";
 import { logLine } from "./shared/log.js";
 
 if (!process.env.DISCORD_TOKEN) {

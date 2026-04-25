@@ -2,7 +2,6 @@ import type { Message } from "discord.js";
 
 import { config as appConfig } from "../../config.js";
 import { onProcessClose } from "../close.js";
-import { config, saveConfig } from "../config.js";
 import discord from "../discord.js";
 import { info, logLine } from "../shared/log.js";
 import { elo } from "./elo.js";
@@ -20,21 +19,6 @@ const processCommand = async (
 	rest: string[],
 ) => {
 	switch (command) {
-		case "alert": {
-			message.reply("Deprecated! Use /alert");
-			break;
-		}
-		case "stop": {
-			delete config[message.channel.id];
-			saveConfig();
-
-			try {
-				message.reply("stopped! To restart, use /alert");
-			} catch (err) {
-				console.error(new Date(), err);
-			}
-			break;
-		}
 		case "restart": {
 			if (message.author.id !== appConfig.admin) return;
 
