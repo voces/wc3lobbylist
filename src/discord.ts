@@ -6,8 +6,8 @@ import type {
 } from "discord.js";
 import Discord from "discord.js";
 
-import { isChannelGuildChannel, isTextChannel } from "./util.js";
 import { logLine } from "./shared/log.js";
+import { isChannelGuildChannel, isTextChannel } from "./util.js";
 
 if (!process.env.DISCORD_TOKEN) {
 	console.error(new Error("Environmental variable DISCORD_TOKEN not set"));
