@@ -77,7 +77,7 @@ const send = async (
 
 export default Object.assign(client, { send });
 
-export const messageAdmin = async (message: string) => {
+export const messageAdmin = async (message: string): Promise<void> => {
 	const verit = await client.users.fetch("287706612456751104");
 	await verit.send(message);
 };
