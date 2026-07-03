@@ -7,14 +7,14 @@ import { query } from "../shared/sql.js";
 export const sql = async (message: Message, args: string[]): Promise<void> => {
 	const result = await query<Record<string, string | number | Date>[]>(
 		args.join(" "),
-	).catch((err) => jsStringify(err));
+	).catch(err => jsStringify(err));
 
 	const data =
 		typeof result === "object"
 			? formatTable([
 					Object.keys(result[0]),
-					...result.map((r) =>
-						Object.values(r).map((v) => {
+					...result.map(r =>
+						Object.values(r).map(v => {
 							if (v === null) return "(null)";
 							if (typeof v === "object" && v instanceof Date)
 								return v.toISOString();
@@ -22,7 +22,7 @@ export const sql = async (message: Message, args: string[]): Promise<void> => {
 							return v.toString();
 						}),
 					),
-			  ])
+				])
 			: result;
 
 	message.reply("```js\n" + data.slice(0, 1900) + "\n```");

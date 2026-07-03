@@ -50,8 +50,7 @@ onNewReplay(async (replay: Replay): Promise<void> => {
 				if (!triggers.includes(command)) return;
 
 				const body = parts.join(" ");
-				const player =
-					players.find((p) => p.id === playerId)?.name ?? "";
+				const player = players.find(p => p.id === playerId)?.name ?? "";
 
 				if (!memory[player]) memory[player] = [];
 				if (memory[player].includes(body) || memory[player].length > 2)

@@ -43,7 +43,7 @@ const simplify = (rule: Rule): RootRule => {
 			}
 		else if (
 			rule.rules.every(
-				(childRule) =>
+				childRule =>
 					!isGroupRule(childRule) || childRule.type === rule.type,
 			)
 		) {

@@ -53,7 +53,7 @@ export const fetchData = async (): Promise<void> => {
 			LIMIT 100;`,
 					[setup],
 				)
-			).map((r) => r.duration);
+			).map(r => r.duration);
 		}),
 	);
 
@@ -113,7 +113,7 @@ const queryData = async (
 	const seasonData = modeData[season] ?? (modeData[season] = {});
 	return {
 		players: Object.fromEntries(
-			[...sheep, ...wolves].map((p) => [
+			[...sheep, ...wolves].map(p => [
 				p,
 				{
 					rating: seasonData[p]?.rating ?? 1000,
@@ -137,7 +137,7 @@ const updateSeasonalModeData = async (
 ) => {
 	const modeData = data.modes[mode] ?? (data.modes[mode] = {});
 	const seasonData = modeData[season] ?? (modeData[season] = {});
-	players.forEach((p) => {
+	players.forEach(p => {
 		seasonData[p] = {
 			rating: input[p].newRating,
 			rounds: (seasonData[p]?.rounds ?? 0) + 1,
@@ -282,10 +282,10 @@ export const expectedScore = async (
 		wolves,
 		playedOn,
 	);
-	const sheepElo = sheep.map((p) => players[p].rating).reduce(avg, 0);
-	const wolfElo = wolves.map((p) => players[p].rating).reduce(avg, 0);
+	const sheepElo = sheep.map(p => players[p].rating).reduce(avg, 0);
+	const wolfElo = wolves.map(p => players[p].rating).reduce(avg, 0);
 	const avgRounds = Object.values(players)
-		.map((d) => d.rounds)
+		.map(d => d.rounds)
 		.reduce(avg, 0);
 	const factor = 2 / ((avgRounds + 1) / 8) ** (1 / 4);
 
@@ -296,7 +296,7 @@ export const expectedScore = async (
 	const expectedWolfScore = 1 - expectedSheepScore;
 
 	const sortedMatches = trailingMatchTimes
-		.map((v) => Math.min(maxTime, v))
+		.map(v => Math.min(maxTime, v))
 		.sort((a, b) => a - b);
 
 	return {
@@ -307,7 +307,7 @@ export const expectedScore = async (
 		maxTime,
 		players,
 		expectedTime: tween(
-			[0, ...sortedMatches.map((v) => Math.min(v, maxTime)), maxTime],
+			[0, ...sortedMatches.map(v => Math.min(v, maxTime)), maxTime],
 			expectedSheepScore,
 		),
 	};
@@ -335,26 +335,26 @@ const processRoundForMode = async (
 	} = ret;
 
 	const sheepScore = reverseTween(
-		[0, ...sortedMatches.map((v) => Math.min(v, maxTime)), maxTime],
+		[0, ...sortedMatches.map(v => Math.min(v, maxTime)), maxTime],
 		time,
 	);
 	const wolfScore = 1 - sheepScore;
 
 	const sheepChange = K * factor * (sheepScore - expectedSheepScore);
-	sheep.forEach((p) => (players[p].newRating += sheepChange));
+	sheep.forEach(p => (players[p].newRating += sheepChange));
 	const wolfChange =
 		K *
 		factor *
 		(sheep.length / wolves.length) *
 		(wolfScore - expectedWolfScore);
-	wolves.forEach((p) => (players[p].newRating += wolfChange));
+	wolves.forEach(p => (players[p].newRating += wolfChange));
 
 	logLine("revo", "round", {
 		mode,
 		sheep,
 		wolves,
 		expectedTime: tween(
-			[0, ...sortedMatches.map((v) => Math.min(v, maxTime)), maxTime],
+			[0, ...sortedMatches.map(v => Math.min(v, maxTime)), maxTime],
 			expectedSheepScore,
 		),
 		sheepScore,

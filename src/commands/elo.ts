@@ -7,7 +7,7 @@ export const elo = async (message: Message, args: string[]): Promise<void> => {
 	const name = await query<{ battlenettag: string }[]>(
 		"SELECT battlenettag FROM elo.discordBattleNetMap WHERE discordid = ?;",
 		[message.author.id],
-	).then((r) => r[0]?.battlenettag);
+	).then(r => r[0]?.battlenettag);
 
 	if (!name) {
 		message.reply(
@@ -22,7 +22,7 @@ export const elo = async (message: Message, args: string[]): Promise<void> => {
 		query<{ rating: number; rounds: number }[]>(
 			"SELECT rating, rounds FROM elo.elos WHERE player = ? AND `mode` = ? AND season = ?;",
 			[name, mode, season],
-		).then((r) => r[0]),
+		).then(r => r[0]),
 		query<{ playedon: Date; change: number; replayid: string }[]>(
 			`SELECT playedon, SUM(\`change\`) \`change\`, replay.replayid
 			FROM elo.outcome
@@ -46,7 +46,7 @@ export const elo = async (message: Message, args: string[]): Promise<void> => {
 Date                          Change  Replay
 ${history
 	.map(
-		(r) =>
+		r =>
 			`${r.playedon.toUTCString()} ${r.change
 				.toFixed(1)
 				.padStart(6, " ")}  https://wc3stats.com/games/${r.replayid}`,

@@ -32,7 +32,7 @@ export const last = async (message: Message): Promise<void> => {
 	message.reply(
 		`\n\`\`\`${res
 			.map(
-				(r) =>
+				r =>
 					`${r.playedon.toUTCString()} [${r.mode}] ${r.gamename} (${
 						r.replayid
 					})\n${formatList(

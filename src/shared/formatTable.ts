@@ -3,9 +3,7 @@ export const formatTable = <T extends { toString: () => string }[][]>(
 ): string => {
 	const stringRows: string[][] = [];
 	const columnWidths = table[0].map(() => 0);
-	const columnTypes = Object.values(table[1] ?? table[0]).map(
-		(v) => typeof v,
-	);
+	const columnTypes = Object.values(table[1] ?? table[0]).map(v => typeof v);
 
 	for (const row of table) {
 		const stringRow: string[] = [];
@@ -19,7 +17,7 @@ export const formatTable = <T extends { toString: () => string }[][]>(
 	}
 
 	return stringRows
-		.map((row) =>
+		.map(row =>
 			row
 				.map((v, i) =>
 					columnTypes[i] === "number"

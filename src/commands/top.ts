@@ -13,7 +13,7 @@ export const top = async (message: Message, args: string[]): Promise<void> => {
 				"SELECT player, rating, rounds FROM elo.elos WHERE season = ? AND `mode` = ? ORDER BY rating DESC LIMIT 10;",
 				[season, mode],
 			)
-		).map((r) => ({
+		).map(r => ({
 			rounds: r.rounds,
 			rating: Math.round(r.rating),
 			player: cleanUsername(r.player),
@@ -34,7 +34,7 @@ export const top = async (message: Message, args: string[]): Promise<void> => {
 		`top 10 in ${mode} in ${season}:
 \`\`\`${results
 			.map(
-				(r) =>
+				r =>
 					`${r.player.padEnd(maxUsername, " ")} ${r.rating
 						.toString()
 						.padStart(6, " ")} ${r.rounds

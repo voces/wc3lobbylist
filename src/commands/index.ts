@@ -69,47 +69,17 @@ const processCommand = async (
 			await js(message, rest);
 			break;
 		}
-		case "bulkdelete": {
-			if (message.channel.type === "dm") {
-				message.reply("cannot bulk delete in dm channels");
-				return;
-			}
-			const amount = Math.min(parseInt(rest[0]) || 10, 99);
-			logLine("discord", "bulk deleting", amount, "messages");
-			try {
-				await message.channel.bulkDelete(amount + 1);
-			} catch (err) {
-				console.error(new Date(), err);
-			}
-
-			break;
-		}
 		default: {
 			message.reply(`unknown command: ${command}.`);
 		}
 	}
 };
 
-discord.on("message", async (message) => {
-	// only consider messages that mention us
-	if (
-		!message.mentions.users.has(discord.user?.id || "") &&
-		message.channel.type !== "dm"
-	)
-		return;
-
-	const guildMember = message.guild?.member(message.author.id);
-
-	if (
-		// Ignore bots
-		message.author.bot ||
-		// Ignore if the user isn't admin and it's not a DM
-		(message.channel.type !== "dm" &&
-			(!guildMember ||
-				(!guildMember.hasPermission("MANAGE_MESSAGES") &&
-					message.author.id !== appConfig.admin)))
-	)
-		return;
+discord.on("messageCreate", async message => {
+	// Only DMs reach us — the GuildMessages intent is intentionally not
+	// requested. This guard is defensive in case Discord ever forwards one.
+	if (!message.channel.isDMBased()) return;
+	if (message.author.bot) return;
 
 	const [command, ...rest] = message.content
 		.replace(new RegExp(`<@!?${discord.user?.id}>`), "")
@@ -122,17 +92,8 @@ discord.on("message", async (message) => {
 			author: {
 				id: message.author.id,
 				username: message.author.username,
-				displayName: guildMember?.displayName,
 			},
-			guild: {
-				id: message.guild?.id,
-				name: message.guild?.name,
-			},
-			channel: {
-				id: message.channel.id,
-				name:
-					message.channel.type === "dm" ? "dm" : message.channel.name,
-			},
+			channel: { id: message.channel.id, name: "dm" },
 			message: [command, ...rest],
 		}),
 	);

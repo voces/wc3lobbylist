@@ -24,18 +24,18 @@ const queryFullPlayerNames = (players: string[]) =>
 					"SELECT DISTINCT ? input, player FROM elo.outcome WHERE player LIKE ?;",
 			)
 			.join("\n"),
-		players.flatMap((r) => [r, r + "%"]),
-	).then((r) => fromEntriesGroup(r.flat().map((r) => [r.input, r.player])));
+		players.flatMap(r => [r, r + "%"]),
+	).then(r => fromEntriesGroup(r.flat().map(r => [r.input, r.player])));
 
 export const matchup = async (
 	message: Message,
 	rest: string[],
 ): Promise<void> => {
 	const words = rest
-		.flatMap((w) => w.split(","))
-		.map((w) => w.replace(/[, ]/g, ""))
-		.filter((v) => v.length);
-	const pivot = words.findIndex((w) => w === "vs" || w === "v");
+		.flatMap(w => w.split(","))
+		.map(w => w.replace(/[, ]/g, ""))
+		.filter(v => v.length);
+	const pivot = words.findIndex(w => w === "vs" || w === "v");
 	if (pivot === -1) {
 		message.reply(
 			"invalid syntax. Example: nmcdo raffish vs eenz verit skiddo ferfykins",
@@ -71,7 +71,7 @@ export const matchup = async (
 								? [
 										...matches.slice(0, 4),
 										`${matches.length - 4} more`,
-								  ]
+									]
 								: matches,
 						)}`,
 				)
@@ -80,8 +80,8 @@ export const matchup = async (
 		return;
 	}
 
-	const sheep = Object.values(sheepResults).map((v) => v[0]);
-	const wolves = Object.values(wolfResults).map((v) => v[0]);
+	const sheep = Object.values(sheepResults).map(v => v[0]);
+	const wolves = Object.values(wolfResults).map(v => v[0]);
 
 	const ret = await expectedScore(
 		setup,

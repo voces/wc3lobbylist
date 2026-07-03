@@ -36,7 +36,7 @@ const stringifyArray = (
 		"[",
 		arr
 			.map(
-				(element) =>
+				element =>
 					space.repeat(level + 1) +
 					replacer(element, level + 1, (level + 1) * spaceWidth),
 			)

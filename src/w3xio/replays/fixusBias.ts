@@ -5,10 +5,9 @@ import { onNewReplay } from "./common.js";
 onNewReplay(async (replay: Replay): Promise<void> => {
 	const biasChanges = replay.data.game.players
 		.filter(
-			(p) =>
-				p.variables?.preference && p.variables?.preference !== "none",
+			p => p.variables?.preference && p.variables?.preference !== "none",
 		)
-		.map((p) => {
+		.map(p => {
 			const biasChange =
 				p.variables?.team === p.variables?.preference ? 0.25 : 1;
 

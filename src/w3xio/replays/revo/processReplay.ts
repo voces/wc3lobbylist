@@ -38,7 +38,7 @@ const trackedMaps = [
 	"Sheep Tag ReVoLuTiOn 30",
 ];
 const getSkipReplayReason = (game: ReplayGame) => {
-	if (!trackedMaps.some((map) => game.map.startsWith(map)))
+	if (!trackedMaps.some(map => game.map.startsWith(map)))
 		return "not whitelisted: " + game.map;
 };
 

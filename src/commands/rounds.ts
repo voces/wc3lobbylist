@@ -12,7 +12,7 @@ export const rounds = async (
 	if (!replay)
 		replay = await query<{ replayid: number }[]>(
 			"SELECT replayid FROM elo.replay ORDER BY replayid DESC LIMIT 1;",
-		).then((d) => d[0].replayid.toString());
+		).then(d => d[0].replayid.toString());
 
 	const data = await query<
 		{
@@ -36,18 +36,24 @@ export const rounds = async (
 		return;
 	}
 
-	const grouped = data.reduce((data, { round, mode, player, ...rest }) => {
-		const roundData = data[round] ?? (data[round] = {});
-		const modeData = roundData[mode] ?? (roundData[mode] = {});
-		modeData[player] = rest;
-		return data;
-	}, {} as Record<string, Record<string, Record<string, { change: number; duration: number }>>>);
+	const grouped = data.reduce(
+		(data, { round, mode, player, ...rest }) => {
+			const roundData = data[round] ?? (data[round] = {});
+			const modeData = roundData[mode] ?? (roundData[mode] = {});
+			modeData[player] = rest;
+			return data;
+		},
+		{} as Record<
+			string,
+			Record<string, Record<string, { change: number; duration: number }>>
+		>,
+	);
 
 	const rounds = Object.entries(grouped)
 		.sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
 		.map(([_, data]) => {
 			const setup = Object.keys(data).find(
-				(k) => k !== "overall" && !k.includes("-"),
+				k => k !== "overall" && !k.includes("-"),
 			)!;
 
 			const sheep = Object.keys(data[`${setup}-sheep`]);

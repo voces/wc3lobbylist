@@ -17,7 +17,7 @@ export const query = async <T>(
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	values?: any[] | Record<string, any>,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<T> => pool.query(sql, values).then((r) => r[0] as any);
+): Promise<T> => pool.query(sql, values).then(r => r[0] as any);
 
 export const kvGet = async <
 	T extends "number" | "string" | "boolean" = "string",

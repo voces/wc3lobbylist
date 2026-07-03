@@ -82,9 +82,9 @@ export const sqlProxy: RequestHandler = async (req, res) => {
 
 		const pool = getPool({ database, host, password, port, user });
 
-		const body: string = await new Promise((resolve) => {
+		const body: string = await new Promise(resolve => {
 			let body = "";
-			req.on("data", (chunk) => {
+			req.on("data", chunk => {
 				body += chunk;
 			});
 			req.on("end", () => {

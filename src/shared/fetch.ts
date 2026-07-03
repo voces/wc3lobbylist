@@ -34,24 +34,24 @@ export const wc3stats = {
 				.join("&")}`;
 			logLine("revo", url);
 			return fetch(url)
-				.then((r) => r.json())
-				.then((r) => (typeof r.body === "string" ? { body: [] } : r));
+				.then(r => r.json())
+				.then(r => (typeof r.body === "string" ? { body: [] } : r));
 		},
 		get: (replay: number): Promise<Replay> =>
 			fetch(`https://api.wc3stats.com/replays/${replay}`)
-				.then((r) => r.json())
+				.then(r => r.json())
 				.then(({ body }: { body: Replay }) => {
-					body.data.game.events = body.data.game.events.map((e) => ({
+					body.data.game.events = body.data.game.events.map(e => ({
 						...e,
-						args: e.args.map((v) => v.replace(/\\ /g, " ")),
+						args: e.args.map(v => v.replace(/\\ /g, " ")),
 					}));
 					return body;
 				}),
 	},
 	gamelist: (): Promise<Array<Wc3StatsLobby>> =>
 		fetch("https://api.wc3stats.com/gamelist")
-			.then((r) => r.json())
-			.then((r) => (typeof r.body === "string" ? [] : r.body)),
+			.then(r => r.json())
+			.then(r => (typeof r.body === "string" ? [] : r.body)),
 };
 
 export const github = {
@@ -74,7 +74,7 @@ export const github = {
 					method: "POST",
 					headers: { Authorization: `token ${token}` },
 					body,
-				}).then((r) => r.json());
+				}).then(r => r.json());
 			},
 		},
 	},

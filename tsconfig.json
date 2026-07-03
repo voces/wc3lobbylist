@@ -17,7 +17,7 @@
 			]
 		},
 		"plugins": [{ "transform": "@zerollup/ts-transform-paths" }],
-		"types": ["@types/jest", "@types/node", "@types/mysql2"],
+		"types": ["@types/jest", "@types/node"],
 		"esModuleInterop": true
 	},
 	"include": ["src"]

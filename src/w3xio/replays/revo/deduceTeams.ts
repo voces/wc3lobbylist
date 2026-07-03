@@ -32,7 +32,7 @@ export const deduceTeams = (
 		usedSlots: number[];
 	}[] = [{ team: "sheep", cursor: 0, sheep: [], wolves: [], usedSlots: [] }];
 	let possibilityIndex = possibilities.findIndex(
-		(p) => p.cursor < round.length,
+		p => p.cursor < round.length,
 	);
 	while (possibilityIndex >= 0) {
 		const possibility = possibilities[possibilityIndex];
@@ -101,7 +101,7 @@ export const deduceTeams = (
 			});
 
 		possibilityIndex = possibilities.findIndex(
-			(p) => p.cursor < round.length,
+			p => p.cursor < round.length,
 		);
 	}
 

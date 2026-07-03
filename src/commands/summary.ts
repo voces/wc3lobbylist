@@ -12,7 +12,7 @@ export const summary = async (
 	if (!replayid)
 		replayid = await query<{ replayid: number }[]>(
 			"SELECT replayid FROM elo.replay ORDER BY replayid DESC LIMIT 1;",
-		).then((d) => d[0].replayid.toString());
+		).then(d => d[0].replayid.toString());
 
 	let data = await query<
 		{
@@ -32,7 +32,7 @@ export const summary = async (
 		return;
 	}
 
-	data = data.map((r) => ({ ...r, player: r.player.split("#")[0] }));
+	data = data.map(r => ({ ...r, player: r.player.split("#")[0] }));
 
 	const maxNameLength = data.reduce(
 		(max, r) => (max > r.player.length ? max : r.player.length),
@@ -48,7 +48,7 @@ export const summary = async (
 			"Player".padStart(maxNameLength) +
 			" Change  Best Worst Rounds\n" +
 			data
-				.map((r) =>
+				.map(r =>
 					[
 						r.player.padStart(maxNameLength),
 						r.change.toFixed(1).padStart(6),

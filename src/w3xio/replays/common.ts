@@ -37,7 +37,7 @@ export const executeCallbacks = (replay: Replay): void => {
 		replay.id,
 		onNewReplayCallbacks.length,
 	);
-	onNewReplayCallbacks.forEach((fn) => fn(replay));
+	onNewReplayCallbacks.forEach(fn => fn(replay));
 };
 
 export type Metadata = {
@@ -93,7 +93,7 @@ export const getRepoAndVersionInfo = async (
 
 export const trim = (str: string): string => {
 	const lines = str.split("\n");
-	const start = lines.findIndex((line) => !line.match(/^\s*$/));
+	const start = lines.findIndex(line => !line.match(/^\s*$/));
 	let end = lines.length;
 	while (lines[end - 1].match(/^\s*$/)) end--;
 
@@ -104,8 +104,7 @@ export const trim = (str: string): string => {
 		return match && match[0].length < min ? match[0].length : min;
 	}, Infinity);
 
-	const trimmed =
-		min === Infinity ? body : body.map((line) => line.slice(min));
+	const trimmed = min === Infinity ? body : body.map(line => line.slice(min));
 
 	return trimmed.join("\n");
 };

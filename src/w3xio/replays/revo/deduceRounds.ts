@@ -8,7 +8,7 @@ const LOG = false;
 const oldDeduceRounds = (replay: Replay): Round[] => {
 	const players = replay.data.game.players;
 
-	const recordKeeper = players.find((p) => p.variables?.setup);
+	const recordKeeper = players.find(p => p.variables?.setup);
 	if (!recordKeeper) {
 		if (LOG)
 			logLine(
@@ -28,7 +28,7 @@ const oldDeduceRounds = (replay: Replay): Round[] => {
 		slot: number;
 		name: string;
 	}[] = [];
-	players.forEach((p) => {
+	players.forEach(p => {
 		playerTimes[p.slot] = {
 			times: (p.variables?.roundTimes?.toString() ?? "")
 				.split("|")
@@ -54,7 +54,7 @@ const oldDeduceRounds = (replay: Replay): Round[] => {
 			? rawSetup.slice(0, rawSetup.lastIndexOf(" "))
 			: rawSetup;
 
-	const playerIds = players.map((p) => p.slot);
+	const playerIds = players.map(p => p.slot);
 
 	const teams = setup
 		.split(" ")
@@ -99,8 +99,8 @@ const oldDeduceRounds = (replay: Replay): Round[] => {
 			}
 
 			return {
-				sheep: sheep.map((slot) => playerTimes[slot].name),
-				wolves: wolves.map((slot) => playerTimes[slot].name),
+				sheep: sheep.map(slot => playerTimes[slot].name),
+				wolves: wolves.map(slot => playerTimes[slot].name),
 				time,
 			};
 		})
@@ -113,17 +113,17 @@ const someFromEnd = <T>(arr: Array<T>, fn: (value: T) => boolean) => {
 };
 
 export const deduceRounds = (replay: Replay): Round[] => {
-	if (!someFromEnd(replay.data.game.events, (e) => e.eventName === "end"))
+	if (!someFromEnd(replay.data.game.events, e => e.eventName === "end"))
 		return oldDeduceRounds(replay);
 
 	const players = replay.data.game.players;
-	const playerMap = Object.fromEntries(players.map((p) => [p.slot, p.name]));
+	const playerMap = Object.fromEntries(players.map(p => [p.slot, p.name]));
 
 	return replay.data.game.events
-		.filter((e) => e.eventName === "round")
-		.map((r) => ({
-			sheep: r.args[0].split(" ").map((slot) => playerMap[slot]),
-			wolves: r.args[1].split(" ").map((slot) => playerMap[slot]),
+		.filter(e => e.eventName === "round")
+		.map(r => ({
+			sheep: r.args[0].split(" ").map(slot => playerMap[slot]),
+			wolves: r.args[1].split(" ").map(slot => playerMap[slot]),
 			time: parseFloat(r.args[2]),
 		}));
 };

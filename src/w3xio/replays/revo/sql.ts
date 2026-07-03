@@ -86,26 +86,36 @@ const summarize = async (replay: ReplayData) => {
 	const players = Array.from(
 		new Set(
 			replay.rounds
-				.flatMap((r) => r.outcomes)
+				.flatMap(r => r.outcomes)
 				.sort((a, b) => b.rating - a.rating)
-				.map((p) => p.player),
+				.map(p => p.player),
 		),
 	);
 
 	const grouped = Object.values(
-		replay.rounds.reduce((data, round) => {
-			round.outcomes.forEach((o) => {
-				const setup = o.mode;
-				const setupData =
-					data[setup] ?? (data[setup] = { setup, players: {} });
-				setupData.players[o.player] = {
-					change:
-						(setupData.players[o.player]?.change ?? 0) + o.change,
-					rating: o.rating,
-				};
-			});
-			return data;
-		}, {} as Record<string, { setup: string; players: Record<string, { rating: number; change: number }> }>),
+		replay.rounds.reduce(
+			(data, round) => {
+				round.outcomes.forEach(o => {
+					const setup = o.mode;
+					const setupData =
+						data[setup] ?? (data[setup] = { setup, players: {} });
+					setupData.players[o.player] = {
+						change:
+							(setupData.players[o.player]?.change ?? 0) +
+							o.change,
+						rating: o.rating,
+					};
+				});
+				return data;
+			},
+			{} as Record<
+				string,
+				{
+					setup: string;
+					players: Record<string, { rating: number; change: number }>;
+				}
+			>,
+		),
 	);
 
 	const r = await query<{ discordid: string; battlenettag: string }[]>(
@@ -123,7 +133,7 @@ const summarize = async (replay: ReplayData) => {
 				setup,
 				score: players[battlenettag],
 			}))
-			.filter((m) => m.score !== undefined);
+			.filter(m => m.score !== undefined);
 
 		if (modeData.length === 0) continue;
 
@@ -168,10 +178,12 @@ export const endReplay = async (save: boolean): Promise<void> => {
 		return;
 	}
 
-	await (save
-		? (...args: Parameters<typeof query>) =>
-				query<{ __ignoreMe: true }>(...args)
-		: format)(
+	await (
+		save
+			? (...args: Parameters<typeof query>) =>
+					query<{ __ignoreMe: true }>(...args)
+			: format
+	)(
 		`
 		INSERT elo.replay SET ?;
 		INSERT elo.round VALUES ?;
@@ -179,9 +191,9 @@ export const endReplay = async (save: boolean): Promise<void> => {
 		`,
 		[
 			replay,
-			rounds.map((r) => [replay.replayId, r.round, r.setup, r.duration]),
-			rounds.flatMap((r) =>
-				r.outcomes.map((o) => [
+			rounds.map(r => [replay.replayId, r.round, r.setup, r.duration]),
+			rounds.flatMap(r =>
+				r.outcomes.map(o => [
 					replay.replayId,
 					r.round,
 					o.mode,
