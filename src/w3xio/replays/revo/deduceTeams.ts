@@ -53,8 +53,8 @@ export const deduceTeams = (
 				playerIds,
 				possibility.usedSlots,
 				(possibility.team === "sheep"
-					? possibility.sheep[possibility.sheep.length - 1]
-					: possibility.wolves[possibility.wolves.length - 1]) ?? -1,
+					? possibility.sheep.at(-1)
+					: possibility.wolves.at(-1)) ?? -1,
 			)
 		)
 			possibilities.push({
@@ -79,8 +79,8 @@ export const deduceTeams = (
 				playerIds,
 				possibility.usedSlots,
 				(possibility.team === "sheep"
-					? possibility.sheep[possibility.sheep.length - 1]
-					: possibility.wolves[possibility.wolves.length - 1]) ?? -1,
+					? possibility.sheep.at(-1)
+					: possibility.wolves.at(-1)) ?? -1,
 			)
 		)
 			possibilities.push({

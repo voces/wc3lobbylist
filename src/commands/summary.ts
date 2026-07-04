@@ -9,10 +9,16 @@ export const summary = async (
 	let replayid = args[0];
 	const mode = args[1] ?? "2v4";
 
-	if (!replayid)
-		replayid = await query<{ replayid: number }[]>(
+	if (!replayid) {
+		const latest = await query<{ replayid: number }[]>(
 			"SELECT replayid FROM elo.replay ORDER BY replayid DESC LIMIT 1;",
-		).then(d => d[0].replayid.toString());
+		);
+		if (!latest.length) {
+			message.reply("no replays found.");
+			return;
+		}
+		replayid = latest[0].replayid.toString();
+	}
 
 	let data = await query<
 		{

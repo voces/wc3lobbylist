@@ -27,7 +27,7 @@ const processCommand = async (
 				logLine("discord", "restarting by command...");
 				await onProcessClose();
 			} catch (err) {
-				console.error(new Date(), err);
+				logLine("discord", err);
 			}
 
 			process.exit(0);

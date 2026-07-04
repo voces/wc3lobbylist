@@ -169,15 +169,3 @@ export type Replay = ReplayPartial & {
 	downloads: number;
 	overrideable: boolean;
 };
-
-export interface Wc3StatsLobby {
-	checksum: undefined | string | number;
-	host: undefined | string;
-	id: undefined | string | number;
-	map: undefined | string;
-	name: undefined | string;
-	server: "us" | "eu" | string;
-	slotsTaken: undefined | number;
-	slotsTotal: undefined | number;
-	created: undefined | number;
-}

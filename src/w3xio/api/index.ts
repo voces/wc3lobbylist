@@ -4,7 +4,6 @@ import morgan from "morgan";
 
 import { config } from "../../../config.js";
 import { logLine } from "../../shared/log.js";
-import { query } from "../../shared/sql.js";
 import { sqlProxy } from "./sqlProxy.js";
 
 const app = express();
@@ -18,16 +17,12 @@ app.get("/preferences", async (req, res) => {
 	if (typeof map !== "string" || typeof rawPlayers !== "string")
 		return res.status(400).send();
 
-	const players = rawPlayers.split(",");
-
-	const result = await query<{ player: string; bias: number }[]>(
-		"SELECT player, bias FROM fixusbias WHERE player IN (:players);",
-		{ players },
-	);
-
-	res.json(
-		Object.fromEntries(result.map(({ player, bias }) => [player, bias])),
-	);
+	// Fixus bias is stubbed out: the latest Fixus map dropped the team
+	// `preference` variable that populated the `fixusbias` table, so we no
+	// longer track it. We keep the endpoint and its param validation so
+	// existing map/client callers don't break, but always return an empty
+	// preference map (player -> bias) since there is no longer any data.
+	res.json({});
 });
 
 app.post("/sql", sqlProxy);

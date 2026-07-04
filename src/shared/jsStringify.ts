@@ -48,7 +48,7 @@ const stringifyArray = (
 const escapeKey = (key: string): string =>
 	key.match(/^[_a-zA-Z][_0-9a-zA-Z]*$/)
 		? key
-		: `"${key.replace(/"/g, "\\")}"`;
+		: `"${key.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 
 const stringifyObject = (
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -172,9 +172,7 @@ export const jsStringify = (
 			if (typeof obj === "string")
 				return `"${obj.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 
-			if (typeof obj === "number") obj.toString();
-
-			// booleans and functions
+			// numbers, booleans, and functions
 			if (typeof obj !== "object") return obj.toString();
 
 			if (Array.isArray(obj))

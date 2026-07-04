@@ -1,6 +1,4 @@
-import fetch from "node-fetch";
-
-import type { List, Replay, ReplaySummary, Wc3StatsLobby } from "./fetchTypes";
+import type { List, Replay, ReplaySummary } from "./fetchTypes";
 import { logLine } from "./log.js";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,10 +46,6 @@ export const wc3stats = {
 					return body;
 				}),
 	},
-	gamelist: (): Promise<Array<Wc3StatsLobby>> =>
-		fetch("https://api.wc3stats.com/gamelist")
-			.then(r => r.json())
-			.then(r => (typeof r.body === "string" ? [] : r.body)),
 };
 
 export const github = {

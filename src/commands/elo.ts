@@ -38,6 +38,13 @@ export const elo = async (message: Message, args: string[]): Promise<void> => {
 		),
 	]);
 
+	if (!rating) {
+		message.reply(
+			`I have no ${mode} rating for you in ${season}. Play some rounds first, or try another mode/season.`,
+		);
+		return;
+	}
+
 	message.reply(
 		`your rating in ${mode} in ${season} is ${rating.rating} with ${
 			rating.rounds

@@ -1,26 +1,12 @@
 import type { Replay } from "../../../shared/fetchTypes.js";
-import { logLine } from "../../../shared/log.js";
 import { deduceTeams } from "./deduceTeams.js";
 import type { Round } from "./types.js";
-
-const LOG = false;
 
 const oldDeduceRounds = (replay: Replay): Round[] => {
 	const players = replay.data.game.players;
 
 	const recordKeeper = players.find(p => p.variables?.setup);
-	if (!recordKeeper) {
-		if (LOG)
-			logLine(
-				"revo",
-				"Skipping replay with no data",
-				replay.id,
-				"from",
-				new Date(replay.playedOn * 1000),
-			);
-
-		return [];
-	}
+	if (!recordKeeper) return [];
 
 	const playerTimes: {
 		times: number[];
@@ -43,12 +29,6 @@ const oldDeduceRounds = (replay: Replay): Round[] => {
 
 	const rawSetup = recordKeeper.variables!.setup!.toString();
 
-	if (rawSetup.length === 218 && LOG)
-		logLine(
-			"revo",
-			"Max w3mmd value setup encountered; skipping last rounds",
-		);
-
 	const setup =
 		rawSetup.length === 218
 			? rawSetup.slice(0, rawSetup.lastIndexOf(" "))
@@ -62,41 +42,18 @@ const oldDeduceRounds = (replay: Replay): Round[] => {
 		.filter((v): v is [number[], number[]] => !!v);
 
 	return teams
-		.map(([sheep, wolves], matchId) => {
+		.map(([sheep, wolves]) => {
 			let time: number | undefined;
 			let inconsistentTime = false;
 			sheep.forEach((s: number, index: number) => {
 				const playerTime =
 					playerTimes[s].times[playerTimes[s].cursor++];
 				if (index === 0) time = playerTime;
-				else if (playerTime !== time) {
-					inconsistentTime = true;
-					if (LOG)
-						logLine("revo", "inconsistent time found", {
-							time,
-							playerTime,
-							index,
-							sheep,
-							wolves,
-							matchId,
-						});
-				}
+				else if (playerTime !== time) inconsistentTime = true;
 			});
 
-			if (inconsistentTime) {
-				if (LOG)
-					console.warn("Skipping match with multiple times", matchId);
-				return;
-			}
-
-			if (time === undefined) {
-				if (LOG)
-					console.warn(
-						"Skipping match that is missing a time",
-						matchId,
-					);
-				return;
-			}
+			// Skip matches with conflicting or missing round times
+			if (inconsistentTime || time === undefined) return;
 
 			return {
 				sheep: sheep.map(slot => playerTimes[slot].name),

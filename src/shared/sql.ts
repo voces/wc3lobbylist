@@ -1,5 +1,4 @@
 import MySQL from "mysql2/promise";
-export { format } from "mysql2";
 
 import { config } from "../../config.js";
 
@@ -16,8 +15,7 @@ export const query = async <T>(
 	sql: string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	values?: any[] | Record<string, any>,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<T> => pool.query(sql, values).then(r => r[0] as any);
+): Promise<T> => pool.query(sql, values).then(r => r[0] as T);
 
 export const kvGet = async <
 	T extends "number" | "string" | "boolean" = "string",

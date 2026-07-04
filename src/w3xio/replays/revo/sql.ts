@@ -1,7 +1,7 @@
 import discord, { messageAdmin } from "../../../discord.js";
 import type { Replay } from "../../../shared/fetchTypes.js";
 import { logLine } from "../../../shared/log.js";
-import { format, query } from "../../../shared/sql.js";
+import { query } from "../../../shared/sql.js";
 import { formatList } from "../../../shared/util.js";
 import type { Round } from "./types.js";
 
@@ -152,8 +152,7 @@ https://wc3stats.com/games/${replay.replayId}`;
 					err instanceof Error ? err.stack : err
 				}`,
 			);
-			console.error(err);
-			/* do nothing */
+			logLine("revo", err);
 		}
 	}
 };
@@ -166,7 +165,7 @@ export const skipReplay = async (replay: {
 	await query("INSERT elo.replay set ?;", [{ ...replay, voided: "Y" }]);
 };
 
-export const endReplay = async (save: boolean): Promise<void> => {
+export const endReplay = async (): Promise<void> => {
 	if (!currentReplay) throw new Error("Expected a current replay");
 
 	const { rounds, ...replay } = currentReplay;
@@ -178,12 +177,7 @@ export const endReplay = async (save: boolean): Promise<void> => {
 		return;
 	}
 
-	await (
-		save
-			? (...args: Parameters<typeof query>) =>
-					query<{ __ignoreMe: true }>(...args)
-			: format
-	)(
+	await query(
 		`
 		INSERT elo.replay SET ?;
 		INSERT elo.round VALUES ?;
@@ -206,9 +200,9 @@ export const endReplay = async (save: boolean): Promise<void> => {
 	);
 
 	try {
-		if (save) await summarize(currentReplay);
+		await summarize(currentReplay);
 	} catch (err) {
-		console.error(err);
+		logLine("revo", err);
 	}
 
 	currentReplay = undefined;

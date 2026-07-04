@@ -47,14 +47,14 @@ onNewReplay(async (replay: Replay): Promise<void> => {
 		for (const { playerId, message } of chatlog)
 			if (message.startsWith("-")) {
 				const [command, ...parts] = message.split(" ");
-				if (!triggers.includes(command)) return;
+				if (!triggers.includes(command)) continue;
 
 				const body = parts.join(" ");
 				const player = players.find(p => p.id === playerId)?.name ?? "";
 
 				if (!memory[player]) memory[player] = [];
 				if (memory[player].includes(body) || memory[player].length > 2)
-					return;
+					continue;
 				memory[player].push(body);
 
 				if (!metadata) metadata = await getRepoAndVersionInfo(replay);
@@ -67,10 +67,10 @@ onNewReplay(async (replay: Replay): Promise<void> => {
 						metadata,
 					});
 				} catch (err) {
-					console.error(new Date(), err);
+					logLine("fixus", err);
 				}
 			}
 	} catch (err) {
-		console.error(new Date(), err);
+		logLine("fixus", err);
 	}
 });

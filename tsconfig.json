@@ -4,7 +4,7 @@
 		"allowJs": false,
 		"target": "es2017",
 		"module": "ESNext",
-		"lib": ["es2019", "es2020", "dom"],
+		"lib": ["es2022", "dom"],
 		"moduleResolution": "node",
 		"strict": true,
 		"declaration": false,

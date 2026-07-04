@@ -3,7 +3,7 @@ export const formatList = (items: string[]): string =>
 		? items[0]
 		: items.length === 2
 			? `${items[0]} and ${items[1]}`
-			: `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
+			: `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 
 export const cleanUsername = (player: string): string => player.split("#")[0];
 

@@ -3,7 +3,7 @@ import type { RequestHandler } from "express";
 import MySQL from "mysql2/promise";
 
 import { logLine } from "../../shared/log.js";
-import { hasNumber, hasString, isError, isRecord } from "../../typeguards.js";
+import { hasNumber, hasString, isRecord } from "../../typeguards.js";
 
 const pools: Record<string, { pool: MySQL.Pool; lastUsed: number }> = {};
 
@@ -76,7 +76,7 @@ export const sqlProxy: RequestHandler = async (req, res) => {
 		const host = "w3x.io";
 		const password = req.headers["x-dbproxy-password"]?.toString();
 		const port =
-			parseInt(req.headers["x-dbproxy-port"]?.toString() ?? "3306") ??
+			parseInt(req.headers["x-dbproxy-port"]?.toString() ?? "3306") ||
 			3306;
 		const user = req.headers["x-dbproxy-user"]?.toString() ?? "public";
 
@@ -102,7 +102,9 @@ export const sqlProxy: RequestHandler = async (req, res) => {
 			isRecord(err) && hasString(err, "message")
 				? err.message
 				: "Unknown error";
-		if (isError(err)) res.json({ code, message });
+		// Always send a body — bailing without responding leaves the request
+		// hanging until the client times out.
+		res.json({ code, message });
 	}
 };
 

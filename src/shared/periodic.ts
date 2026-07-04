@@ -25,7 +25,7 @@ export const periodic = (
 		try {
 			await fn();
 		} catch (err) {
-			console.error(err);
+			logLine("", name, err);
 		}
 
 		if (!isExiting())

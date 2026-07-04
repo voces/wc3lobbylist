@@ -73,7 +73,10 @@ export const fetchData = async (): Promise<void> => {
 		seasonData[player] = { rating, rounds };
 	}
 };
-fetchData();
+// Warm the in-memory ELO cache at startup so the `matchup` command works
+// before any replay is processed. Guarded so a boot-time DB hiccup doesn't
+// surface as an unhandled rejection — processReplay re-fetches anyway.
+fetchData().catch(err => logLine("revo", "initial fetchData failed", err));
 
 const queryData = async (
 	setup: string,

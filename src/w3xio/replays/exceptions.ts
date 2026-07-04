@@ -95,10 +95,10 @@ onNewReplay(async (replay: Replay): Promise<void> => {
 			try {
 				await newException({ event, replay, metadata });
 			} catch (err) {
-				console.error(new Date(), err);
+				logLine("fixus", err);
 			}
 		}
 	} catch (err) {
-		console.error(new Date(), err);
+		logLine("fixus", err);
 	}
 });
