@@ -44,6 +44,9 @@
 	"watch": {
 		"build": "src"
 	},
+	"overrides": {
+		"undici": "6.27.0"
+	},
 	"author": "verit",
 	"license": "MIT",
 	"type": "module",
