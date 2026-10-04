@@ -26,6 +26,10 @@ export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
 	}
 
 	for (const replay of page.body) {
+		// wc3stats sometimes ignores `since` and returns old replays; skip
+		// anything we've already recorded.
+		if (replay.id <= lastReplayId) continue;
+
 		const map = (replay.map ?? "").replace(/ /g, "").toLowerCase();
 		const variant = (replay.variant ?? "").replace(/ /g, "").toLowerCase();
 		const isRevo =
@@ -58,7 +62,7 @@ export const fetchReplayList = async (lastReplayId: number): Promise<void> => {
 				}
 			else logLine("revo", "not revo or void, inserting...");
 
-			await query("INSERT elo.replay SET ?;", [
+			await query("INSERT IGNORE elo.replay SET ?;", [
 				{
 					replayId: replay.id,
 					playedOn: new Date(replay.playedOn * 1000),
